@@ -57,8 +57,9 @@ def register():
                         password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Account created successfully! Please login.', 'success')
-        return redirect(url_for('auth.login'))
+        login_user(new_user)
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('dashboard.dashboard'))
     return render_template('register.html', form=form)
 
 
