@@ -694,3 +694,24 @@ nav a.active {
     color: #667eea;
     font-weight: 600;
 }
+[data-theme="dark"] nav a.active {
+    color: #e74c3c;
+    text-align: center;
+}
+[data-theme="dark"] .quick-actions-section h3 {
+    color: #551313;
+    text-shadow: 4px 3px 5px #b46666;
+}
+[data-theme="dark"] .recent-activity-section {
+    background-color: #e3cdcdae;
+}
+[data-theme="dark"] .recent-activity-section h3 {
+    color: #551313;
+    text-shadow: 4px 3px 5px #b46666;
+}
+[data-theme="dark"] .empty-subtext {
+    color: #4b0707;
+}
+[data-theme="dark"] .empty-text {
+    color: rgb(134, 65, 65);
+}
