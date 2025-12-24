@@ -63,7 +63,7 @@ def register():
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('auth.login'))
     
-    return render_template('auth.html', mode='register')
+    return render_template('index.html', page='register')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -93,7 +93,7 @@ def login():
             flash('Invalid username or password!', 'error')
             return redirect(url_for('auth.login'))
     
-    return render_template('auth.html', mode='login')
+    return render_template('index.html', page='login')
 
 
 @auth_bp.route('/logout')

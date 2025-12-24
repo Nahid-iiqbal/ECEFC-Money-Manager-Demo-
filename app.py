@@ -105,7 +105,7 @@ def inject_user():
 if __name__ == '__main__':
     # Run the application
     print("=" * 50)
-    print("ECEFC Money Manager - Starting Application")
+    print("FeinBuddy - Starting Application")
     print("=" * 50)
     print(f"Database: {app.config['DATABASE_URL']}")
     print("Server starting on http://localhost:5000")
