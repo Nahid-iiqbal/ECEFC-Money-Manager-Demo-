@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, redirect, url_for
-from routes.database import db, init_db, User
+from routes.database import db, User
 from routes.auth import auth_bp
 from routes import register_blueprints
 from flask_login import LoginManager
@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize database
 db.init_app(app)
 with app.app_context():
-    init_db()
+    db.create_all()
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     print("=" * 50)
     print("FeinBuddy - Starting Application")
     print("=" * 50)
-    print(f"Database: {app.config['DATABASE_URL']}")
+    print(f"Database: {app.config['SQLALCHEMY_DATABASE_URI']}")
     print("Server starting on http://localhost:5000")
     print("Press Ctrl+C to stop the server")
     print("=" * 50)
