@@ -1,6 +1,6 @@
 @echo off
 echo ====================================
-echo ECEFC Money Manager Setup
+echo FeinBuddy Setup
 echo ====================================
 echo.
 

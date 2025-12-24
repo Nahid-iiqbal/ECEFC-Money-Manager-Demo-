@@ -1,4 +1,4 @@
-# ECEFC Money Manager - API Routes Documentation
+# FeinBuddy - API Routes Documentation
 
 ## Authentication Routes (`/auth`)
 
