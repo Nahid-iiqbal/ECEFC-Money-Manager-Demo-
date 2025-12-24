@@ -63,7 +63,7 @@ def register():
         session['user_id'] = new_user.id
         session['username'] = new_user.username
         flash('Account created successfully!', 'success')
-        return redirect(url_for('dashboard.dashboard'))
+        return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
 
 
