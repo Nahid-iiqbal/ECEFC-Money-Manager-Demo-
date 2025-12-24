@@ -32,6 +32,25 @@
     --accent-green: #5ed88f;
 }
 
+/* Dashboard-specific nav styling */
+nav a {
+    color: #8B2833 !important;
+}
+
+nav a:hover {
+    color: #D32F2F !important;
+}
+
+nav a.active {
+    color: #D32F2F !important;
+    border-bottom-color: #D32F2F !important;
+}
+
+/* Dashboard-specific main content styling */
+main {
+    color: #8B2833;
+}
+
 .theme-toggle {
     background: var(--bg-card);
     border: 2px solid var(--border-color);
@@ -693,4 +712,32 @@ nav a.active {
 nav a.active {
     color: #667eea;
     font-weight: 600;
+}
+
+[data-theme="dark"] nav a.active {
+    color: #e74c3c;
+    text-align: center;
+}
+[data-theme="dark"] .quick-actions-section h3 {
+    color: rgb(168, 62, 62);
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+[data-theme="dark"] .recent-activity-section{
+    background-color: rgba(200, 187, 187, 0.467);
+}
+[data-theme="dark"] .recent-activity-section h3 {
+    color: rgb(168, 62, 62);
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+[data-theme="dark"] .activity-item {
+    background: var(--bg-secondary);
+}
+[data-theme="dark"] .activity-item:hover {
+    background: var(--bg-card);
+}
+[data-theme="dark"] .empty-subtext {
+    color: rgba(45, 5, 5, 0.975);
+}
+[data-theme="dark"] .empty-text {
+    color: rgb(76, 41, 16);
 }
