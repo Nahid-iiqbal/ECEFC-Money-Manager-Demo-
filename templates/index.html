@@ -7,6 +7,18 @@
     <link href="{{url_for('static', filename = "css/style.css")}}" rel="stylesheet">
 </head>
 <body>
-    
+    <div class="container">
+        <h1>Fin Buddy</h1>
+        
+        <pre class="tagline">Tuition.   Dues.   Savings.<br>Managed.</pre>
+
+        <a href="{{url_for('auth.login')}}" class="btn-main">
+            Get Started &rarr;
+        </a>
+
+        <div class="footer">
+            <pre>Built for the CSE24 HackJam<br>By BUETIANS for EVERYONE</pre>
+        </div>
+    </div>
 </body>
 </html>

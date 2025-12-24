@@ -1,111 +1,71 @@
-/* Reset and Base Styles */
-* {
+/* static/style.css */
+
+/* --- Base Layout --- */
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-}
-
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Header */
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem 0;
-    text-align: center;
-}
-
-header h1 {
-    font-size: 2rem;
-}
-
-/* Navigation */
-nav {
-    background-color: #444;
-    padding: 1rem;
-}
-
-nav ul {
-    list-style: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    height: 100vh;
     display: flex;
     justify-content: center;
-    gap: 2rem;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-nav a:hover {
-    color: #4CAF50;
-}
-
-/* Main Content */
-main {
-    padding: 2rem 0;
-    min-height: calc(100vh - 200px);
-}
-
-/* Cards */
-.card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: #4CAF50;
-    color: #fff;
-    text-decoration: none;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.btn:hover {
-    background-color: #45a049;
-}
-
-/* Forms */
-form {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-/* Footer */
-footer {
-    background-color: #333;
-    color: #fff;
+    align-items: center;
+    color: white;
     text-align: center;
-    padding: 1rem 0;
-    margin-top: 2rem;
+}
+
+/* --- The Glass Box --- */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    max-width: 800px;
+    width: 90%;
+}
+
+/* --- Typography --- */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    margin-top: -0.5rem;
+    letter-spacing: 3px;
+
+}
+
+.tagline {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    margin-top: 2.5rem;
+    color: #dbe4f0;
+    font-weight: 300;
+}
+
+/* --- The Main Button --- */
+.btn-main {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #e74c3c; /* Red Accent */
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-main:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+    background-color: #c0392b;
+}
+
+/* --- Footer --- */
+.footer {
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    opacity: 0.6;
 }
