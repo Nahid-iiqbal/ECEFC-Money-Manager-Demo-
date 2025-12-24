@@ -68,3 +68,7 @@ def logout():
     session.clear()
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('auth.login'))
+    """Handle user logout."""
+    session.clear()
+    flash('You have been logged out successfully.', 'info')
+    return redirect(url_for('auth.login'))

@@ -10,137 +10,100 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    {% if page == 'login' or page == 'register' %}
-        <!-- Auth Pages -->
-        <div class="auth-container">
-            <div class="auth-box">
-                <div class="auth-header">
-                    <h1>💰 FeinBuddy</h1>
-                    <p class="subtitle">For BUET Students</p>
-                    <h2>{% if page == 'register' %}Create Account{% else %}Sign In{% endif %}</h2>
-                </div>
-                
-                <!-- Flash messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                <form method="POST" action="{{ url_for('auth.register' if page == 'register' else 'auth.login') }}">
-                    {% if page == 'register' %}
-                        <!-- Registration Form -->
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required 
-                                   placeholder="Choose a username" minlength="3">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required 
-                                   placeholder="your.email@example.com">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required 
-                                   placeholder="At least 6 characters" minlength="6">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm_password">Confirm Password</label>
-                            <input type="password" id="confirm_password" name="confirm_password" required 
-                                   placeholder="Re-enter your password" minlength="6">
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Create Account</button>
-                        
-                        <p class="auth-switch">
-                            Already have an account? 
-                            <a href="{{ url_for('auth.login') }}">Sign In</a>
-                        </p>
-                    {% else %}
-                        <!-- Login Form -->
-                        <div class="form-group">
-                            <label for="username">Username or Email</label>
-                            <input type="text" id="username" name="username" required 
-                                   placeholder="Enter your username or email">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required 
-                                   placeholder="Enter your password">
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Sign In</button>
-                        
-                        <p class="auth-switch">
-                            Don't have an account? 
-                            <a href="{{ url_for('auth.register') }}">Create Account</a>
-                        </p>
-                    {% endif %}
-                </form>
-            </div>
-        </div>
-    {% else %}
-        <!-- Dashboard/Main App Pages -->
-        <header>
-            <div class="container">
-                <h1>💰 FeinBuddy</h1>
-                <p>Welcome, {{ username }}!</p>
-            </div>
-        </header>
-        
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('personal.personal') }}">Personal Expenses</a></li>
-                <li><a href="{{ url_for('group.group_list') }}">Groups</a></li>
-                <li><a href="{{ url_for('tuition.tuition_list') }}">Tuition</a></li>
-                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        
-        <main class="container">
+    
+    {% if page == 'login' %}
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Welcome Back</h2>
+            <p class="auth-subtitle">Please login to continue</p>
+
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-            
-            <div class="dashboard">
-                <h2>Dashboard</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Personal Expenses</h3>
-                        <p class="stat-value">৳{{ personal_total|default(0)|round(2) }}</p>
-                        <p class="stat-label">{{ personal_count|default(0) }} transactions</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Groups</h3>
-                        <p class="stat-value">{{ groups_count|default(0) }}</p>
-                        <p class="stat-label">active groups</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Tuition</h3>
-                        <p class="stat-value">৳{{ tuition_due|default(0)|round(2) }}</p>
-                        <p class="stat-label">{{ tuition_count|default(0) }} records</p>
-                    </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label>Username or Email</label>
+                    <input type="text" name="username" placeholder="Enter your username or email" required>
                 </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
             </div>
-        </main>
+        </div>
+    </div>
+
+    {% elif page == 'register' %}
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Create Account</h2>
+            <p class="auth-subtitle">Join FeinBuddy today</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Choose a username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Create a password (min 6 characters)" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Register</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="container">
+        <h1>💰 FeinBuddy</h1>
+        
+        <pre class="tagline">Tuition.   Dues.   Savings.<br>Managed.</pre>
+
+        <a href="{{url_for('auth.login')}}" class="btn-main">
+            Get Started &rarr;
+        </a>
+
+        <div class="footer">
+            <pre>Built for the CSE24 HackJam<br>By BUETIANS for EVERYONE</pre>
+        </div>
+    </div>
     {% endif %}
-    
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </body>
 </html>

@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
-init_db(app)
+database.init_db()
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -33,6 +33,10 @@ routes.register_blueprints(app)
 
 @app.route('/')
 def home():
+    """Redirect to dashboard if logged in, otherwise to login page."""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard.dashboard'))
+    return redirect(url_for('auth.login'))
     """Redirect to dashboard if logged in, otherwise to login page."""
     if 'user_id' in session:
         return redirect(url_for('dashboard.dashboard'))
