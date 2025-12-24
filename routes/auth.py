@@ -1,5 +1,5 @@
 # In routes/auth.py
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -65,10 +65,7 @@ def register():
 @auth_bp.route('/logout')
 def logout():
     """Handle user logout."""
-    session.clear()
-    flash('You have been logged out successfully.', 'info')
-    return redirect(url_for('auth.login'))
-    """Handle user logout."""
+    logout_user()
     session.clear()
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('auth.login'))
