@@ -12,6 +12,15 @@ body {
     background-color: #f4f4f4;
 }
 
+[data-theme="dark"] nav {
+    background-color: #433f3f;
+    color: #e0e0e0;
+}
+[data-theme="dark"] main.container {
+    background-color: #3f3d3d;
+    color: #f5f5f5;
+}
+
 /* Container */
 .container {
     max-width: 1200px;
@@ -26,6 +35,11 @@ header {
     padding: 1.5rem 0;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] header {
+    background: rgb(114, 31, 31);
+    color: #f5f5f5;
 }
 
 header h1 {
@@ -49,20 +63,22 @@ nav ul {
 }
 
 nav a {
-    color: #fff;
+    color: #8B2833;
     text-decoration: none;
     transition: color 0.3s;
     font-weight: 500;
 }
 
 nav a:hover {
-    color: #667eea;
+    color: #D32F2F;
 }
 
 /* Main Content */
 main {
-    padding: 2rem 0;
+    padding: 0rem 2rem 0;
     min-height: calc(100vh - 200px);
+    background-color: #444;
+    color: #8B2833;
 }
 
 /* Dashboard */
@@ -515,20 +531,20 @@ nav li {
 nav a {
     display: block;
     padding: 1rem 1.5rem;
-    color: #333;
+    color: #8B2833;
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 nav a:hover {
-    color: #667eea;
+    color: #D32F2F;
     background: #f7f9fc;
 }
 
 nav a.active {
-    color: #667eea;
-    border-bottom: 3px solid #667eea;
+    color: #D32F2F;
+    border-bottom: 3px solid #D32F2F;
 }
 
 main.container {

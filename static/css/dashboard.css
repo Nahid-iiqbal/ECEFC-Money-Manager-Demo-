@@ -16,12 +16,12 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #1a1a1a;
-    --bg-card: #1f1f1f;
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --text-tertiary: #808080;
+    --bg-primary: #484545;
+    --bg-secondary: #797474;
+    --bg-card: #7b5555;
+    --text-primary: #271414;
+    --text-secondary: #bd2727;
+    --text-tertiary: #700808;
     --border-color: rgba(231, 76, 60, 0.3);
     --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
@@ -68,6 +68,9 @@
     justify-content: space-between;
     align-items: center;
 }
+[data-theme="dark"] .header-content {
+    background-color: rgb(114, 31, 31);
+}
 
 .header-right {
     display: flex;
@@ -90,12 +93,13 @@
 }
 
 [data-theme="dark"] .flicker {
-    text-shadow: 0 0 10px var(--accent-red), 0 0 20px rgba(231, 76, 60, 0.5);
+    text-shadow: 0 0 10px var(--accent-red), 0 0 20px rgba(232, 103, 89, 0.5);
+    margin: 0%;
 }
 
 .dashboard-header {
     text-align: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
 }
 
 .dashboard-header h2 {
@@ -124,12 +128,12 @@
     margin-top: 0.5rem;
     font-size: 0.95rem;
     color: var(--text-primary);
-    color: #ff7f7f;
+    color: #e85151;
 }
 
 [data-theme="dark"] .welcome-text strong {
     color: var(--accent-red);
-    text-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+    text-shadow: 0 0 8px rgba(235, 114, 101, 0.836);
 }
 
 .summary-cards {
@@ -153,6 +157,11 @@
     cursor: pointer;
     border: 2px solid transparent;
 }
+[data-theme="dark"] .summary-card {
+    border: 1px solid var(--border-color);
+    background-color: #cfcaca;
+    color:rgb(76, 41, 16)
+}
 
 .summary-card:hover {
     transform: translateY(-5px);
@@ -170,6 +179,7 @@
 
 .card-content {
     flex: 1;
+    color:rgb(76, 41, 16)
 }
 
 .card-content h3 {
