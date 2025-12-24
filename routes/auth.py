@@ -64,5 +64,7 @@ def register():
 
 @auth_bp.route('/logout')
 def logout():
-    # Logout logic
-    return redirect(url_for('home'))
+    """Handle user logout."""
+    session.clear()
+    flash('You have been logged out successfully.', 'info')
+    return redirect(url_for('auth.login'))

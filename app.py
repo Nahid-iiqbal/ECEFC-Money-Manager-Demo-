@@ -27,13 +27,16 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# Register blueprints
-app.register_blueprint(auth_bp)
+# Register all blueprints
+routes.register_blueprints(app)
 
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    """Redirect to dashboard if logged in, otherwise to login page."""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard.dashboard'))
+    return redirect(url_for('auth.login'))
 
 
 if __name__ == '__main__':
