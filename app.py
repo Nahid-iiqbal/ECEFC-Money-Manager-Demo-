@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from routes.database import db, init_db, User
 from routes.auth import auth_bp
+from routes.expense import expense
 from flask_login import LoginManager
 import os
 
@@ -29,7 +30,7 @@ def load_user(user_id):
 
 # Register blueprints
 app.register_blueprint(auth_bp)
-
+app.register_blueprint(expense)
 
 @app.route('/')
 def home():

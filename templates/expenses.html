@@ -1,0 +1,23 @@
+<h1>Expenses</h1>
+
+<ul>
+    {% for e in expenses %}
+    <li>{{ e.name }} : {{ e.amount }}
+
+    <form action="/expenses_pop" method="POST" style="display:inline;">
+        <input type="hidden" name="idx" value="{{ loop.index0 }}">
+        <button type="submit">Delete</button>
+    </form></li>
+    {% endfor %}
+</ul>
+
+<h2>Add Expense</h2>
+<form action="/add_expense" method="POST">
+    Name: <input type="text" name="name" required><br>
+    Amount: <input type="number" name="amount" step="0.01" required><br>
+    <input type="submit" value="Add Expense">
+</form>
+<form action="/clear_expenses" method="POST">
+    <button type="submit">Clear All Expenses</button>
+</form>
+
