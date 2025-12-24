@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from routes.database import db, init_db, User
 from routes.auth import auth_bp
+from routes import register_blueprints
 from flask_login import LoginManager
 import os
 
@@ -14,7 +15,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
-database.init_db()
+db.init_app(app)
+with app.app_context():
+    init_db()
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -28,15 +31,11 @@ def load_user(user_id):
 
 
 # Register all blueprints
-routes.register_blueprints(app)
+register_blueprints(app)
 
 
 @app.route('/')
 def home():
-    """Redirect to dashboard if logged in, otherwise to login page."""
-    if 'user_id' in session:
-        return redirect(url_for('dashboard.dashboard'))
-    return redirect(url_for('auth.login'))
     """Redirect to dashboard if logged in, otherwise to login page."""
     if 'user_id' in session:
         return redirect(url_for('dashboard.dashboard'))
