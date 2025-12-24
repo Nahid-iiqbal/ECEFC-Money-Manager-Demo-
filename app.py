@@ -36,10 +36,8 @@ register_blueprints(app)
 
 @app.route('/')
 def home():
-    """Redirect to dashboard if logged in, otherwise to login page."""
-    if 'user_id' in session:
-        return redirect(url_for('dashboard.dashboard'))
-    return redirect(url_for('auth.login'))
+    """Homepage - shows welcome page."""
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
@@ -51,5 +49,5 @@ if __name__ == '__main__':
     print("Server starting on http://localhost:5000")
     print("Press Ctrl+C to stop the server")
     print("=" * 50)
-    
+
     app.run(debug=True, host='0.0.0.0', port=5000)

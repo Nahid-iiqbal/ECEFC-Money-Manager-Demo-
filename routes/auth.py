@@ -41,7 +41,8 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
-            return redirect(url_for('home'))
+            flash('Logged in successfully!', 'success')
+            return redirect(url_for('dashboard.dashboard'))
         else:
             flash('Invalid username or password', 'danger')
     return render_template('auth.html', form=form)
@@ -57,9 +58,8 @@ def register():
                         password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
         flash('Account created successfully!', 'success')
-        return redirect(url_for('dashboard.dashboard'))
+        return redirect(url_for('auth.login'))
     return render_template('register.html', form=form)
 
 

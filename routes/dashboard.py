@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, flash
-from routes.auth import login_required
-import database
+from flask_login import login_required, current_user
+from routes.database import db, User
 from datetime import datetime, timedelta
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -10,33 +10,38 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @login_required
 def dashboard():
     """Main dashboard page showing overview and recent activity."""
-    user_id = session.get('user_id')
-    username = session.get('username')
-    
-    conn = database.get_db_connection()
-    
+    # Placeholder data - will be replaced with real data when other blueprints are enabled
+    return render_template('dashboard.html',
+                           username=current_user.username,
+                           personal_this_month=0,
+                           group_balance=0,
+                           balance_status='neutral',
+                           pending_tuition=0,
+                           total_all_time=0,
+                           recent_activities=[])
+
     today = datetime.now()
     first_day_of_month = today.replace(day=1).strftime('%Y-%m-%d')
-    
+
     personal_this_month = conn.execute(
         '''SELECT COALESCE(SUM(amount), 0) as total 
            FROM personal_expenses 
            WHERE user_id = ? AND date >= ?''',
         (user_id, first_day_of_month)
     ).fetchone()['total']
-    
+
     personal_all_time = conn.execute(
         'SELECT COALESCE(SUM(amount), 0) as total FROM personal_expenses WHERE user_id = ?',
         (user_id,)
     ).fetchone()['total']
-    
+
     amount_paid = conn.execute(
         '''SELECT COALESCE(SUM(amount), 0) as total 
            FROM group_expenses 
            WHERE paid_by = ?''',
         (user_id,)
     ).fetchone()['total']
-    
+
     amount_owed = conn.execute(
         '''SELECT COALESCE(SUM(es.share_amount), 0) as total 
            FROM expense_splits es
@@ -44,16 +49,16 @@ def dashboard():
            WHERE es.user_id = ? AND es.is_paid = 0''',
         (user_id,)
     ).fetchone()['total']
-    
+
     group_balance = amount_paid - amount_owed
-    
+
     pending_tuition = conn.execute(
         '''SELECT COALESCE(SUM(amount - paid_amount), 0) as total 
            FROM tuition_records 
            WHERE user_id = ? AND status != 'paid' ''',
         (user_id,)
     ).fetchone()['total']
-    
+
     personal_activities = conn.execute(
         '''SELECT 'Personal' as type, title as description, amount, date, created_at
            FROM personal_expenses 
@@ -61,7 +66,7 @@ def dashboard():
            ORDER BY created_at DESC LIMIT 5''',
         (user_id,)
     ).fetchall()
-    
+
     group_activities = conn.execute(
         '''SELECT 'Group' as type, 
                   ge.title as description, 
@@ -74,7 +79,7 @@ def dashboard():
            ORDER BY ge.created_at DESC LIMIT 5''',
         (user_id,)
     ).fetchall()
-    
+
     tuition_activities = conn.execute(
         '''SELECT 'Tuition' as type, 
                   semester || ' - ' || status as description, 
@@ -86,13 +91,14 @@ def dashboard():
            ORDER BY created_at DESC LIMIT 5''',
         (user_id,)
     ).fetchall()
-    
+
     conn.close()
-    
-    all_activities = list(personal_activities) + list(group_activities) + list(tuition_activities)
+
+    all_activities = list(personal_activities) + \
+        list(group_activities) + list(tuition_activities)
     all_activities.sort(key=lambda x: x['created_at'], reverse=True)
     recent_activities = all_activities[:5]
-    
+
     return render_template(
         'dashboard.html',
         username=username,
@@ -114,7 +120,7 @@ def quick_add_personal():
 
 
 @dashboard_bp.route('/quick-add-group', methods=['GET'])
-@login_required  
+@login_required
 def quick_add_group():
     """Quick add group expense - redirects to group page."""
     flash('Create or select a group to add expenses', 'info')
