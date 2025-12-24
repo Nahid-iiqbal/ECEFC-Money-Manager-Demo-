@@ -6,6 +6,34 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <h1>Tuition Management</h1>
+    <div class="body-section">
+        <div class = "tuition_list">
+            <h2>Tuition Entries</h2>
+            {% for tuition in tuitions %}
+                <div class="tuition-entry">
+                    <div class ="tuition-id">
+                        <p><strong>ID:</strong> {{ tuition.id }}</p>
+
+                    </div>
+                    <div class ="tuition-details">
+                        <p><strong>Student:</strong> {{ tuition.student_name }}</p>
+                        <p><strong>Salary:</strong> ${{ tuition.salery }}</p>
+                        <p><strong>Due Date:</strong> {{ tuition.due_date }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>No tuition entries found.</p>
+            {% endfor %}
+        </div>
+        <div class = "calendar_view">
+            
+        </div>
+
+    </div>
+    <div class="button-section">
+        <button class="btn-main">Add Tuition</button>
+        <button class="btn-secondary">Remove Tuition</button>
+    </div>
 </body>
 </html>
