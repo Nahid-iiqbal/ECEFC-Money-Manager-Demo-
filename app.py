@@ -1,6 +1,6 @@
-from flask import Flask, render_template
-from routes.database import db, init_db
-from routes.auth import auth_bp
+from flask import Flask, render_template, redirect, url_for, session
+import database
+import routes
 import os
 
 app = Flask(__name__)
@@ -8,20 +8,20 @@ app = Flask(__name__)
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', 'dev-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 'sqlite:///finance.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
-init_db(app)
+database.init_db()
 
-# Register blueprints
-app.register_blueprint(auth_bp)
+# Register all blueprints
+routes.register_blueprints(app)
 
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    """Redirect to dashboard if logged in, otherwise to login page."""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard.dashboard'))
+    return redirect(url_for('auth.login'))
 
 
 if __name__ == '__main__':
