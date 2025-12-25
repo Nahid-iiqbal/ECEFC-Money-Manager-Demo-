@@ -1,8 +1,8 @@
 /* CSS Custom Properties for Light and Dark Modes */
 :root {
-    --bg-primary: #f7f9fc;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
+    --bg-primary: #aacee0;
+    --bg-secondary: #c5dfe0dc;
+    --bg-card: #d4ddea;
     --bg-header: linear-gradient(135deg, #75a8d2 0%, #a24b86 100%);
     --bg-nav: #444444;
     --bg-input: #ffffff;
@@ -27,7 +27,7 @@
     --color-info: #4299e1;
 }
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
+    --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
     --bg-card: #3a3a3a;
     --bg-header: linear-gradient(135deg, #8B2833 0%, #5c1a28 100%);
@@ -53,6 +53,11 @@
     --color-warning: #ffb866;
     --color-info: #5bb5f7;
 }
+
+nav{
+    background-color: var(--bg-primary);
+}
+
 * {
     margin: 0;
     padding: 0;

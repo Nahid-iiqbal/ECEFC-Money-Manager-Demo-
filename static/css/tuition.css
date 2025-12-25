@@ -1,7 +1,7 @@
 :root {
-    --bg-primary: #f7f9fc;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
+    --bg-primary: #aacee0;
+    --bg-secondary: #c5dfe0dc;
+    --bg-card: #d4ddea;
     --text-primary: #333;
     --text-secondary: #666;
     --text-tertiary: #888;
@@ -17,7 +17,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
+    --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
     --bg-card: #3a3a3a;
     --text-primary: #e8e8e8;
@@ -38,6 +38,10 @@
 .expense-page {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+nav{
+    background-color: var(--bg-primary);
 }
 
 /* Navigation styling */

@@ -54,11 +54,13 @@ def dashboard():
     recent_activities = []
     for row in recent_result:
         if has_category_column and has_date_column:
+            # SQLite returns date as string, not date object
+            date_value = row[5] if row[5] else 'N/A'
             activity = {
                 'type': 'Personal',
                 'description': row[1],  # name
                 'amount': f"{row[2]:.2f}",  # amount
-                'date': row[5].strftime('%Y-%m-%d') if row[5] else 'N/A'  # date
+                'date': date_value  # date is already a string from SQLite
             }
         else:
             activity = {
@@ -73,6 +75,49 @@ def dashboard():
     group_balance = 0
     pending_tuition = 0
     
+    # Get spending by category and monthly data
+    category_data = {}
+    monthly_data = {}
+    is_student = False
+    
+    # Check if user is a student
+    if current_user.profile and current_user.profile.grade:
+        is_student = True
+    
+    # Get analytics data for all users (not just students)
+    if has_category_column and has_date_column:
+        # Get category spending data
+        category_result = db.session.execute(
+            text("""SELECT category, COALESCE(SUM(amount), 0) as total 
+                    FROM expense 
+                    WHERE user_id = :user_id AND category IS NOT NULL
+                    GROUP BY category
+                    ORDER BY total DESC"""),
+            {"user_id": current_user.id}
+        ).fetchall()
+        
+        for row in category_result:
+            if row[0]:  # Only add if category is not None
+                category_data[row[0]] = float(row[1])
+        
+        # Get monthly spending data (last 6 months)
+        six_months_ago = (today - timedelta(days=180)).replace(day=1)
+        monthly_result = db.session.execute(
+            text("""SELECT strftime('%Y-%m', date) as month, COALESCE(SUM(amount), 0) as total
+                    FROM expense
+                    WHERE user_id = :user_id AND date >= :start_date
+                    GROUP BY strftime('%Y-%m', date)
+                    ORDER BY month ASC"""),
+            {"user_id": current_user.id, "start_date": six_months_ago}
+        ).fetchall()
+        
+        for row in monthly_result:
+            if row[0]:  # Only add if month is not None
+                # Convert YYYY-MM to readable format
+                month_obj = datetime.strptime(row[0], '%Y-%m')
+                month_name = month_obj.strftime('%b %Y')
+                monthly_data[month_name] = float(row[1])
+    
     return render_template('dashboard.html',
                            username=current_user.username,
                            personal_this_month=personal_this_month,
@@ -80,7 +125,10 @@ def dashboard():
                            balance_status='neutral',
                            pending_tuition=pending_tuition,
                            total_all_time=total_all_time,
-                           recent_activities=recent_activities)
+                           recent_activities=recent_activities,
+                           is_student=is_student,
+                           category_data=category_data,
+                           monthly_data=monthly_data)
 
     today = datetime.now()
     first_day_of_month = today.replace(day=1).strftime('%Y-%m-%d')
