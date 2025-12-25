@@ -9,7 +9,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f4f4f4;
+    background-color: var(--bg-primary);
 }
 
 [data-theme="dark"] nav {
@@ -527,7 +527,7 @@ header h1 {
 }
 
 nav {
-    background: white;
+    background: var(--bg-primary);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 

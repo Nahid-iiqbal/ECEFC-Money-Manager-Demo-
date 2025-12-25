@@ -1,7 +1,7 @@
 :root {
-    --bg-primary: #f7f9fc;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
+    --bg-primary: #aacee0;
+    --bg-secondary: #c5dfe0dc;
+    --bg-card: #becee3;
     --bg-input: #ffffff;
     --text-primary: #333;
     --text-secondary: #666;
@@ -19,7 +19,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
+    --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
     --bg-card: #3a3a3a;
     --bg-input: #4a4a4a;
@@ -43,8 +43,12 @@ body {
 }
 
 main {
-    background-color: var(--bg-primary);
+    background-color: var(--bg-secondary);
     padding-top: 1rem;
+    color: var(--text-primary);
+}
+nav{
+    background-color: var(--bg-primary);
 }
 
 /* Navigation styling */
@@ -98,11 +102,6 @@ nav a.active {
     color: var(--text-secondary);
     margin: 0;
 }
-
-/* ============================================
-   Profile Form Section
-   ============================================ */
-
 .profile-form-section {
     background-color: var(--bg-card);
     border-radius: 12px;
@@ -214,6 +213,7 @@ nav a.active {
     background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
     color: white;
     box-shadow: var(--shadow-sm);
+    align-items: flex-end;
 }
 
 .btn-primary:hover {
@@ -231,11 +231,6 @@ nav a.active {
     background-color: var(--bg-primary);
     border-color: var(--accent-red);
 }
-
-/* ============================================
-   Profile View Section
-   ============================================ */
-
 .profile-view-section {
     background-color: var(--bg-card);
     border-radius: 12px;
