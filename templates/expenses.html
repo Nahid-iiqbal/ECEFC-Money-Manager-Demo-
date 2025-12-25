@@ -169,9 +169,9 @@
             <tr>
                 <td>{{ e.date.strftime('%Y-%m-%d') if e.date else 'N/A' }}</td>
                 <td>{{ e.name }}</td>
-                <td><span class="category-badge">{{ e.category }}</span></td>
-                <td>${{ "%.2f"|format(e.amount) }}</td>
-                <td>{{ e.description[:50] + '...' if e.description and e.description|length > 50 else (e.description or '') }}</td>
+                <td><span class="category-badge">{{ e.category if e.category else 'Other' }}</span></td>
+                <td>৳{{ "%.2f"|format(e.amount) }}</td>
+                <td>{{ (e.description[:50] + '...') if (e.description and e.description|length > 50) else (e.description or '-') }}</td>
                 <td>
                     <form action="/expenses_pop" method="POST" style="display:inline;">
                         <input type="hidden" name="id" value="{{ e.id }}">
@@ -209,14 +209,14 @@
                 <button class="clear-btn" type="submit">Clear All Expenses</button>
             </form>
             <div class="total-box">
-                Total Expense: <strong>${{ "%.2f"|format(total) }}</strong>
+                Total Expense: <strong>৳{{ "%.2f"|format(total) }}</strong>
             </div>
             {% if category_totals %}
             <div class="category-summary">
                 <h4>Spending by Category:</h4>
                 <ul>
                 {% for category, amount in category_totals.items() %}
-                    <li>{{ category }}: ${{ "%.2f"|format(amount) }}</li>
+                    <li>{{ category }}: ৳{{ "%.2f"|format(amount) }}</li>
                 {% endfor %}
                 </ul>
             </div>

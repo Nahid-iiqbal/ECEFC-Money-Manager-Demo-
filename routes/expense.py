@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from routes.database import db, Expense
 from datetime import datetime
-from sqlalchemy import extract, func
+from sqlalchemy import extract, func, text
+import sqlite3
 
 expense = Blueprint("expense", __name__)
 
@@ -10,23 +11,47 @@ expense = Blueprint("expense", __name__)
 @login_required
 def personal():
     """Display personal expenses dashboard (aliased from /expenses)."""
-    user_expenses = Expense.query.filter_by(
-        user_id=current_user.id
-    ).order_by(Expense.date.desc(), Expense.created_at.desc()).all()
+    # Get database column info to check which columns exist
+    result = db.session.execute(text("PRAGMA table_info(expense)"))
+    existing_columns = [row[1] for row in result.fetchall()]
+    
+    # Query based on available columns
+    if 'category' in existing_columns and 'date' in existing_columns:
+        # New schema - use ORM
+        user_expenses = Expense.query.filter_by(user_id=current_user.id).order_by(Expense.id.desc()).all()
+    else:
+        # Old schema - use raw SQL to query only existing columns
+        query = text("SELECT id, name, amount, user_id FROM expense WHERE user_id = :user_id ORDER BY id DESC")
+        result = db.session.execute(query, {"user_id": current_user.id})
+        
+        # Convert to objects with attributes
+        class SimpleExpense:
+            def __init__(self, id, name, amount, user_id):
+                self.id = id
+                self.name = name
+                self.amount = amount
+                self.user_id = user_id
+                self.category = 'Other'
+                self.description = None
+                self.date = None
+                self.created_at = None
+        
+        user_expenses = [SimpleExpense(*row) for row in result.fetchall()]
     
     total = sum(exp.amount for exp in user_expenses)
     
     # Category breakdown
     category_totals = {}
     for exp in user_expenses:
-        category = exp.category
+        category = getattr(exp, 'category', 'Other') or 'Other'
         category_totals[category] = category_totals.get(category, 0) + exp.amount
     
     return render_template(
         "expenses.html", 
         expenses=user_expenses, 
         total=total,
-        category_totals=category_totals
+        category_totals=category_totals,
+        today=datetime.now().strftime('%Y-%m-%d')
     )
 
 @expense.route('/expenses')
@@ -42,27 +67,42 @@ def add_expense():
     try:
         name = request.form.get('name') or request.form.get('title')
         amount = float(request.form.get('amount', 0))
-        category = request.form.get('category', 'Other')
-        description = request.form.get('description', '')
-        date_str = request.form.get('date')
         
-        # Parse date or use today
-        if date_str:
-            expense_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        # Check which columns exist in the database
+        result = db.session.execute(text("PRAGMA table_info(expense)"))
+        existing_columns = [row[1] for row in result.fetchall()]
+        
+        if 'category' in existing_columns:
+            # New schema - use ORM with all fields
+            category = request.form.get('category', 'Other')
+            description = request.form.get('description', '')
+            date_str = request.form.get('date')
+            
+            expense_data = {
+                'name': name,
+                'amount': amount,
+                'category': category,
+                'description': description,
+                'user_id': current_user.id
+            }
+            
+            if date_str:
+                expense_data['date'] = datetime.strptime(date_str, '%Y-%m-%d').date()
+            else:
+                expense_data['date'] = datetime.utcnow().date()
+            
+            new_expense = Expense(**expense_data)
+            db.session.add(new_expense)
         else:
-            expense_date = datetime.utcnow().date()
+            # Old schema - use raw SQL with only basic columns
+            query = text("INSERT INTO expense (name, amount, user_id) VALUES (:name, :amount, :user_id)")
+            db.session.execute(query, {
+                "name": name,
+                "amount": amount,
+                "user_id": current_user.id
+            })
         
-        new_expense = Expense(
-            name=name,
-            amount=amount,
-            category=category,
-            description=description,
-            date=expense_date,
-            user_id=current_user.id
-        )
-        db.session.add(new_expense)
         db.session.commit()
-        
         flash('Expense added successfully!', 'success')
     except Exception as e:
         db.session.rollback()

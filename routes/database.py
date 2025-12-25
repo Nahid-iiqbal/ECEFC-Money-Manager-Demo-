@@ -17,10 +17,10 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    category = db.Column(db.String(50), nullable=False, default='Other')
-    description = db.Column(db.Text)
-    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    category = db.Column(db.String(50), nullable=True, default='Other')
+    description = db.Column(db.Text, nullable=True)
+    date = db.Column(db.Date, nullable=True, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 def init_db(app):
