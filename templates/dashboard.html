@@ -165,14 +165,42 @@
 {% block extra_js %}
 {% if category_data or monthly_data %}
 <script>
-    // Get current theme
-    const currentTheme = document.body.getAttribute('data-theme');
-    const isDark = currentTheme === 'dark';
+    // Robust theme detection function
+    function getCurrentTheme() {
+        // Check data-theme attribute on body or documentElement
+        const bodyTheme = document.body.getAttribute('data-theme');
+        const htmlTheme = document.documentElement.getAttribute('data-theme');
+        const datasetTheme = document.body.dataset.theme || document.documentElement.dataset.theme;
+        
+        // Check localStorage as fallback
+        const storedTheme = localStorage.getItem('feinbuddy_theme');
+        
+        // Check computed CSS variable as final fallback
+        const computedBg = getComputedStyle(document.body).getPropertyValue('--bg-primary').trim();
+        const isCssDark = computedBg === '#352e2e';
+        
+        return bodyTheme || htmlTheme || datasetTheme || storedTheme || (isCssDark ? 'dark' : 'light');
+    }
     
-    // Theme-aware colors
-    const textColor = isDark ? '#e8e8e8' : '#333';
-    const gridColor = isDark ? 'rgba(231, 76, 60, 0.2)' : 'rgba(0, 0, 0, 0.1)';
-    const bgColor = isDark ? '#3a3a3a' : '#ffffff';
+    // Get current theme
+    let currentTheme = getCurrentTheme();
+    let isDark = currentTheme === 'dark';
+    
+    // Theme-aware colors with brighter text for dark mode
+    function getThemeColors() {
+        const dark = getCurrentTheme() === 'dark';
+        return {
+            textColor: dark ? '#ececec' : '#333',
+            gridColor: dark ? 'rgba(231, 76, 60, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+            bgColor: dark ? '#3a3a3a' : '#ffffff'
+        };
+    }
+    
+    let { textColor, gridColor, bgColor } = getThemeColors();
+    
+    // Store chart instances for recreation
+    window.categoryChart = null;
+    window.monthlyChart = null;
     
     // Chart.js default options
     Chart.defaults.color = textColor;
@@ -184,32 +212,61 @@
     const categoryLabels = Object.keys(categoryData);
     const categoryValues = Object.values(categoryData);
     
-    // Category color mapping with emoji icons
-    const categoryColors = {
-        'Food': '#ff6b6b',
-        'Transport': '#4299e1',
-        'Entertainment': '#9f7aea',
-        'Shopping': '#ed8936',
-        'Bills': '#48bb78',
-        'Health': '#f56565',
-        'Education': '#667eea',
-        'Other': '#718096'
-    };
+    // Category color mapping function - dark mode uses high-contrast palette with red glow theme
+    function getCategoryColors() {
+        const dark = getCurrentTheme() === 'dark';
+        return dark ? {
+            'Food': '#ef233c',           // Bright red
+            'Transport': '#c0c0c0',       // Light silver
+            'Entertainment': '#a01a3a',   // Deep maroon
+            'Shopping': '#d3d3d3',        // Very light gray
+            'Bills': '#3d3d3d',           // Dark charcoal (lighter than near-black for visibility)
+            'Health': '#dc143c',          // Crimson red
+            'Education': '#909090',       // Light medium gray
+            'Dues': '#b8b8b8',            // Bright silver gray
+            'Owes': '#8b1538',            // Dark red-maroon
+            'Other': '#707070'            // Medium gray
+        } : {
+            'Food': '#ff6b6b',
+            'Transport': '#4299e1',
+            'Entertainment': '#9f7aea',
+            'Shopping': '#ed8936',
+            'Bills': '#48bb78',
+            'Health': '#f56565',
+            'Education': '#667eea',
+            'Dues': '#38b2ac',
+            'Owes': '#fc8181',
+            'Other': '#718096'
+        };
+    }
     
-    const categoryBgColors = categoryLabels.map(label => categoryColors[label] || '#718096');
+    const categoryColors = getCategoryColors();
+    
+    const categoryBgColors = categoryLabels.map(label => categoryColors[label] || (getCurrentTheme() === 'dark' ? '#666666' : '#718096'));
     
     // Create Category Chart (Doughnut)
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    new Chart(categoryCtx, {
+    function createCategoryChart() {
+        const colors = getThemeColors();
+        const catColors = getCategoryColors();
+        const categoryBgColors = categoryLabels.map(label => catColors[label] || (getCurrentTheme() === 'dark' ? '#666666' : '#718096'));
+            
+            if (window.categoryChart) {
+                window.categoryChart.destroy();
+            }
+            
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            window.categoryChart = new Chart(categoryCtx, {
         type: 'doughnut',
         data: {
             labels: categoryLabels,
             datasets: [{
                 data: categoryValues,
                 backgroundColor: categoryBgColors,
-                borderColor: bgColor,
-                borderWidth: 3,
-                hoverOffset: 10
+                borderColor: getCurrentTheme() === 'dark' ? '#2d2d2d' : '#ffffff',
+                borderWidth: getCurrentTheme() === 'dark' ? 2 : 3,
+                hoverOffset: 8,
+                hoverBorderColor: getCurrentTheme() === 'dark' ? '#e74c3c' : '#ffffff',
+                hoverBorderWidth: 3
             }]
         },
         options: {
@@ -221,18 +278,20 @@
                     labels: {
                         padding: 15,
                         font: {
-                            size: 12,
-                            weight: '500'
+                            size: 13,
+                            weight: '600'
                         },
-                        color: textColor,
+                        color: colors.textColor,
                         usePointStyle: true,
                         pointStyle: 'circle'
                     }
                 },
                 tooltip: {
-                    backgroundColor: isDark ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
+                    backgroundColor: getCurrentTheme() === 'dark' ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
+                    titleColor: getCurrentTheme() === 'dark' ? '#ececec' : '#fff',
+                    bodyColor: getCurrentTheme() === 'dark' ? '#d0d0d0' : '#fff',
+                    borderColor: getCurrentTheme() === 'dark' ? '#e74c3c' : 'transparent',
+                    borderWidth: getCurrentTheme() === 'dark' ? 1 : 0,
                     padding: 12,
                     cornerRadius: 8,
                     callbacks: {
@@ -248,6 +307,7 @@
             }
         }
     });
+    }
     {% endif %}
     
     {% if monthly_data %}
@@ -257,19 +317,29 @@
     const monthlyValues = Object.values(monthlyData);
     
     // Create Monthly Chart (Bar)
-    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
-    new Chart(monthlyCtx, {
+    function createMonthlyChart() {
+        if (window.monthlyChart) {
+            window.monthlyChart.destroy();
+        }
+        const colors = getThemeColors();
+        const dark = getCurrentTheme() === 'dark';
+        
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        window.monthlyChart = new Chart(monthlyCtx, {
         type: 'bar',
         data: {
             labels: monthlyLabels,
             datasets: [{
                 label: 'Spending (৳)',
                 data: monthlyValues,
-                backgroundColor: isDark ? 'rgba(255, 107, 107, 0.7)' : 'rgba(102, 126, 234, 0.7)',
-                borderColor: isDark ? '#ff6b6b' : '#667eea',
+                backgroundColor: dark ? 'rgba(220, 20, 60, 0.75)' : 'rgba(102, 126, 234, 0.7)',
+                borderColor: dark ? '#a01a3a' : '#667eea',
                 borderWidth: 2,
                 borderRadius: 8,
                 borderSkipped: false,
+                hoverBackgroundColor: dark ? 'rgba(239, 35, 60, 0.85)' : 'rgba(102, 126, 234, 0.85)',
+                hoverBorderColor: dark ? '#e74c3c' : '#667eea',
+                hoverBorderWidth: 3
             }]
         },
         options: {
@@ -279,11 +349,11 @@
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: gridColor,
+                        color: colors.gridColor,
                         drawBorder: false
                     },
                     ticks: {
-                        color: textColor,
+                        color: colors.textColor,
                         font: {
                             size: 11
                         },
@@ -297,7 +367,7 @@
                         display: false
                     },
                     ticks: {
-                        color: textColor,
+                        color: colors.textColor,
                         font: {
                             size: 11
                         }
@@ -309,9 +379,11 @@
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: isDark ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
+                    backgroundColor: dark ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
+                    titleColor: dark ? '#ececec' : '#fff',
+                    bodyColor: dark ? '#d0d0d0' : '#fff',
+                    borderColor: dark ? '#e74c3c' : 'transparent',
+                    borderWidth: dark ? 1 : 0,
                     padding: 12,
                     cornerRadius: 8,
                     callbacks: {
@@ -322,8 +394,52 @@
                 }
             }
         }
-    });
+        });
+    }
     {% endif %}
+    
+    // Initialize charts after DOM is ready and theme is set
+    function initCharts() {
+        // Use requestAnimationFrame to ensure theme is applied to DOM
+        requestAnimationFrame(() => {
+            {% if category_data %}
+            createCategoryChart();
+            {% endif %}
+            
+            {% if monthly_data %}
+            createMonthlyChart();
+            {% endif %}
+        });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCharts);
+    } else {
+        initCharts();
+    }
+    
+    // Listen for theme changes and recreate charts
+    window.addEventListener('themeChanged', function(e) {
+        currentTheme = e.detail.theme;
+        isDark = currentTheme === 'dark';
+        
+        const colors = getThemeColors();
+        textColor = colors.textColor;
+        gridColor = colors.gridColor;
+        bgColor = colors.bgColor;
+        
+        Chart.defaults.color = textColor;
+        Chart.defaults.borderColor = gridColor;
+        
+        {% if category_data %}
+        createCategoryChart();
+        {% endif %}
+        
+        {% if monthly_data %}
+        createMonthlyChart();
+        {% endif %}
+    });
     
     // PDF Download Functionality
     document.getElementById('downloadPdfBtn')?.addEventListener('click', async function() {
