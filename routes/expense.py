@@ -143,14 +143,12 @@ def delete_expense(expense_id=None):
         if expense_id is None:
             expense_id = int(request.form.get('id'))
         
-        expense_to_delete = Expense.query.filter_by(
-            id=expense_id, 
-            user_id=current_user.id
-        ).first()
+        # Use raw SQL to avoid querying columns that might not exist
+        delete_query = text("DELETE FROM expense WHERE id = :expense_id AND user_id = :user_id")
+        result = db.session.execute(delete_query, {"expense_id": expense_id, "user_id": current_user.id})
+        db.session.commit()
         
-        if expense_to_delete:
-            db.session.delete(expense_to_delete)
-            db.session.commit()
+        if result.rowcount > 0:
             flash('Expense deleted successfully!', 'success')
         else:
             flash('Expense not found!', 'danger')
