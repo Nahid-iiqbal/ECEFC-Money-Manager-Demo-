@@ -9,7 +9,7 @@ expense = Blueprint("expense", __name__)
 @expense.route('/personal')
 @login_required
 def personal():
-    """Display personal expenses dashboard (aliased from /expenses)."""
+    """Display personal expenses list."""
     # Get database column info to check which columns exist
     result = db.session.execute(text("PRAGMA table_info(expense)"))
     existing_columns = [row[1] for row in result.fetchall()]
@@ -49,9 +49,14 @@ def personal():
         "expenses.html", 
         expenses=user_expenses, 
         total=total,
-        category_totals=category_totals,
-        today=datetime.now().strftime('%Y-%m-%d')
+        category_totals=category_totals
     )
+
+@expense.route('/personal/add', methods=['GET'])
+@login_required
+def add_expense_form():
+    """Display add expense form."""
+    return render_template('addExpense.html', today=datetime.now().strftime('%Y-%m-%d'))
 
 @expense.route('/expenses')
 @login_required

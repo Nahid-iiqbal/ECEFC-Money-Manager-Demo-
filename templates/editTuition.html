@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Tuition - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/addTuition.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="expense-page">
+    <div class="page-header">
+        <h1 class="page-title">✏️ Edit Tuition</h1>
+        <p class="page-subtitle">Update tuition details and schedule</p>
+    </div>
+
+    <section class="form-section">
+        <form action="{{ url_for('tuition.edit_tuition', record_id=record.id) }}" method="POST" class="tuition-form">
+            
+            <div class="input-group">
+                <label for="student_name">Student Name</label>
+                <input type="text" id="student_name" name="student_name" value="{{ record.student_name }}" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="input-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" value="{{ record.address }}" placeholder="e.g. 123 Main St, City" required>
+            </div>
+
+            <div class="input-group">
+                <label>Tuition Days</label>
+                <div class="days-checkbox-container">
+                    <label class="day-tag"><input type="checkbox" name="days" value="1" {% if record.days and 1 in record.days %}checked{% endif %}> Mon</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="2" {% if record.days and 2 in record.days %}checked{% endif %}> Tue</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="3" {% if record.days and 3 in record.days %}checked{% endif %}> Wed</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="4" {% if record.days and 4 in record.days %}checked{% endif %}> Thu</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="5" {% if record.days and 5 in record.days %}checked{% endif %}> Fri</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="6" {% if record.days and 6 in record.days %}checked{% endif %}> Sat</label>
+                    <label class="day-tag"><input type="checkbox" name="days" value="0" {% if record.days and 0 in record.days %}checked{% endif %}> Sun</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group half">
+                    <label for="total_days">Total Class Days</label>
+                    <input type="number" id="total_days" name="total_days" value="{{ record.total_days }}" placeholder="e.g. 12" min="1" required>
+                </div>
+                <div class="input-group half">
+                    <label for="total_completed">Days Completed</label>
+                    <input type="number" id="total_completed" name="total_completed" value="{{ record.total_completed }}" placeholder="e.g. 0" min="0" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="tuition_time">Tuition Time</label>
+                <input type="time" id="tuition_time" name="tuition_time" value="{{ record.tuition_time }}">
+            </div>
+
+            <div class="input-group">
+                <label for="amount">Salary (৳)</label>
+                <input type="number" id="amount" name="amount" value="{{ record.amount }}" placeholder="e.g. 1500.00" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Update Record</button>
+                <a href="{{ url_for('tuition.tuition_list') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+
+        </form>
+    </section>
+</div>
+{% endblock %}

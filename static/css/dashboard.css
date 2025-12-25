@@ -33,6 +33,15 @@
 }
 
 /* Dashboard-specific nav styling */
+body {
+    background-color: var(--bg-primary);
+}
+
+main {
+    background-color: var(--bg-primary);
+    padding-top: 1rem;
+}
+
 nav a {
     color: #8B2833 !important;
 }
@@ -44,6 +53,20 @@ nav a:hover {
 nav a.active {
     color: #D32F2F !important;
     border-bottom-color: #D32F2F !important;
+}
+
+/* Dark mode navigation colors for dashboard */
+[data-theme="dark"] nav a {
+    color: #ff9999 !important;
+}
+
+[data-theme="dark"] nav a:hover {
+    color: #ffcccc !important;
+}
+
+[data-theme="dark"] nav a.active {
+    color: #ff6b6b !important;
+    border-bottom-color: #ff6b6b !important;
 }
 
 /* Dashboard-specific main content styling */
@@ -118,8 +141,10 @@ main {
 
 .dashboard-header {
     text-align: center;
-    margin: 1rem 0;
+    padding: 1rem 0;
+    margin: 0;
 }
+
 
 .dashboard-header h2 {
     font-size: 2rem;
@@ -484,16 +509,18 @@ nav a.active {
     text-align: center;
 }
 
-.dashboard-header h2 {
-    font-size: 2rem;
+[data-theme="light"] .dashboard-header h2 {
     color: #333;
-    margin-bottom: 0.5rem;
 }
 
-.dashboard-subtitle {
+[data-theme="light"] .dashboard-subtitle {
     color: #666;
-    font-size: 1rem;
 }
+
+[data-theme="light"] .summary-card {
+    background: white;
+}
+
 
 .welcome-text {
     margin-top: 0.5rem;

@@ -186,6 +186,21 @@ nav a.active::after {
     background-color: var(--accent-red);
     border-radius: 2px;
 }
+
+/* Dark mode navigation colors */
+[data-theme="dark"] nav a {
+    color: #ff9999;
+}
+
+[data-theme="dark"] nav a:hover {
+    color: #ffcccc;
+    background-color: rgba(255, 153, 153, 0.1);
+}
+
+[data-theme="dark"] nav a.active {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.15);
+}
 .container {
     max-width: 1200px;
     margin: 0 auto;

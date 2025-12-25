@@ -1,7 +1,71 @@
+:root {
+    --bg-primary: #f7f9fc;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-tertiary: #888;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+    --accent-red: #e74c3c;
+    --accent-purple: #667eea;
+    --accent-blue: #4299e1;
+    --accent-orange: #f6ad55;
+    --accent-green: #48bb78;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #484545;
+    --bg-secondary: #797474;
+    --bg-card: #7b5555;
+    --text-primary: #271414;
+    --text-secondary: #bd2727;
+    --text-tertiary: #700808;
+    --border-color: rgba(231, 76, 60, 0.3);
+    --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
+    --shadow-md: 0 4px 20px rgba(231, 76, 60, 0.2);
+    --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
+    --accent-red: #ff4444;
+    --accent-purple: #8b7eea;
+    --accent-blue: #5bb5f7;
+    --accent-orange: #ffb866;
+    --accent-green: #5ed88f;
+}
+
 /* Page Layout */
 .expense-page {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Navigation styling */
+nav a {
+    color: #8B2833 !important;
+}
+
+nav a:hover {
+    color: #D32F2F !important;
+}
+
+nav a.active {
+    color: #D32F2F !important;
+    border-bottom-color: #D32F2F !important;
+}
+
+/* Dark mode navigation colors */
+[data-theme="dark"] nav a {
+    color: #ff9999 !important;
+}
+
+[data-theme="dark"] nav a:hover {
+    color: #ffcccc !important;
+}
+
+[data-theme="dark"] nav a.active {
+    color: #ff6b6b !important;
+    border-bottom-color: #ff6b6b !important;
 }
 
 .page-header {
@@ -349,6 +413,17 @@ section:hover {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+}
+
+/* Action Link Section */
+.action-link-section {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
 }
 
 /*Responsive Design*/
