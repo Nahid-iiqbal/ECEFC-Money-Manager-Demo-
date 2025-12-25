@@ -1,8 +1,8 @@
 /* --- GROUP PAGE SPECIFIC STYLES --- */
 :root {
-    --bg-primary: #f7f9fc;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
+    --bg-primary: #aacee0;
+    --bg-secondary: #c5dfe0dc;
+    --bg-card: #d4ddea;
     --text-primary: #333;
     --text-secondary: #666;
     --text-tertiary: #888;
@@ -17,7 +17,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
+    --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
     --bg-card: #3a3a3a;
     --text-primary: #e8e8e8;
@@ -31,6 +31,10 @@
     --accent-blue: #5bb5f7;
     --accent-orange: #ffb866;
     --accent-green: #5ed88f;
+}
+
+nav{
+    background-color: var(--bg-primary);
 }
 
 /* Dashboard-specific nav styling */
@@ -985,6 +989,7 @@ nav a.active {
     font-size: 0.9rem;
 }
 .selectable {
+    -webkit-user-select: all;
     user-select: all;
     cursor: pointer;
 }
