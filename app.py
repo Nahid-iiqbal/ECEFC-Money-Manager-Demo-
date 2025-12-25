@@ -3,7 +3,7 @@ from routes.database import db, User
 from routes.auth import auth_bp
 from routes.expense import expense
 from routes.dashboard import dashboard_bp
-from routes.group import group_bp
+from routes.group import group
 from routes.tuition import tuition_bp
 from routes.profile import profile_bp
 from flask_login import LoginManager, current_user
@@ -41,7 +41,7 @@ def load_user(user_id):
 app.register_blueprint(auth_bp)
 app.register_blueprint(expense)
 app.register_blueprint(dashboard_bp)
-app.register_blueprint(group_bp)
+app.register_blueprint(group)
 app.register_blueprint(tuition_bp)
 
 app.register_blueprint(profile_bp)
