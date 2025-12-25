@@ -1,0 +1,228 @@
+
+.main-nav {
+    /* Sticky positioning: stays at top when scrolling */
+    position: sticky;
+    top: 0;
+    
+    /* High z-index to stay above content, but below modals/dialogs */
+    z-index: 1000;
+    
+    /* Light mode: Lighter blue-gray to match light theme */
+    background-color: #c5dfe0dc;
+    
+    /* Modern glassmorphism effect (Safari, Chrome, Edge support) */
+    --webkit-backdrop-filter: blur(10px);
+    
+    /* Subtle shadow - starts light, enhanced via JS on scroll */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    /* Smooth transitions for shadow changes */
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    
+    /* Prevent layout shift */
+    width: 100%;
+    
+    /* Padding for breathing room */
+    padding: 0.75rem 0;
+}
+
+/* Dark mode navbar - brownish/reddish tone to match theme */
+[data-theme="dark"] .main-nav {
+    background-color: #433f3f;
+}
+
+/* Enhanced shadow when scrolled (applied via JS class) */
+.main-nav.scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode scrolled state */
+[data-theme="dark"] .main-nav.scrolled {
+    box-shadow: 0 4px 25px rgba(231, 76, 60, 0.25);
+    background-color: #433f3f;
+}
+
+/* Navigation List Container */
+.main-nav .container {
+    /* Ensure content stays within max-width */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav-list {
+    /* Flexbox for horizontal layout */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    
+    /* Remove default list styling */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
+}
+
+/* Navigation Links */
+.nav-list a {
+    /* Display and spacing */
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    
+    /* Typography - Light mode: darker text, Dark mode: lighter text */
+    color: #333333;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    
+    /* Border radius for modern look */
+    border-radius: 6px;
+    
+    /* Smooth transitions for all interactive states */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Position for pseudo-element underline */
+    position: relative;
+    
+    /* Ensure emoji + text stay together */
+    white-space: nowrap;
+}
+
+/* Dark mode link text color */
+[data-theme="dark"] .nav-list a {
+    color: #e0e0e0;
+}
+
+/* Hover state - subtle background highlight */
+.nav-list a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Dark mode hover */
+[data-theme="dark"] .nav-list a:hover {
+    background-color: rgba(231, 76, 60, 0.15);
+}
+
+/* Active page indicator */
+.nav-list a.active {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark mode active state */
+[data-theme="dark"] .nav-list a.active {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 2px 12px rgba(231, 76, 60, 0.4);
+}
+
+/* Logout button - distinct styling */
+.nav-list a.logout-btn {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.nav-list a.logout-btn:hover {
+    background-color: var(--accent-red);
+    color: white;
+    border-color: var(--accent-red);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   ACCESSIBILITY FEATURES
+   ============================================ */
+
+/* Focus state for keyboard navigation - high contrast outline */
+.nav-list a:focus {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
+}
+
+/* Focus visible (modern browsers) - only show outline for keyboard, not mouse clicks */
+.nav-list a:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.nav-list a:focus-visible {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+/* Dark mode focus */
+[data-theme="dark"] .nav-list a:focus-visible {
+    outline-color: #ff6b6b;
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet and below - adjust spacing */
+@media (max-width: 768px) {
+    .nav-list {
+        gap: 0.25rem;
+    }
+    
+    .nav-list a {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile - stack vertically if needed or reduce further */
+@media (max-width: 480px) {
+    .main-nav {
+        padding: 0.5rem 0;
+    }
+    
+    .nav-list {
+        gap: 0.5rem;
+        justify-content: flex-start;
+    }
+    
+    .nav-list a {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ============================================
+   SMOOTH SCROLL BEHAVIOR
+   ============================================
+   Prevent layout shift when navbar becomes sticky
+   ============================================ */
+
+/* Ensure body has smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Prevent content jump by matching header + nav height */
+body {
+    /* Account for sticky nav to prevent content jump */
+    scroll-padding-top: 100px;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    .main-nav {
+        position: static;
+        box-shadow: none;
+        background: white;
+    }
+    
+    .nav-list a:not(.active) {
+        display: none;
+    }
+}

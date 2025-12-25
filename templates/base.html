@@ -8,6 +8,7 @@
     
     <!-- Global Styles -->
     <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/navbar.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     
     <!-- Page-specific Styles -->
@@ -32,17 +33,19 @@
         </div>
     </header>
     
-    <!-- Main Navigation -->
+    <!-- Main Navigation with Sticky Positioning -->
     {% if current_user.is_authenticated %}
-    <nav role="navigation" aria-label="Main navigation">
-        <ul>
-            <li><a href="{{ url_for('dashboard.dashboard') }}" {% if request.endpoint == 'dashboard.dashboard' %}class="active" aria-current="page"{% endif %}>Dashboard</a></li>
-            <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>Expenses</a></li>
-            <li><a href="{{ url_for('group.my_groups') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>Groups</a></li>
-            <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>Tuition</a></li>
-            <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>Profile</a></li>
-            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-        </ul>
+    <nav id="mainNav" class="main-nav" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="{{ url_for('dashboard.dashboard') }}" {% if request.endpoint == 'dashboard.dashboard' %}class="active" aria-current="page"{% endif %}>📊 Dashboard</a></li>
+                <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>💰 Expenses</a></li>
+                <li><a href="{{ url_for('group.my_groups') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>👥 Groups</a></li>
+                <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>🎓 Tuition</a></li>
+                <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>👤 Profile</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="logout-btn">🚪 Logout</a></li>
+            </ul>
+        </div>
     </nav>
     {% endif %}
     
@@ -74,6 +77,7 @@
     
     <!-- Global Scripts -->
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     
     <!-- Chart.js Library (must load before page scripts that use it) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

@@ -40,6 +40,9 @@
         applyTheme(newTheme);
         setStoredTheme(newTheme);
         
+        // Dispatch custom event for charts to update
+        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+        
         body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
         setTimeout(() => {
             body.style.transition = '';
