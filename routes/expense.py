@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from routes.database import db, Expense
 from datetime import datetime
 from sqlalchemy import extract, func, text
-import sqlite3
 
 expense = Blueprint("expense", __name__)
 
