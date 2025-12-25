@@ -1,295 +1,284 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from routes.auth import login_required
-from routes.database import db
-from flask_login import current_user
+from flask import Blueprint, render_template, redirect, url_for, flash
+from flask_login import login_required, current_user
+from routes.database import db, Group, GroupMember, GroupExpense, ExpenseSplit
+from datetime import datetime
+import random
+import string
 
-group_bp = Blueprint('group', __name__)
+group = Blueprint("group", __name__)
 
 
-@group_bp.route('/group')
+def generate_join_code():
+    """Generate a unique 6-character join code."""
+    while True:
+        code = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=6))
+        if not Group.query.filter_by(join_code=code).first():
+            return code
+
+
+def calculate_settlements(balances, user_names):
+    """Calculate optimal settlements to balance all debts.
+
+    Args:
+        balances: dict of user_id -> balance (positive = owed, negative = owes)
+        user_names: dict of user_id -> username
+
+    Returns:
+        list of dicts with 'from', 'to', 'amount' for settlements
+    """
+    # Separate creditors (positive balance) and debtors (negative balance)
+    creditors = [(uid, bal) for uid, bal in balances.items() if bal > 0.01]
+    debtors = [(uid, -bal) for uid, bal in balances.items() if bal < -0.01]
+
+    settlements = []
+
+    # Sort by amount for better matching
+    creditors.sort(key=lambda x: x[1], reverse=True)
+    debtors.sort(key=lambda x: x[1], reverse=True)
+
+    i, j = 0, 0
+    while i < len(creditors) and j < len(debtors):
+        creditor_id, credit_amount = creditors[i]
+        debtor_id, debt_amount = debtors[j]
+
+        # Settle the minimum of what's owed and what's due
+        settle_amount = min(credit_amount, debt_amount)
+
+        if settle_amount > 0.01:  # Ignore very small amounts
+            settlements.append({
+                'from': user_names[debtor_id],
+                'to': user_names[creditor_id],
+                'amount': settle_amount
+            })
+
+        # Update remaining balances
+        creditors[i] = (creditor_id, credit_amount - settle_amount)
+        debtors[j] = (debtor_id, debt_amount - settle_amount)
+
+        # Move to next creditor or debtor if current one is settled
+        if creditors[i][1] < 0.01:
+            i += 1
+        if debtors[j][1] < 0.01:
+            j += 1
+
+    return settlements
+
+
+@group.route('/groups')
 @login_required
-def group_list():
-    """Display list of groups user is part of."""
-    user_id = session.get('user_id')
-    
-    conn = db.session.connection()
-    
-    # Get all groups user is a member of
-    groups = conn.execute(
-        '''SELECT g.*, u.username as creator_name,
-           (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count
-           FROM groups g
-           JOIN users u ON g.created_by = u.id
-           WHERE g.id IN (SELECT group_id FROM group_members WHERE user_id = ?)
-           ORDER BY g.created_at DESC''',
-        (user_id,)
-    ).fetchall()
-    
-    conn.close()
-    
+def my_groups():
+    """View all groups the current user is a member of."""
+    memberships = GroupMember.query.filter_by(user_id=current_user.id).all()
+    groups = [membership.group for membership in memberships]
     return render_template('group.html', groups=groups)
 
 
-@group_bp.route('/group/create', methods=['POST'])
+@group.route('/groups/create', methods=['POST'])
 @login_required
 def create_group():
     """Create a new group."""
-    user_id = session.get('user_id')
-    
-    name = request.form.get('name')
-    description = request.form.get('description', '')
-    
+    from flask import request
+    name = request.form.get('group_name')
+
     if not name:
-        flash('Group name is required!', 'error')
-        return redirect(url_for('group.group_list'))
-    
-    conn = db.session.connection()
-    
-    # Create group
-    cursor = conn.execute(
-        'INSERT INTO groups (name, description, created_by) VALUES (?, ?, ?)',
-        (name, description, user_id)
-    )
-    group_id = cursor.lastrowid
-    
-    # Add creator as member
-    conn.execute(
-        'INSERT INTO group_members (group_id, user_id) VALUES (?, ?)',
-        (group_id, user_id)
-    )
-    
-    conn.commit()
-    conn.close()
-    
-    flash('Group created successfully!', 'success')
-    return redirect(url_for('group.group_detail', group_id=group_id))
+        flash('Group name is required!', 'danger')
+        return redirect(url_for('group.my_groups'))
+
+    new_group = Group(name=name, created_by=current_user.id,
+                      join_code=generate_join_code())
+    db.session.add(new_group)
+    db.session.commit()
+    # Add the creator as a member
+    membership = GroupMember(group_id=new_group.id, user_id=current_user.id)
+    db.session.add(membership)
+    db.session.commit()
+
+    flash(f'Group "{name}" created successfully!', 'success')
+    return redirect(url_for('group.group_details', group_id=new_group.id))
 
 
-@group_bp.route('/group/<int:group_id>')
+@group.route('/groups/join', methods=['POST'])
 @login_required
-def group_detail(group_id):
-    """Display group details and expenses."""
-    user_id = session.get('user_id')
-    
-    conn = db.session.connection()
-    
-    # Check if user is member
-    membership = conn.execute(
-        'SELECT * FROM group_members WHERE group_id = ? AND user_id = ?',
-        (group_id, user_id)
-    ).fetchone()
-    
+def join_group():
+    """Join a group using an invite code."""
+    from flask import request
+    join_code = request.form.get('join_code', '').strip().upper()
+
+    if not join_code:
+        flash('Please enter an invite code!', 'danger')
+        return redirect(url_for('group.my_groups'))
+
+    # Find group by join code
+    group = Group.query.filter_by(join_code=join_code).first()
+
+    if not group:
+        flash(f'Invalid invite code: {join_code}', 'danger')
+        return redirect(url_for('group.my_groups'))
+
+    # Check if already a member
+    existing_membership = GroupMember.query.filter_by(
+        group_id=group.id, user_id=current_user.id).first()
+
+    if existing_membership:
+        flash(f'You are already a member of "{group.name}"!', 'info')
+        return redirect(url_for('group.group_details', group_id=group.id))
+
+    # Add user to group
+    membership = GroupMember(group_id=group.id, user_id=current_user.id)
+    db.session.add(membership)
+    db.session.commit()
+
+    flash(f'Successfully joined "{group.name}"!', 'success')
+    return redirect(url_for('group.group_details', group_id=group.id))
+
+
+@group.route('/groups/<int:group_id>')
+@login_required
+def group_details(group_id):
+    """View details of a specific group."""
+    from sqlalchemy import func
+    group = Group.query.get_or_404(group_id)
+    # Ensure the current user is a member of the group
+    membership = GroupMember.query.filter_by(
+        group_id=group.id, user_id=current_user.id).first()
     if not membership:
-        conn.close()
-        flash('You are not a member of this group!', 'error')
-        return redirect(url_for('group.group_list'))
-    
-    # Get group info
-    group = conn.execute(
-        '''SELECT g.*, u.username as creator_name
-           FROM groups g
-           JOIN users u ON g.created_by = u.id
-           WHERE g.id = ?''',
-        (group_id,)
-    ).fetchone()
-    
-    # Get members
-    members = conn.execute(
-        '''SELECT u.id, u.username, gm.joined_at
-           FROM group_members gm
-           JOIN users u ON gm.user_id = u.id
-           WHERE gm.group_id = ?
-           ORDER BY gm.joined_at''',
-        (group_id,)
-    ).fetchall()
-    
-    # Get expenses
-    expenses = conn.execute(
-        '''SELECT ge.*, u.username as paid_by_name
-           FROM group_expenses ge
-           JOIN users u ON ge.paid_by = u.id
-           WHERE ge.group_id = ?
-           ORDER BY ge.date DESC, ge.created_at DESC''',
-        (group_id,)
-    ).fetchall()
-    
-    # Calculate balances
-    balances = {}
-    for member in members:
-        balances[member['id']] = 0
-    
-    for expense in expenses:
-        # Get splits for this expense
-        splits = conn.execute(
-            'SELECT * FROM expense_splits WHERE expense_id = ?',
-            (expense['id'],)
-        ).fetchall()
-        
-        # Person who paid gets positive balance
-        balances[expense['paid_by']] += expense['amount']
-        
-        # People who owe get negative balance
-        for split in splits:
-            balances[split['user_id']] -= split['share_amount']
-    
-    conn.close()
-    
-    return render_template(
-        'group.html',
-        group=group,
-        members=members,
-        expenses=expenses,
-        balances=balances,
-        mode='detail'
-    )
+        flash('You are not a member of this group!', 'danger')
+        return redirect(url_for('group.my_groups'))
+
+    # Calculate total group expense
+    total_group_expense = db.session.query(func.sum(GroupExpense.amount)).filter_by(
+        group_id=group_id).scalar() or 0.0
+
+    # Get member statistics and calculate balances
+    members = []
+    member_count = len(group.members)
+    fair_share = total_group_expense / member_count if member_count > 0 else 0
+
+    balances = {}  # user_id -> balance (positive = owed, negative = owes)
+
+    for member in group.members:
+        user = member.user
+        # Count expenses paid by this member
+        member_total = db.session.query(func.sum(GroupExpense.amount)).filter_by(
+            group_id=group_id, paid_by=user.id).scalar() or 0.0
+        member_count_exp = db.session.query(func.count(GroupExpense.id)).filter_by(
+            group_id=group_id, paid_by=user.id).scalar() or 0
+
+        # Calculate balance: what they paid minus their fair share
+        balance = member_total - fair_share
+        balances[user.id] = balance
+
+        members.append({
+            'id': user.id,
+            'name': user.username,
+            'total': member_total,
+            'count': member_count_exp,
+            'balance': balance
+        })
+
+    # Calculate settlements (who should pay whom)
+    settlements = calculate_settlements(
+        balances, {m['id']: m['name'] for m in members})
+
+    expenses = group.expenses
+    return render_template('groupDetails.html',
+                           group=group,
+                           members=members,
+                           expenses=expenses,
+                           total_group_expense=total_group_expense,
+                           fair_share=fair_share,
+                           settlements=settlements)
 
 
-@group_bp.route('/group/<int:group_id>/add_expense', methods=['POST'])
+@group.route('/groups/<int:group_id>/add_expense', methods=['GET', 'POST'])
 @login_required
-def add_group_expense(group_id):
-    """Add an expense to a group."""
-    user_id = session.get('user_id')
-    
+def add_expense_to_group(group_id):
+    """Add a new expense to a group."""
+    from flask import request
+    group = Group.query.get_or_404(group_id)
+
+    # Verify membership
+    membership = GroupMember.query.filter_by(
+        group_id=group_id, user_id=current_user.id).first()
+    if not membership:
+        flash('You are not a member of this group!', 'danger')
+        return redirect(url_for('group.my_groups'))
+
+    if request.method == 'GET':
+        # Show the form to add expense
+        members = [member.user for member in group.members]
+        return render_template('addGroupExpense.html', group=group, members=members)
+
+    # Handle POST - add the expense
     title = request.form.get('title')
     amount = request.form.get('amount')
     description = request.form.get('description', '')
-    date = request.form.get('date')
-    split_type = request.form.get('split_type', 'equal')
-    
-    # Validation
-    if not all([title, amount, date]):
-        flash('Please fill in all required fields!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
+    expense_date = request.form.get('date')
+
+    if not all([title, amount, expense_date]):
+        flash('Please fill in all required fields!', 'danger')
+        return redirect(url_for('group.add_expense_to_group', group_id=group_id))
+
     try:
         amount = float(amount)
         if amount <= 0:
             raise ValueError("Amount must be positive")
     except ValueError:
-        flash('Invalid amount!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
-    conn = db.session.connection()
-    
-    # Verify membership
-    membership = conn.execute(
-        'SELECT * FROM group_members WHERE group_id = ? AND user_id = ?',
-        (group_id, user_id)
-    ).fetchone()
-    
-    if not membership:
-        conn.close()
-        flash('You are not a member of this group!', 'error')
-        return redirect(url_for('group.group_list'))
-    
-    # Get all members
-    members = conn.execute(
-        'SELECT user_id FROM group_members WHERE group_id = ?',
-        (group_id,)
-    ).fetchall()
-    
-    # Create expense
-    cursor = conn.execute(
-        '''INSERT INTO group_expenses 
-           (group_id, paid_by, title, amount, description, date)
-           VALUES (?, ?, ?, ?, ?, ?)''',
-        (group_id, user_id, title, amount, description, date)
+        flash('Invalid amount!', 'danger')
+        return redirect(url_for('group.add_expense_to_group', group_id=group_id))
+
+    # Create the expense
+    new_expense = GroupExpense(
+        group_id=group_id,
+        title=title,
+        amount=amount,
+        paid_by=current_user.id,
+        description=description,
+        date=datetime.strptime(expense_date, '%Y-%m-%d').date()
     )
-    expense_id = cursor.lastrowid
-    
-    # Create splits (equal split by default)
+    db.session.add(new_expense)
+    db.session.commit()
+
+    # Split equally among all members
+    members = group.members
     share_amount = amount / len(members)
+
     for member in members:
-        conn.execute(
-            '''INSERT INTO expense_splits 
-               (expense_id, user_id, share_amount, is_paid)
-               VALUES (?, ?, ?, ?)''',
-            (expense_id, member['user_id'], share_amount, 
-             1 if member['user_id'] == user_id else 0)
+        expense_split = ExpenseSplit(
+            expense_id=new_expense.id,
+            user_id=member.user_id,
+            share_amount=share_amount,
+            is_paid=(member.user_id == current_user.id)
         )
-    
-    conn.commit()
-    conn.close()
-    
-    flash('Expense added successfully!', 'success')
-    return redirect(url_for('group.group_detail', group_id=group_id))
+        db.session.add(expense_split)
+
+    db.session.commit()
+
+    flash(f'Expense "{title}" added successfully!', 'success')
+    return redirect(url_for('group.group_details', group_id=group_id))
 
 
-@group_bp.route('/group/<int:group_id>/add_member', methods=['POST'])
-@login_required
-def add_member(group_id):
-    """Add a member to a group."""
-    user_id = session.get('user_id')
-    username = request.form.get('username')
-    
-    if not username:
-        flash('Username is required!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
-    conn = db.session.connection()
-    
-    # Verify user is admin/creator
-    group = conn.execute(
-        'SELECT * FROM groups WHERE id = ? AND created_by = ?',
-        (group_id, user_id)
-    ).fetchone()
-    
-    if not group:
-        conn.close()
-        flash('Only group creator can add members!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
-    # Find user by username
-    new_member = conn.execute(
-        'SELECT id FROM users WHERE username = ?',
-        (username,)
-    ).fetchone()
-    
-    if not new_member:
-        conn.close()
-        flash('User not found!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
-    # Check if already member
-    existing = conn.execute(
-        'SELECT * FROM group_members WHERE group_id = ? AND user_id = ?',
-        (group_id, new_member['id'])
-    ).fetchone()
-    
-    if existing:
-        conn.close()
-        flash('User is already a member!', 'error')
-        return redirect(url_for('group.group_detail', group_id=group_id))
-    
-    # Add member
-    conn.execute(
-        'INSERT INTO group_members (group_id, user_id) VALUES (?, ?)',
-        (group_id, new_member['id'])
-    )
-    conn.commit()
-    conn.close()
-    
-    flash('Member added successfully!', 'success')
-    return redirect(url_for('group.group_detail', group_id=group_id))
+def add_member_to_group(group_id, user_id):
+    """Add a new member to a group."""
+    membership = GroupMember(group_id=group_id, user_id=user_id)
+    db.session.add(membership)
+    db.session.commit()
+    return membership
 
 
-@group_bp.route('/group/<int:group_id>/settle/<int:expense_id>', methods=['POST'])
-@login_required
-def settle_expense(group_id, expense_id):
-    """Mark an expense as settled."""
-    user_id = session.get('user_id')
-    
-    conn = db.session.connection()
-    
-    # Update split as paid
-    conn.execute(
-        '''UPDATE expense_splits 
-           SET is_paid = 1 
-           WHERE expense_id = ? AND user_id = ?''',
-        (expense_id, user_id)
-    )
-    conn.commit()
-    conn.close()
-    
-    flash('Expense marked as settled!', 'success')
-    return redirect(url_for('group.group_detail', group_id=group_id))
+def split_expense(expense_id, splits):
+    """Split an expense among group members.
+
+    Args:
+        expense_id (int): The ID of the group expense.
+        splits (list of tuples): Each tuple contains (user_id, share_amount).
+    """
+    for user_id, share_amount in splits:
+        expense_split = ExpenseSplit(
+            expense_id=expense_id,
+            user_id=user_id,
+            share_amount=share_amount
+        )
+        db.session.add(expense_split)
+    db.session.commit()

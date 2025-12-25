@@ -38,7 +38,7 @@
         <ul>
             <li><a href="{{ url_for('dashboard.dashboard') }}" {% if request.endpoint == 'dashboard.dashboard' %}class="active" aria-current="page"{% endif %}>Dashboard</a></li>
             <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>Personal Expenses</a></li>
-            <li><a href="{{ url_for('group.group_list') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>Groups</a></li>
+            <li><a href="{{ url_for('group.my_groups') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>Groups</a></li>
             <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>Tuition</a></li>
             <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>Profile</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{{ group.name }} - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/group.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header group-header">
+    <a href="{{ url_for('group.my_groups') }}" class="back-link">← Back</a>
+    <h2 class="flicker">{{ group.name }}</h2>
+    <div class="invite-pill">
+        <span>Invite Code:</span>
+        <strong class="selectable">{{ group.join_code }}</strong>
+    </div>
+</div>
+
+<div class="summary-cards">
+    <div class="summary-card card-green">
+        <div class="card-icon">💸</div>
+        <div class="card-content">
+            <h3>Total Spent</h3>
+            <p class="card-subtitle">Entire Group</p>
+            <p class="card-amount">৳{{ "%.2f"|format(total_group_expense) }}</p>
+        </div>
+    </div>
+
+    <div class="summary-card card-purple action-card" onclick="window.location.href='{{ url_for('group.add_expense_to_group', group_id=group.id) }}';">
+        <div class="card-icon">➕</div>
+        <div class="card-content">
+            <h3>Add Expense</h3>
+            <p class="card-subtitle">Split with group</p>
+        </div>
+    </div>
+</div>
+
+{% if settlements %}
+<div class="recent-activity-section settlements-section">
+    <h3>💸 Settlements Needed</h3>
+    <p class="section-subtitle">Simplify payments with these transactions</p>
+    <div class="activity-list">
+        {% for settlement in settlements %}
+        <div class="activity-item settlement-item">
+            <div class="activity-icon {% if settlement.from == current_user.username %}personal{% else %}group{% endif %}">
+                🔄
+            </div>
+            <div class="activity-details">
+                <div class="activity-header">
+                    <span class="activity-type badge-{% if settlement.from == current_user.username %}personal{% else %}blue{% endif %}">
+                        {{ settlement.from }} → {{ settlement.to }}
+                    </span>
+                    {% if settlement.from == current_user.username %}
+                    <span class="activity-date badge-personal">You owe</span>
+                    {% elif settlement.to == current_user.username %}
+                    <span class="activity-date badge-green">You get</span>
+                    {% endif %}
+                </div>
+                <p class="activity-description">
+                    {% if settlement.from == current_user.username %}
+                        You need to pay {{ settlement.to }}
+                    {% elif settlement.to == current_user.username %}
+                        {{ settlement.from }} needs to pay you
+                    {% else %}
+                        Settlement between members
+                    {% endif %}
+                </p>
+            </div>
+            <div class="activity-amount {% if settlement.to == current_user.username %}positive{% else %}negative{% endif %}">
+                {% if settlement.to == current_user.username %}+{% endif %}৳{{ "{:.2f}".format(settlement.amount) }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="details-grid">
+    <div class="recent-activity-section members-section">
+        <h3>👥 Member Contributions</h3>
+        <div class="activity-list">
+            {% for member in members %}
+            <div class="activity-item member-item">
+                <div class="activity-icon group">
+                    {{ member.name[:1] }}
+                </div>
+                <div class="activity-details">
+                    <div class="activity-header">
+                        <span class="activity-type badge-group">{{ member.name }}</span>
+                        {% if member.name == current_user.username %}
+                        <span class="activity-date">(You)</span>
+                        {% endif %}
+                    </div>
+                    <div class="contribution-bar-container">
+                        {% set percentage = (member.total / total_group_expense * 100) if total_group_expense > 0 else 0 %}
+                        <div class="contribution-bar" style="width: {{ '%.1f'|format(percentage) }}%"></div>
+                    </div>
+                    <p class="activity-description">{{ member.count }} Transactions</p>
+                </div>
+                <div class="activity-amount">৳{{ "%.2f"|format(member.total) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="recent-activity-section">
+        <h3>📜 Group History</h3>
+        {% if group.expenses %}
+            <div class="activity-list">
+                {% for exp in group.expenses|sort(attribute='date', reverse=True) %}
+                <div class="activity-item">
+                    <div class="activity-icon personal">🧾</div>
+                    <div class="activity-details">
+                        <div class="activity-header">
+                            <span class="activity-type badge-personal">{{ exp.payer.username }} paid</span>
+                            <span class="activity-date">{{ exp.date.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        <p class="activity-description">{{ exp.description }}</p>
+                    </div>
+                    <div class="activity-amount">৳{{ exp.amount }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p class="empty-text">No expenses yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

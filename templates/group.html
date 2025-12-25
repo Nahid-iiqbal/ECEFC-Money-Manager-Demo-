@@ -1,22 +1,71 @@
 {% extends "base.html" %}
 
-{% block title %}Groups - FeinBuddy{% endblock %}
+{% block title %}My Groups - FeinBuddy{% endblock %}
 
 {% block extra_css %}
 <link href="{{ url_for('static', filename='css/group.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title">👥 Group Management</h1>
-    <p class="page-subtitle">Manage shared expenses with your groups</p>
+<div class="dashboard-header">
+    <h2 class="flicker">👥 Group Hub</h2>
+    <p class="dashboard-subtitle">Manage your shared expenses and squads</p>
 </div>
 
-<section class="groups-section">
-    <div class="empty-state">
-        <p class="empty-icon">👥</p>
-        <p class="empty-message">Group management coming soon!</p>
-        <p class="empty-hint">This feature is under development.</p>
+<div class="quick-actions-section">
+    <div class="group-forms-container">
+        <div class="group-action-card create-mode">
+            <h3>✨ Create New Squad</h3>
+            <form action="{{ url_for('group.create_group') }}" method="POST" class="inline-form">
+                <div class="input-wrapper">
+                    <span class="input-icon">🖊️</span>
+                    <input type="text" name="group_name" placeholder="Group Name (e.g. Trip to Bali)" required>
+                </div>
+                <button type="submit" class="action-btn btn-purple">Create Group</button>
+            </form>
+        </div>
+
+        <div class="group-action-card join-mode">
+            <h3>🔗 Join Existing</h3>
+            <form action="{{ url_for('group.join_group') }}" method="POST" class="inline-form">
+                <div class="input-wrapper">
+                    <span class="input-icon">🔑</span>
+                    <input type="text" name="join_code" placeholder="Enter Invite Code" maxlength="6" required style="text-transform: uppercase;">
+                </div>
+                <button type="submit" class="action-btn btn-blue">Join Squad</button>
+            </form>
+        </div>
     </div>
-</section>
+</div>
+
+<div class="recent-activity-section">
+    <h3>Your Groups</h3>
+    
+    {% if groups %}
+        <div class="summary-cards">
+            {% for group in groups %}
+            <a href="{{ url_for('group.group_details', group_id=group.id) }}" class="summary-card card-blue group-card-link">
+                <div class="card-icon">
+                    <div class="group-avatar">{{ group.name[:1] }}</div>
+                </div>
+                <div class="card-content">
+                    <h3>{{ group.name }}</h3>
+                    <p class="card-subtitle">{{ group.members|length }} Members</p>
+                    
+                    <div class="code-badge">
+                        Code: <strong>{{ group.join_code }}</strong>
+                    </div>
+                </div>
+                <div class="card-arrow">→</div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p class="empty-icon">🤷‍♂️</p>
+            <p class="empty-text">No groups yet</p>
+            <p class="empty-subtext">Create a group or ask a friend for a code!</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
