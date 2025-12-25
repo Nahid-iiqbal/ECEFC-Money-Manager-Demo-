@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from routes.database import db, Expense
+from routes.database import db, Expense, Debt
 from datetime import datetime
 from sqlalchemy import extract, func, text
 
@@ -45,11 +45,28 @@ def personal():
         category = getattr(exp, 'category', 'Other') or 'Other'
         category_totals[category] = category_totals.get(category, 0) + exp.amount
     
+    # Calculate dues and owes
+    total_dues = 0.0
+    total_owes = 0.0
+    try:
+        # Check if debt table exists
+        debts = Debt.query.filter_by(user_id=current_user.id).all()
+        for debt in debts:
+            if debt.debt_type == 'due':
+                total_dues += debt.amount
+            elif debt.debt_type == 'owe':
+                total_owes += debt.amount
+    except:
+        # Debt table doesn't exist yet or error occurred
+        pass
+    
     return render_template(
         "expenses.html", 
         expenses=user_expenses, 
         total=total,
-        category_totals=category_totals
+        category_totals=category_totals,
+        total_dues=total_dues,
+        total_owes=total_owes
     )
 
 @expense.route('/personal/add', methods=['GET'])

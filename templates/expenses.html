@@ -13,6 +13,41 @@
         <p class="page-subtitle">Track and manage your personal spending</p>
     </div>
 
+    <!-- Dues & Owes Section -->
+    <section class="dues-owes-section" aria-labelledby="dues-owes-title">
+        <h2 id="dues-owes-title" class="section-title">💰 Dues & Owes</h2>
+        <div class="dues-owes-cards">
+            <div class="debt-card debt-due">
+                <div class="debt-icon">📥</div>
+                <div class="debt-content">
+                    <h3>Total Dues</h3>
+                    <p class="debt-subtitle">Money owed to me</p>
+                    <p class="debt-amount">৳{{ "%.2f"|format(total_dues) }}</p>
+                </div>
+            </div>
+            
+            <div class="debt-card debt-owe">
+                <div class="debt-icon">📤</div>
+                <div class="debt-content">
+                    <h3>Total Owes</h3>
+                    <p class="debt-subtitle">Money I owe</p>
+                    <p class="debt-amount">৳{{ "%.2f"|format(total_owes) }}</p>
+                </div>
+            </div>
+            
+            <div class="debt-card debt-balance">
+                <div class="debt-icon">💵</div>
+                <div class="debt-content">
+                    <h3>Net Balance</h3>
+                    <p class="debt-subtitle">Dues - Owes</p>
+                    <p class="debt-amount {{ 'positive' if (total_dues - total_owes) >= 0 else 'negative' }}">
+                        {{ "৳%.2f"|format(total_dues - total_owes) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Expense List Section -->
     <section class="expense-list-section" aria-labelledby="expense-list-title">
         <h2 id="expense-list-title" class="section-title">Your Expenses</h2>

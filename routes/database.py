@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(80), nullable=False)
     expenses = db.relationship('Expense', backref='user', lazy=True, cascade='all, delete-orphan')
+    debts = db.relationship('Debt', backref='user', lazy=True, cascade='all, delete-orphan')
     profile = db.relationship('Profile', backref='user', uselist=False, cascade='all, delete-orphan')
 
 class Expense(db.Model):
@@ -23,6 +24,17 @@ class Expense(db.Model):
     date = db.Column(db.Date, nullable=True, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Debt(db.Model):
+    """Debt model for tracking dues (owed to me) and owes (I owe others)"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    debt_type = db.Column(db.String(10), nullable=False)  # 'due' or 'owe'
+    person = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    note = db.Column(db.Text, nullable=True)
+    date = db.Column(db.Date, nullable=True, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class TuitionRecord(db.Model):
     """Tuition Record model"""
