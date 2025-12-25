@@ -1,5 +1,6 @@
 # Virtual environment
 .venv/
+.venv/
 venv/
 
 # Environment variables
@@ -7,13 +8,16 @@ venv/
 
 # Python cache
 __pycache__/
+*.pyc
 *.py[cod]
 *$py.class
+*.pyc
 *.pyc
 *.so
 
 # Database
 *.db
+database.db
 database.db
 finance.db
 instance/

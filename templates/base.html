@@ -37,7 +37,7 @@
     <nav role="navigation" aria-label="Main navigation">
         <ul>
             <li><a href="{{ url_for('dashboard.dashboard') }}" {% if request.endpoint == 'dashboard.dashboard' %}class="active" aria-current="page"{% endif %}>Dashboard</a></li>
-            <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>Personal Expenses</a></li>
+            <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>Expenses</a></li>
             <li><a href="{{ url_for('group.my_groups') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>Groups</a></li>
             <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>Tuition</a></li>
             <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>Profile</a></li>
@@ -75,11 +75,15 @@
     <!-- Global Scripts -->
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     
+    <!-- Chart.js Library (must load before page scripts that use it) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- jsPDF and html2canvas for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <!-- Page-specific Scripts -->
     {% block extra_js %}{% endblock %}
-    
-    <!-- Chart.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Alert Close Handler -->
     <script>
