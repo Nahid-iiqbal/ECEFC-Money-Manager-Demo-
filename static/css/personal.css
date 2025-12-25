@@ -90,7 +90,7 @@ nav a.active {
 /* Section Styles */
 section {
     background-color: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: var(--shadow-md);
@@ -108,6 +108,92 @@ section:hover {
     padding-bottom: 0.75rem;
     border-bottom: 3px solid var(--accent-red);
     font-weight: 600;
+}
+
+/* Dues & Owes Section Styles */
+.dues-owes-section {
+    margin-bottom: 2.5rem;
+}
+
+.dues-owes-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.debt-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: 16px;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.debt-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.debt-due {
+    border-color: var(--accent-green);
+}
+
+.debt-owe {
+    border-color: var(--accent-orange);
+}
+
+.debt-balance {
+    border-color: var(--accent-blue);
+}
+
+.debt-icon {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.debt-content {
+    flex: 1;
+}
+
+.debt-content h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.debt-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin: 0 0 0.75rem 0;
+}
+
+.debt-amount {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--accent-green);
+}
+
+.debt-owe .debt-amount {
+    color: var(--accent-orange);
+}
+
+.debt-balance .debt-amount {
+    color: var(--accent-blue);
+}
+
+.debt-amount.positive {
+    color: var(--accent-green);
+}
+
+.debt-amount.negative {
+    color: var(--accent-red);
 }
 
 /*Expense Table Styles*/
@@ -418,6 +504,8 @@ section:hover {
 /* Action Link Section */
 .action-link-section {
     margin-top: 2rem;
+    margin-bottom: 4rem;
+    padding-bottom: 3rem;
     text-align: center;
 }
 
