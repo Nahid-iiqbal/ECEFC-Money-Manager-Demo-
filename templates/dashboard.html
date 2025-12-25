@@ -74,11 +74,11 @@
             <span class="btn-icon">➕</span>
             Add Personal Expense
         </button>
-        <button class="action-btn btn-blue" disabled style="opacity: 0.5; cursor: not-allowed;">
+        <button class="action-btn btn-blue" onclick="window.location.href='{{ url_for('group.my_groups') }}';">
             <span class="btn-icon">➕</span>
-            Add Group Expense
+            Manage Groups
         </button>
-        <button class="action-btn btn-orange" onclick="window.location.href='{{ url_for('tuition.add_tuition') }}'">
+        <button class="action-btn btn-orange" onclick="window.location.href='{{ url_for('tuition.add_tuition') }}';">
             <span class="btn-icon">➕</span>
             Add Tuition Payment
         </button>
