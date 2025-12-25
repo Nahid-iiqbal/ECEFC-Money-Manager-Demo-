@@ -102,6 +102,7 @@ nav a.active {
     transition: box-shadow 0.3s ease;
     max-width: 700px;
     margin: 0 auto;
+    border: 1px solid var(--border-color);
 }
 
 .form-section:hover {
