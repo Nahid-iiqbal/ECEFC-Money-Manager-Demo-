@@ -27,6 +27,7 @@ class Expense(db.Model):
     description = db.Column(db.Text, nullable=True)
     date = db.Column(db.Date, nullable=True, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    type = db.Column(db.String(50), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 

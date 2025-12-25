@@ -9,43 +9,9 @@
 {% block content %}
 <div class="expense-page">
     <div class="page-header">
-        <h1 class="page-title">💳 Personal Expense Manager</h1>
-        <p class="page-subtitle">Track and manage your personal spending</p>
+        <h1 class="page-title">� Expenses</h1>
+        <p class="page-subtitle">Track and manage your spending</p>
     </div>
-    <!-- Dues & Owes Section -->
-    <section class="dues-owes-section" aria-labelledby="dues-owes-title">
-        <h2 id="dues-owes-title" class="section-title">💰 Dues & Owes</h2>
-        <div class="dues-owes-cards">
-            <div class="debt-card debt-due">
-                <div class="debt-icon">📥</div>
-                <div class="debt-content">
-                    <h3>Total Dues</h3>
-                    <p class="debt-subtitle">Money owed to me</p>
-                    <p class="debt-amount">৳{{ "%.2f"|format(total_dues) }}</p>
-                </div>
-            </div>
-            
-            <div class="debt-card debt-owe">
-                <div class="debt-icon">📤</div>
-                <div class="debt-content">
-                    <h3>Total Owes</h3>
-                    <p class="debt-subtitle">Money I owe</p>
-                    <p class="debt-amount">৳{{ "%.2f"|format(total_owes) }}</p>
-                </div>
-            </div>
-            
-            <div class="debt-card debt-balance">
-                <div class="debt-icon">💵</div>
-                <div class="debt-content">
-                    <h3>Net Balance</h3>
-                    <p class="debt-subtitle">Dues - Owes</p>
-                    <p class="debt-amount {{ 'positive' if (total_dues - total_owes) >= 0 else 'negative' }}">
-                        {{ "৳%.2f"|format(total_dues - total_owes) }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Expense List Section -->
     <section class="expense-list-section" aria-labelledby="expense-list-title">
@@ -59,6 +25,7 @@
                         <th scope="col" role="columnheader">Date</th>
                         <th scope="col" role="columnheader">Name</th>
                         <th scope="col" role="columnheader">Category</th>
+                        <th scope="col" role="columnheader">Type</th>
                         <th scope="col" role="columnheader">Amount</th>
                         <th scope="col" role="columnheader">Description</th>
                         <th scope="col" role="columnheader">Action</th>
@@ -73,6 +40,15 @@
                             <span class="category-badge category-{{ (e.category|lower) if e.category else 'other' }}">
                                 {{ e.category if e.category else 'Other' }}
                             </span>
+                        </td>
+                        <td role="cell" data-label="Type">
+                            {% if e.type %}
+                            <span class="type-badge type-{{ e.type|lower }}">
+                                {{ '👤' if e.type == 'Personal' else '👥' }} {{ e.type }}
+                            </span>
+                            {% else %}
+                            <span class="type-badge type-unknown">-</span>
+                            {% endif %}
                         </td>
                         <td role="cell" data-label="Amount" class="amount">৳{{ "%.2f"|format(e.amount) }}</td>
                         <td role="cell" data-label="Description" class="description">

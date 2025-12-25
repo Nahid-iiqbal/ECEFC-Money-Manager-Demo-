@@ -42,7 +42,18 @@
                         <option value="Bills">💡 Bills</option>
                         <option value="Health">⚕️ Health</option>
                         <option value="Education">📚 Education</option>
+                        <option value="Dues">Dues</option>
+                        <option value="Owes">Owes</option>
                         <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-type">Type <span class="required">*</span></label>
+                    <select id="expense-type" name="type" required aria-required="true" class="form-select">
+                        <option value="">Select Type</option>
+                        <option value="Personal">👤 Personal</option>
+                        <option value="Group">👥 Group</option>
                     </select>
                 </div>
 
@@ -70,62 +81,5 @@
         </form>
     </section>
 
-    <!-- Add Dues & Owes Section -->
-    <section class="add-debt-section" aria-labelledby="add-debt-title">
-        <h2 id="add-debt-title" class="section-title">💰 Add Dues or Owes</h2>
-        <p class="section-subtitle">Track money you're owed or money you owe to others</p>
-        
-        <form action="{{ url_for('expense.add_debt') }}" method="POST" class="debt-form">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="debt-type">Type <span class="required">*</span></label>
-                    <select id="debt-type" name="debt_type" required aria-required="true" class="form-select">
-                        <option value="">Select Type</option>
-                        <option value="due">📥 Due (Someone owes me)</option>
-                        <option value="owe">📤 Owe (I owe someone)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="debt-person">Person <span class="required">*</span></label>
-                    <input type="text" id="debt-person" name="person" placeholder="e.g., John Doe" 
-                           required aria-required="true" class="form-input">
-                </div>
-
-                <div class="form-group">
-                    <label for="debt-amount">Amount <span class="required">*</span></label>
-                    <input type="number" id="debt-amount" name="amount" placeholder="0.00" step="0.01" 
-                           required aria-required="true" class="form-input">
-                </div>
-
-                <div class="form-group">
-                    <label for="debt-date">Transaction Date</label>
-                    <input type="date" id="debt-date" name="date" value="{{ today }}" class="form-input">
-                </div>
-
-                <div class="form-group">
-                    <label for="reminder-date">Reminder Date (For Dues)</label>
-                    <input type="date" id="reminder-date" name="reminder_date" class="form-input"
-                           title="Set a reminder date when you want to collect the due amount">
-                    <small class="form-hint">📅 Get notified when it's time to collect</small>
-                </div>
-            </div>
-
-            <div class="form-group full-width">
-                <label for="debt-note">Note (Optional)</label>
-                <textarea id="debt-note" name="note" rows="2" 
-                          placeholder="Add any details about this transaction..." class="form-textarea"></textarea>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    💾 Save Record
-                </button>
-                <button type="reset" class="btn btn-secondary">
-                    🔄 Reset
-                </button>
-            </div>
-        </form>
-    </section>
 </div>
 {% endblock %}
