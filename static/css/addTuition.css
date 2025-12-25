@@ -18,18 +18,18 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #484545;
-    --bg-secondary: #797474;
-    --bg-card: #7b5555;
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-card: #3a3a3a;
     --bg-input: #4a4a4a;
-    --text-primary: #271414;
-    --text-secondary: #bd2727;
-    --text-tertiary: #700808;
+    --text-primary: #e8e8e8;
+    --text-secondary: #b8b8b8;
+    --text-tertiary: #999999;
     --border-color: rgba(231, 76, 60, 0.3);
     --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-md: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
-    --accent-red: #ff4444;
+    --accent-red: #ff6b6b;
     --accent-purple: #8b7eea;
     --accent-blue: #5bb5f7;
     --accent-orange: #ffb866;
