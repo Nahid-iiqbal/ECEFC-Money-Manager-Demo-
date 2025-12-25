@@ -55,28 +55,11 @@ def personal():
         category = getattr(exp, 'category', 'Other') or 'Other'
         category_totals[category] = category_totals.get(category, 0) + exp.amount
     
-    # Calculate dues and owes
-    total_dues = 0.0
-    total_owes = 0.0
-    try:
-        # Check if debt table exists
-        debts = Debt.query.filter_by(user_id=current_user.id).all()
-        for debt in debts:
-            if debt.debt_type == 'due':
-                total_dues += debt.amount
-            elif debt.debt_type == 'owe':
-                total_owes += debt.amount
-    except:
-        # Debt table doesn't exist yet or error occurred
-        pass
-    
     return render_template(
         "expenses.html", 
         expenses=user_expenses, 
         total=total,
-        category_totals=category_totals,
-        total_dues=total_dues,
-        total_owes=total_owes
+        category_totals=category_totals
     )
 
 @expense.route('/personal/add', methods=['GET'])
@@ -108,12 +91,14 @@ def add_expense():
             category = request.form.get('category', 'Other')
             description = request.form.get('description', '')
             date_str = request.form.get('date')
+            expense_type = request.form.get('type', '')
             
             expense_data = {
                 'name': name,
                 'amount': amount,
                 'category': category,
                 'description': description,
+                'type': expense_type,
                 'user_id': current_user.id
             }
             

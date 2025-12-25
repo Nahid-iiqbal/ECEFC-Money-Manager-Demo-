@@ -27,7 +27,7 @@
     <div class="summary-card card-purple">
         <div class="card-icon">💰</div>
         <div class="card-content">
-            <h3>Personal Expenses</h3>
+            <h3>Expenses</h3>
             <p class="card-subtitle">This Month</p>
             <p class="card-amount">৳{{ "%.2f"|format(personal_this_month) }}</p>
         </div>
@@ -72,7 +72,7 @@
     <div class="quick-actions">
         <button class="action-btn btn-purple" onclick="window.location.href='{{ url_for('expense.add_expense_form') }}';">
             <span class="btn-icon">➕</span>
-            Add Personal Expense
+            Add Expense
         </button>
         <button class="action-btn btn-blue" onclick="window.location.href='{{ url_for('group.my_groups') }}';">
             <span class="btn-icon">➕</span>
@@ -120,10 +120,17 @@
 <!-- Spending Analytics -->
 {% if category_data or monthly_data %}
 <div class="analytics-section">
-    <h3>📊 Spending Analytics</h3>
-    <p class="analytics-subtitle">Visual insights into your spending patterns</p>
+    <div class="analytics-header">
+        <div>
+            <h3>📊 Spending Analytics</h3>
+            <p class="analytics-subtitle">Visual insights into your spending patterns</p>
+        </div>
+        <button id="downloadPdfBtn" class="btn btn-primary">
+            📥 Download PDF
+        </button>
+    </div>
     
-    <div class="charts-container">
+    <div class="charts-container" id="chartsContainer">
         <!-- Category Chart -->
         {% if category_data %}
         <div class="chart-wrapper">
@@ -317,6 +324,100 @@
         }
     });
     {% endif %}
+    
+    // PDF Download Functionality
+    document.getElementById('downloadPdfBtn')?.addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Generating...';
+        btn.disabled = true;
+        
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Add title
+            pdf.setFontSize(20);
+            pdf.setTextColor(102, 126, 234);
+            pdf.text('Spending Analytics Report', 105, 20, { align: 'center' });
+            
+            pdf.setFontSize(10);
+            pdf.setTextColor(100, 100, 100);
+            pdf.text('Generated on: ' + new Date().toLocaleDateString(), 105, 28, { align: 'center' });
+            
+            let yPosition = 40;
+            
+            {% if category_data %}
+            // Category Chart
+            const categoryCanvas = document.getElementById('categoryChart');
+            if (categoryCanvas) {
+                const categoryImg = await html2canvas(categoryCanvas, {
+                    backgroundColor: isDark ? '#3a3a3a' : '#ffffff',
+                    scale: 2
+                });
+                
+                const categoryImgData = categoryImg.toDataURL('image/png');
+                const imgWidth = 160;
+                const imgHeight = (categoryImg.height * imgWidth) / categoryImg.width;
+                
+                pdf.setFontSize(14);
+                pdf.setTextColor(50, 50, 50);
+                pdf.text('Spending by Category', 105, yPosition, { align: 'center' });
+                yPosition += 10;
+                
+                pdf.addImage(categoryImgData, 'PNG', 25, yPosition, imgWidth, imgHeight);
+                yPosition += imgHeight + 15;
+            }
+            {% endif %}
+            
+            {% if monthly_data %}
+            // Check if we need a new page
+            {% if category_data %}
+            if (yPosition > 200) {
+                pdf.addPage();
+                yPosition = 20;
+            }
+            {% endif %}
+            
+            // Monthly Chart
+            const monthlyCanvas = document.getElementById('monthlyChart');
+            if (monthlyCanvas) {
+                const monthlyImg = await html2canvas(monthlyCanvas, {
+                    backgroundColor: isDark ? '#3a3a3a' : '#ffffff',
+                    scale: 2
+                });
+                
+                const monthlyImgData = monthlyImg.toDataURL('image/png');
+                const imgWidth = 160;
+                const imgHeight = (monthlyImg.height * imgWidth) / monthlyImg.width;
+                
+                pdf.setFontSize(14);
+                pdf.setTextColor(50, 50, 50);
+                pdf.text('Monthly Spending Trend', 105, yPosition, { align: 'center' });
+                yPosition += 10;
+                
+                pdf.addImage(monthlyImgData, 'PNG', 25, yPosition, imgWidth, imgHeight);
+            }
+            {% endif %}
+            
+            // Save PDF
+            const fileName = 'spending-analytics-' + new Date().toISOString().split('T')[0] + '.pdf';
+            pdf.save(fileName);
+            
+            btn.innerHTML = '✅ Downloaded!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            btn.innerHTML = '❌ Error';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+    });
 </script>
 {% endif %}
 {% endblock %}
