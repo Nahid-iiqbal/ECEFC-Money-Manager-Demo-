@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Reschedule - {{ record.student_name }}{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>✏️ Edit Reschedule</h1>
+            <p class="subtitle"><strong>{{ record.student_name }}</strong> | ⏰ {{ record.tuition_time }}</p>
+        </div>
+
+        <!-- Edit Reschedule Form -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Update Reschedule Details</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('tuition.edit_reschedule', reschedule_id=reschedule.id) }}">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="original_date">Original Date</label>
+                            <input type="date" id="original_date" name="original_date" 
+                                   class="form-input" value="{{ reschedule.original_date.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="original_time">Original Time</label>
+                            <input type="time" id="original_time" name="original_time" 
+                                   class="form-input" value="{{ reschedule.original_time }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_date">New Date</label>
+                            <input type="date" id="new_date" name="new_date" 
+                                   class="form-input" value="{{ reschedule.new_date.strftime('%Y-%m-%d') }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_time">New Time</label>
+                            <input type="time" id="new_time" name="new_time" 
+                                   class="form-input" value="{{ reschedule.new_time }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reason">Reason (Optional)</label>
+                        <textarea id="reason" name="reason" rows="3" 
+                                  class="form-input" 
+                                  placeholder="E.g., Student has exam, family event, etc.">{{ reschedule.reason or '' }}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾 Update Reschedule</span>
+                        </button>
+                        <a href="{{ url_for('tuition.tuition_list') }}" class="btn btn-secondary">
+                            <span>← Back to Tuition</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.main-content {
+    padding: 2rem 1rem;
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-header .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    background: var(--bg-card);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    display: inline-block;
+    box-shadow: var(--shadow);
+    margin-top: 0.5rem;
+}
+
+.page-header .subtitle strong {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+}
+
+.card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--accent-red), #c0392b);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.form-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+/* Date and time inputs specific styling */
+input[type="date"],
+input[type="time"],
+textarea {
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"],
+[data-theme="dark"] textarea {
+    color-scheme: dark;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-red);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-red), #c0392b);
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-card);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
