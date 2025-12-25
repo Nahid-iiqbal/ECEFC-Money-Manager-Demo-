@@ -5,7 +5,11 @@ expense = Blueprint("expense", __name__)
 expenses = []  # In-memory list to store expenses for testing purposes
 @expense.route('/expenses')
 def view_expenses():
-    return render_template("expenses.html", expenses=expenses)
+    total = 0
+    for val in expenses:
+        total += val['amount']
+    return render_template("expenses.html", expenses=expenses, total=total)
+
 @expense.route('/add_expense', methods=['GET', 'POST'])
 def add_expense():
     name = request.form['name']

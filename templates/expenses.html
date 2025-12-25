@@ -1,23 +1,157 @@
-<h1>Expenses</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-<ul>
-    {% for e in expenses %}
-    <li>{{ e.name }} : {{ e.amount }}
+<head>
+    <meta charset="UTF-8">
+    <title>Expenses</title>
 
-    <form action="/expenses_pop" method="POST" style="display:inline;">
-        <input type="hidden" name="idx" value="{{ loop.index0 }}">
-        <button type="submit">Delete</button>
-    </form></li>
-    {% endfor %}
-</ul>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
 
-<h2>Add Expense</h2>
-<form action="/add_expense" method="POST">
-    Name: <input type="text" name="name" required><br>
-    Amount: <input type="number" name="amount" step="0.01" required><br>
-    <input type="submit" value="Add Expense">
-</form>
-<form action="/clear_expenses" method="POST">
-    <button type="submit">Clear All Expenses</button>
-</form>
+        .container {
+            width: 60%;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .total-box {
+            margin-top: 15px;
+            font-size: 18px;
+            text-align: right;
+        }
+
+        .clear-btn {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            background-color: #333;
+        }
+
+        .form-section {
+            margin-top: 25px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 45%;
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        .add-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Expense Manager</h1>
+
+        {% if expenses %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+
+            {% for e in expenses %}
+            <tr>
+                <td>{{ e.name }}</td>
+                <td>{{ e.amount }}</td>
+                <td>
+                    <form action="/expenses_pop" method="POST" style="display:inline;">
+                        <input type="hidden" name="idx" value="{{ loop.index0 }}">
+                        <button class="delete-btn" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty">No expenses added yet.</p>
+        {% endif %}
+
+        <div class="form-section">
+            <h3>Add Expense</h3>
+            <form action="/add_expense" method="POST">
+                <input type="text" name="name" placeholder="Expense name" required>
+                <input type="number" name="amount" placeholder="Amount" step="0.01" required>
+                <button class="add-btn" type="submit">Add</button>
+            </form>
+            <form action="/clear_expenses" method="POST" style="text-align:right; margin-top:15px;">
+                <button class="clear-btn" type="submit">Clear All Expenses</button>
+            </form>
+            <div class="total-box">
+                Total Expense: <strong>{{ total }}</strong>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
