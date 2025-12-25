@@ -196,6 +196,8 @@ input, select, textarea {
     font-size: 15px;
     transition: all 0.3s;
     font-family: inherit;
+    background-color: #0b18c9;
+    color: #f20505;
 }
 
 .form-group input:focus,
@@ -203,6 +205,22 @@ input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Dark theme support for inputs */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #4a4a4a;
+    color: #e8e8e8;
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 /* Auth Pages */
