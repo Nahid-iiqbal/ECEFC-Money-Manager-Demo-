@@ -1,150 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FeinBuddy</title>
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
-</head>
-<body data-theme="light">
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <h1 class="flicker">💰 FeinBuddy</h1>
-                <div class="header-right">
-                    <p class="welcome-text">Welcome back, <strong>{{ username }}</strong>!</p>
-                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Upside Down Mode">
-                        <span class="theme-icon">🌙</span>
-                        <span class="theme-label">Upside Down</span>
-                    </button>
-                </div>
-            </div>
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2 class="flicker">📊 Control Room</h2>
+    <p class="dashboard-subtitle">Track your expenses, groups, and tuition at a glance</p>
+</div>
+
+<!-- Profile Alert if not created -->
+{% if not current_user.profile %}
+<div class="profile-alert">
+    <div class="alert alert-info">
+        <strong>👤 Complete Your Profile!</strong>
+        <p>Set up your profile to unlock all features.</p>
+        <a href="{{ url_for('profile.create_profile') }}" class="btn btn-sm">Create Profile</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="summary-cards">
+    <div class="summary-card card-purple">
+        <div class="card-icon">💰</div>
+        <div class="card-content">
+            <h3>Personal Expenses</h3>
+            <p class="card-subtitle">This Month</p>
+            <p class="card-amount">৳{{ "%.2f"|format(personal_this_month) }}</p>
         </div>
-    </header>
+    </div>
     
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('dashboard.dashboard') }}" class="active">Dashboard</a></li>
-            <li><a href="{{ url_for('expense.personal') }}">Personal Expenses</a></li>
-            <li><a href="{{ url_for('group.group_list') }}">Groups</a></li>
-            <li><a href="{{ url_for('tuition.tuition_list') }}">Tuition</a></li>
-            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-        </ul>
-    </nav>
+    <div class="summary-card card-blue">
+        <div class="card-icon">👥</div>
+        <div class="card-content">
+            <h3>Group Balance</h3>
+            <p class="card-subtitle">Outstanding</p>
+            <p class="card-amount {{ balance_status }}">
+                {% if group_balance >= 0 %}
+                    +৳{{ "%.2f"|format(group_balance) }}
+                {% else %}
+                    -৳{{ "%.2f"|format(group_balance|abs) }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
     
-    <main class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
+    <div class="summary-card card-orange">
+        <div class="card-icon">🎓</div>
+        <div class="card-content">
+            <h3>Pending Tuition</h3>
+            <p class="card-subtitle">Due Amount</p>
+            <p class="card-amount">৳{{ "%.2f"|format(pending_tuition) }}</p>
+        </div>
+    </div>
+    
+    <div class="summary-card card-green">
+        <div class="card-icon">📅</div>
+        <div class="card-content">
+            <h3>Total Expenses</h3>
+            <p class="card-subtitle">All Time</p>
+            <p class="card-amount">৳{{ "%.2f"|format(total_all_time) }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions-section">
+    <h3>⚡ Quick Actions</h3>
+    <div class="quick-actions">
+        <button class="action-btn btn-purple" onclick="window.location.href='{{ url_for('expense.personal') }}'">
+            <span class="btn-icon">➕</span>
+            Add Personal Expense
+        </button>
+        <button class="action-btn btn-blue" disabled style="opacity: 0.5; cursor: not-allowed;">
+            <span class="btn-icon">➕</span>
+            Add Group Expense
+        </button>
+        <button class="action-btn btn-orange" disabled style="opacity: 0.5; cursor: not-allowed;">
+            <span class="btn-icon">➕</span>
+            Add Tuition Payment
+        </button>
+    </div>
+</div>
+
+<div class="recent-activity-section">
+    <h3>📝 Recent Activity</h3>
+    
+    {% if recent_activities %}
+        <div class="activity-list">
+            {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <div class="activity-icon {{ activity.type|lower }}">
+                        {% if activity.type == 'Personal' %}💰
+                        {% elif activity.type == 'Group' %}👥
+                        {% else %}🎓{% endif %}
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <div class="dashboard-header">
-            <h2 class="flicker">📊 Control Room</h2>
-            <p class="dashboard-subtitle">Track your expenses, groups, and tuition at a glance</p>
-        </div>
-        
-        <div class="summary-cards">
-            <div class="summary-card card-purple">
-                <div class="card-icon">💰</div>
-                <div class="card-content">
-                    <h3>Personal Expenses</h3>
-                    <p class="card-subtitle">This Month</p>
-                    <p class="card-amount">৳{{ personal_this_month }}</p>
-                </div>
-            </div>
-            
-            <div class="summary-card card-blue">
-                <div class="card-icon">👥</div>
-                <div class="card-content">
-                    <h3>Group Balance</h3>
-                    <p class="card-subtitle">Outstanding</p>
-                    <p class="card-amount {{ balance_status }}">
-                        {% if group_balance >= 0 %}
-                            +৳{{ group_balance }}
-                        {% else %}
-                            -৳{{ group_balance|abs }}
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-            
-            <div class="summary-card card-orange">
-                <div class="card-icon">🎓</div>
-                <div class="card-content">
-                    <h3>Pending Tuition</h3>
-                    <p class="card-subtitle">Due Amount</p>
-                    <p class="card-amount">৳{{ pending_tuition }}</p>
-                </div>
-            </div>
-            
-            <div class="summary-card card-green">
-                <div class="card-icon">📅</div>
-                <div class="card-content">
-                    <h3>Total Expenses</h3>
-                    <p class="card-subtitle">All Time</p>
-                    <p class="card-amount">৳{{ total_all_time }}</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="quick-actions-section">
-            <h3>⚡ Quick Actions</h3>
-            <div class="quick-actions">
-                <button class="action-btn btn-purple" disabled style="opacity: 0.5; cursor: not-allowed;">
-                    <span class="btn-icon">➕</span>
-                    Add Personal Expense
-                </button>
-                <button class="action-btn btn-blue" disabled style="opacity: 0.5; cursor: not-allowed;">
-                    <span class="btn-icon">➕</span>
-                    Add Group Expense
-                </button>
-                <button class="action-btn btn-orange" disabled style="opacity: 0.5; cursor: not-allowed;">
-                    <span class="btn-icon">➕</span>
-                    Add Tuition Payment
-                </button>
-            </div>
-        </div>
-        
-        <div class="recent-activity-section">
-            <h3>📝 Recent Activity</h3>
-            
-            {% if recent_activities %}
-                <div class="activity-list">
-                    {% for activity in recent_activities %}
-                        <div class="activity-item">
-                            <div class="activity-icon {{ activity.type|lower }}">
-                                {% if activity.type == 'Personal' %}💰
-                                {% elif activity.type == 'Group' %}👥
-                                {% else %}🎓{% endif %}
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-header">
-                                    <span class="activity-type badge-{{ activity.type|lower }}">{{ activity.type }}</span>
-                                    <span class="activity-date">{{ activity.date }}</span>
-                                </div>
-                                <p class="activity-description">{{ activity.description }}</p>
-                            </div>
-                            <div class="activity-amount">৳{{ activity.amount }}</div>
+                    <div class="activity-details">
+                        <div class="activity-header">
+                            <span class="activity-type badge-{{ activity.type|lower }}">{{ activity.type }}</span>
+                            <span class="activity-date">{{ activity.date }}</span>
                         </div>
-                    {% endfor %}
+                        <p class="activity-description">{{ activity.description }}</p>
+                    </div>
+                    <div class="activity-amount">৳{{ activity.amount }}</div>
                 </div>
-            {% else %}
-                <div class="empty-state">
-                    <p class="empty-icon">📭</p>
-                    <p class="empty-text">No recent activity yet</p>
-                    <p class="empty-subtext">Start by adding your first expense!</p>
-                </div>
-            {% endif %}
+            {% endfor %}
         </div>
-    </main>
-    
-    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-</html>
+    {% else %}
+        <div class="empty-state">
+            <p class="empty-icon">📭</p>
+            <p class="empty-text">No recent activity yet</p>
+            <p class="empty-subtext">Start by adding your first expense!</p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

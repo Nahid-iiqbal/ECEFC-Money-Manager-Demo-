@@ -1,229 +1,150 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Expenses</title>
+{% block title %}Personal Expenses - FeinBuddy{% endblock %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/personal.css') }}" rel="stylesheet">
+{% endblock %}
 
-        .container {
-            width: 60%;
-            margin: 40px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+{% block content %}
+<div class="expense-page">
+    <div class="page-header">
+        <h1 class="page-title">💳 Personal Expense Manager</h1>
+        <p class="page-subtitle">Track and manage your personal spending</p>
+    </div>
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f0f0f0;
-        }
-
-        .delete-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .delete-btn:hover {
-            background-color: #c0392b;
-        }
-
-        .total-box {
-            margin-top: 15px;
-            font-size: 18px;
-            text-align: right;
-        }
-
-        .clear-btn {
-            background-color: #555;
-            color: white;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .clear-btn:hover {
-            background-color: #333;
-        }
-
-        .form-section {
-            margin-top: 25px;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select,
-        textarea {
-            width: 45%;
-            padding: 8px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        textarea {
-            width: 92%;
-            resize: vertical;
-        }
-
-        select {
-            width: 47%;
-        }
-
-        .category-badge {
-            background-color: #3498db;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-
-        .category-summary {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-
-        .category-summary h4 {
-            margin-top: 0;
-        }
-
-        .category-summary ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .category-summary li {
-            padding: 5px 0;
-        }
-
-        .add-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .add-btn:hover {
-            background-color: #2980b9;
-        }
-
-        .empty {
-            text-align: center;
-            color: #777;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <h1>Expense Manager</h1>
-
+    <!-- Expense List Section -->
+    <section class="expense-list-section" aria-labelledby="expense-list-title">
+        <h2 id="expense-list-title" class="section-title">Your Expenses</h2>
+        
         {% if expenses %}
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Action</th>
-            </tr>
+        <div class="table-wrapper">
+            <table class="expense-table" role="table">
+                <thead>
+                    <tr role="row">
+                        <th scope="col" role="columnheader">Date</th>
+                        <th scope="col" role="columnheader">Name</th>
+                        <th scope="col" role="columnheader">Category</th>
+                        <th scope="col" role="columnheader">Amount</th>
+                        <th scope="col" role="columnheader">Description</th>
+                        <th scope="col" role="columnheader">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in expenses %}
+                    <tr role="row" class="expense-row">
+                        <td role="cell" data-label="Date">{{ e.date.strftime('%Y-%m-%d') if e.date else 'N/A' }}</td>
+                        <td role="cell" data-label="Name">{{ e.name }}</td>
+                        <td role="cell" data-label="Category">
+                            <span class="category-badge category-{{ (e.category|lower) if e.category else 'other' }}">
+                                {{ e.category if e.category else 'Other' }}
+                            </span>
+                        </td>
+                        <td role="cell" data-label="Amount" class="amount">৳{{ "%.2f"|format(e.amount) }}</td>
+                        <td role="cell" data-label="Description" class="description">
+                            {{ (e.description[:50] + '...') if (e.description and e.description|length > 50) else (e.description or '-') }}
+                        </td>
+                        <td role="cell" data-label="Action">
+                            <form action="{{ url_for('expense.delete_expense', expense_id=e.id) }}" method="POST" style="display:inline;">
+                                <button class="btn btn-delete" type="submit" aria-label="Delete expense: {{ e.name }}">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-            {% for e in expenses %}
-            <tr>
-                <td>{{ e.date.strftime('%Y-%m-%d') if e.date else 'N/A' }}</td>
-                <td>{{ e.name }}</td>
-                <td><span class="category-badge">{{ e.category if e.category else 'Other' }}</span></td>
-                <td>৳{{ "%.2f"|format(e.amount) }}</td>
-                <td>{{ (e.description[:50] + '...') if (e.description and e.description|length > 50) else (e.description or '-') }}</td>
-                <td>
-                    <form action="/expenses_pop" method="POST" style="display:inline;">
-                        <input type="hidden" name="id" value="{{ e.id }}">
-                        <button class="delete-btn" type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <p class="empty">No expenses added yet.</p>
-        {% endif %}
-
-        <div class="form-section">
-            <h3>Add Expense</h3>
-            <form action="/personal/add" method="POST">
-                <input type="text" name="name" placeholder="Expense name" required>
-                <input type="number" name="amount" placeholder="Amount" step="0.01" required>
-                <select name="category" required>
-                    <option value="">Select Category</option>
-                    <option value="Food">Food</option>
-                    <option value="Transport">Transport</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Bills">Bills</option>
-                    <option value="Health">Health</option>
-                    <option value="Education">Education</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input type="date" name="date" value="{{ today }}" required>
-                <textarea name="description" placeholder="Description (optional)" rows="2"></textarea>
-                <button class="add-btn" type="submit">Add Expense</button>
-            </form>
-            <form action="/clear_expenses" method="POST" style="text-align:right; margin-top:15px;">
-                <button class="clear-btn" type="submit">Clear All Expenses</button>
-            </form>
+        <div class="expense-summary">
             <div class="total-box">
-                Total Expense: <strong>৳{{ "%.2f"|format(total) }}</strong>
+                <span class="total-label">Total Expenses:</span>
+                <span class="total-amount">৳{{ "%.2f"|format(total) }}</span>
             </div>
+            
             {% if category_totals %}
             <div class="category-summary">
-                <h4>Spending by Category:</h4>
-                <ul>
-                {% for category, amount in category_totals.items() %}
-                    <li>{{ category }}: ৳{{ "%.2f"|format(amount) }}</li>
-                {% endfor %}
+                <h3>Spending by Category</h3>
+                <ul class="category-list">
+                    {% for category, amount in category_totals.items() %}
+                    <li class="category-item">
+                        <span class="category-name">{{ category }}:</span>
+                        <span class="category-amount">৳{{ "%.2f"|format(amount) }}</span>
+                    </li>
+                    {% endfor %}
                 </ul>
             </div>
             {% endif %}
         </div>
-    </div>
+        {% else %}
+        <div class="empty-state">
+            <p class="empty-message">📭 No expenses added yet.</p>
+            <p class="empty-hint">Add your first expense using the form below!</p>
+        </div>
+        {% endif %}
+    </section>
 
-</body>
+    <!-- Add Expense Form Section -->
+    <section class="add-expense-section" aria-labelledby="add-expense-title">
+        <h2 id="add-expense-title" class="section-title">Add New Expense</h2>
+        
+        <form action="{{ url_for('expense.add_expense') }}" method="POST" class="expense-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="expense-name">Expense Name <span class="required">*</span></label>
+                    <input type="text" id="expense-name" name="name" placeholder="e.g., Groceries" required 
+                           aria-required="true" class="form-input">
+                </div>
 
-</html>
+                <div class="form-group">
+                    <label for="expense-amount">Amount <span class="required">*</span></label>
+                    <input type="number" id="expense-amount" name="amount" placeholder="0.00" step="0.01" 
+                           required aria-required="true" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-category">Category <span class="required">*</span></label>
+                    <select id="expense-category" name="category" required aria-required="true" class="form-select">
+                        <option value="">Select Category</option>
+                        <option value="Food">🍔 Food</option>
+                        <option value="Transport">🚗 Transport</option>
+                        <option value="Entertainment">🎬 Entertainment</option>
+                        <option value="Shopping">🛍️ Shopping</option>
+                        <option value="Bills">💡 Bills</option>
+                        <option value="Health">⚕️ Health</option>
+                        <option value="Education">📚 Education</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-date">Date <span class="required">*</span></label>
+                    <input type="date" id="expense-date" name="date" value="{{ today }}" 
+                           required aria-required="true" class="form-input">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="expense-description">Description (Optional)</label>
+                <textarea id="expense-description" name="description" rows="3" 
+                          placeholder="Add any additional details..." class="form-textarea"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    ➕ Add Expense
+                </button>
+                {% if expenses %}
+                <button type="button" class="btn btn-secondary" onclick="if(confirm('Are you sure you want to clear all expenses?')) { document.getElementById('clearForm').submit(); }">
+                    🗑️ Clear All
+                </button>
+                {% endif %}
+            </div>
+        </form>
+
+        <!-- Hidden Clear Form -->
+        <form id="clearForm" action="{{ url_for('expense.clear_expenses') }}" method="POST" style="display:none;"></form>
+    </section>
+</div>
+{% endblock %}

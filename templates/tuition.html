@@ -1,39 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Tuition Management</h1>
-    <div class="body-section">
-        <div class = "tuition_list">
-            <h2>Tuition Entries</h2>
+{% extends "base.html" %}
+
+{% block title %}Tuition - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/tuition.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">🎓 Tuition Management</h1>
+    <p class="page-subtitle">Track and manage tuition payments</p>
+</div>
+
+<section class="tuition-section">
+    <h2 class="section-title">Tuition Entries</h2>
+    
+    {% if tuitions %}
+        <div class="tuition-list">
             {% for tuition in tuitions %}
                 <div class="tuition-entry">
-                    <div class ="tuition-id">
-                        <p><strong>ID:</strong> {{ tuition.id }}</p>
-
+                    <div class="tuition-id">
+                        <span class="badge">ID: {{ tuition.id }}</span>
                     </div>
-                    <div class ="tuition-details">
+                    <div class="tuition-details">
                         <p><strong>Student:</strong> {{ tuition.student_name }}</p>
                         <p><strong>Salary:</strong> ${{ tuition.salery }}</p>
                         <p><strong>Due Date:</strong> {{ tuition.due_date }}</p>
                     </div>
                 </div>
-            {% else %}
-                <p>No tuition entries found.</p>
             {% endfor %}
         </div>
-        <div class = "calendar_view">
-            
+    {% else %}
+        <div class="empty-state">
+            <p class="empty-icon">🎓</p>
+            <p class="empty-message">No tuition entries found</p>
+            <p class="empty-hint">Add your first tuition entry to get started!</p>
         </div>
-
-    </div>
+    {% endif %}
+    
     <div class="button-section">
-        <button class="btn-main">Add Tuition</button>
-        <button class="btn-secondary">Remove Tuition</button>
+        <button class="btn btn-primary">➕ Add Tuition</button>
+        <button class="btn btn-secondary">🗑️ Remove Tuition</button>
     </div>
-</body>
-</html>
+</section>
+{% endblock %}

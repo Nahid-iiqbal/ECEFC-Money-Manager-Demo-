@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, session, redirect, url_for, flash
 from flask_login import login_required, current_user
-from routes.database import db, User
+from routes.database import db, User, Expense
 from datetime import datetime, timedelta
+from sqlalchemy import text, func
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -10,15 +11,76 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @login_required
 def dashboard():
     """Main dashboard page showing overview and recent activity."""
-    # Placeholder data - will be replaced with real data when other blueprints are enabled
+    
+    today = datetime.now()
+    first_day_of_month = today.replace(day=1)
+    
+    # Check if expense table has required columns
+    result = db.session.execute(text("PRAGMA table_info(expense)"))
+    existing_columns = [row[1] for row in result.fetchall()]
+    has_date_column = 'date' in existing_columns
+    has_category_column = 'category' in existing_columns
+    
+    # Get personal expenses this month
+    if has_date_column:
+        personal_this_month = db.session.query(func.sum(Expense.amount)).filter(
+            Expense.user_id == current_user.id,
+            Expense.date >= first_day_of_month
+        ).scalar() or 0
+    else:
+        personal_this_month = 0
+    
+    # Get all-time personal expenses using raw SQL
+    total_result = db.session.execute(
+        text("SELECT COALESCE(SUM(amount), 0) as total FROM expense WHERE user_id = :user_id"),
+        {"user_id": current_user.id}
+    ).fetchone()
+    total_all_time = total_result[0] if total_result else 0
+    
+    # Get recent expense activities using raw SQL
+    if has_category_column and has_date_column:
+        # New schema with all columns
+        recent_result = db.session.execute(
+            text("SELECT id, name, amount, category, description, date FROM expense WHERE user_id = :user_id ORDER BY id DESC LIMIT 5"),
+            {"user_id": current_user.id}
+        ).fetchall()
+    else:
+        # Old schema with basic columns only
+        recent_result = db.session.execute(
+            text("SELECT id, name, amount FROM expense WHERE user_id = :user_id ORDER BY id DESC LIMIT 5"),
+            {"user_id": current_user.id}
+        ).fetchall()
+    
+    recent_activities = []
+    for row in recent_result:
+        if has_category_column and has_date_column:
+            activity = {
+                'type': 'Personal',
+                'description': row[1],  # name
+                'amount': f"{row[2]:.2f}",  # amount
+                'date': row[5].strftime('%Y-%m-%d') if row[5] else 'N/A'  # date
+            }
+        else:
+            activity = {
+                'type': 'Personal',
+                'description': row[1],  # name
+                'amount': f"{row[2]:.2f}",  # amount
+                'date': 'N/A'
+            }
+        recent_activities.append(activity)
+    
+    # Placeholder for group and tuition data
+    group_balance = 0
+    pending_tuition = 0
+    
     return render_template('dashboard.html',
                            username=current_user.username,
-                           personal_this_month=0,
-                           group_balance=0,
+                           personal_this_month=personal_this_month,
+                           group_balance=group_balance,
                            balance_status='neutral',
-                           pending_tuition=0,
-                           total_all_time=0,
-                           recent_activities=[])
+                           pending_tuition=pending_tuition,
+                           total_all_time=total_all_time,
+                           recent_activities=recent_activities)
 
     today = datetime.now()
     first_day_of_month = today.replace(day=1).strftime('%Y-%m-%d')

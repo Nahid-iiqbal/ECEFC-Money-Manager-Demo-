@@ -5,6 +5,7 @@ from routes.expense import expense
 from routes.dashboard import dashboard_bp
 from routes.group import group_bp
 from routes.tuition_app import tuition_bp
+from routes.profile import profile_bp
 from flask_login import LoginManager, current_user
 import os
 
@@ -42,6 +43,7 @@ app.register_blueprint(expense)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(group_bp)
 app.register_blueprint(tuition_bp)
+app.register_blueprint(profile_bp)
 
 @app.route('/')
 def home():
