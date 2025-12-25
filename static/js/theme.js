@@ -56,7 +56,7 @@
         
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
         if (!localStorage.getItem(THEME_KEY)) {
-            applyTheme(prefersLight.matches ? 'dark' : 'light');
+            applyTheme(prefersDark.matches ? 'dark' : 'light');
         }
     }
     

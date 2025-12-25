@@ -138,6 +138,65 @@ def update_completed(record_id, action):
     return redirect(url_for('tuition.tuition_list'))
 
 
+@tuition_bp.route('/tuition/edit/<int:record_id>', methods=['GET', 'POST'])
+@login_required
+def edit_tuition(record_id):
+    """Edit an existing tuition record."""
+    user_id = current_user.id
+
+    # Find and verify ownership
+    record = TuitionRecord.query.filter_by(
+        id=record_id, user_id=user_id).first()
+
+    if not record:
+        flash('Record not found!', 'error')
+        return redirect(url_for('tuition.tuition_list'))
+
+    if request.method == 'GET':
+        return render_template('editTuition.html', record=record)
+
+    # Handle POST request
+    student_name = request.form.get('student_name')
+    total_days = request.form.get('total_days')
+    total_completed = request.form.get('total_completed', 0)
+    address = request.form.get('address')
+    amount = request.form.get('amount')
+    tuition_time = request.form.get('tuition_time')
+    days = request.form.getlist('days')
+
+    # Validation
+    if not all([student_name, total_days, address, amount]):
+        flash('Please fill in all required fields!', 'error')
+        return redirect(url_for('tuition.edit_tuition', record_id=record_id))
+
+    try:
+        amount = float(amount)
+        total_days = int(total_days)
+        total_completed = int(total_completed)
+        if amount <= 0 or total_days <= 0 or total_completed < 0:
+            raise ValueError("Amount and total days must be positive")
+        if total_completed > total_days:
+            raise ValueError("Completed days cannot exceed total days")
+        days = [int(day) for day in days] if days else []
+    except ValueError as e:
+        flash(f'Invalid input: {str(e)}', 'error')
+        return redirect(url_for('tuition.edit_tuition', record_id=record_id))
+
+    # Update record
+    record.student_name = student_name
+    record.total_days = total_days
+    record.total_completed = total_completed
+    record.address = address
+    record.amount = amount
+    record.tuition_time = tuition_time if tuition_time else None
+    record.days = days if days else None
+
+    db.session.commit()
+
+    flash('Tuition record updated successfully!', 'success')
+    return redirect(url_for('tuition.tuition_list'))
+
+
 @tuition_bp.route('/tuition/delete/<int:record_id>', methods=['POST'])
 @login_required
 def delete_tuition(record_id):

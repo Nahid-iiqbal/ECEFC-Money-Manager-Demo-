@@ -1,194 +1,140 @@
-/* --- Dark Theme & Glassmorphism Variables --- */
 :root {
-    --bg-gradient: linear-gradient(135deg, #1e0533 0%, #110b29 100%);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --text-main: #ffffff;
-    --text-muted: #b3b3b3;
-    --accent-color: #00d2ff;
-    --accent-gradient: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    --danger-gradient: linear-gradient(90deg, #ff416c, #ff4b2b);
+    --bg-primary: #f7f9fc;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-tertiary: #888;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+    --accent-red: #e74c3c;
+    --accent-purple: #667eea;
+    --accent-blue: #4299e1;
+    --accent-orange: #f6ad55;
+    --accent-green: #48bb78;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-card: #3a3a3a;
+    --text-primary: #e8e8e8;
+    --text-secondary: #b8b8b8;
+    --text-tertiary: #999999;
+    --border-color: rgba(231, 76, 60, 0.3);
+    --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
+    --shadow-md: 0 4px 20px rgba(231, 76, 60, 0.2);
+    --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
+    --accent-red: #ff6b6b;
+    --accent-purple: #8b7eea;
+    --accent-blue: #5bb5f7;
+    --accent-orange: #ffb866;
+    --accent-green: #5ed88f;
 }
 
-body {
-    font-family: 'Inter', Helvetica, Arial, sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-main);
-    min-height: 100vh;
-    padding: 40px 20px;
-}
-
-/* --- Typography --- */
-h1 {
-    text-align: center;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-    background: -webkit-linear-gradient(#fff, #999);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
-    width: 100%;
-    position: relative;
-}
-
-h1::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 650px;
-    height: 80px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: var(--glass-border);
-    border-radius: 50px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    z-index: -1;
-}
-
-h2 {
-    font-size: 1.2rem;
-    color: var(--accent-color);
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 10px;
-}
-
-/* --- Alert Messages --- */
-.alert {
-    max-width: 1100px;
-    margin: 0 auto 20px auto;
-    padding: 15px 20px;
-    border-radius: 12px;
-    font-size: 14px;
-    animation: slideDown 0.4s ease-out;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: var(--glass-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.alert-error {
-    border-left: 4px solid #ff416c;
-    color: #ffcdd2;
-}
-
-.alert-success {
-    border-left: 4px solid #4caf50;
-    color: #c8e6c9;
-}
-
-.alert-warning {
-    border-left: 4px solid #ff9800;
-    color: #ffe0b2;
-}
-
-.alert-info {
-    border-left: 4px solid var(--accent-color);
-    color: #b3e5fc;
-}
-
-/* --- Layout --- */
-.body-section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 25px;
-    max-width: 1100px;
+/* Page Layout */
+.expense-page {
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-/* --- Glass Container Styling --- */
-.tuition_list, .calendar_view {
-    flex: 1;
-    min-width: 320px;
-    height: 70vh;
-    min-height: 600px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: var(--glass-border);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-
-}
-/* Custom Scrollbar for both containers */
-.tuition_list::-webkit-scrollbar,
-.calendar_view::-webkit-scrollbar {
-    width: 8px;
+/* Navigation styling */
+nav a {
+    color: #8B2833 !important;
 }
 
-/* The background track of the scrollbar */
-.tuition_list::-webkit-scrollbar-track,
-.calendar_view::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2); 
-    border-radius: 10px;
+nav a:hover {
+    color: #D32F2F !important;
 }
 
-/* The moving part of the scrollbar (The Thumb) */
-.tuition_list::-webkit-scrollbar-thumb,
-.calendar_view::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-    border-radius: 10px;
+nav a.active {
+    color: #D32F2F !important;
+    border-bottom-color: #D32F2F !important;
 }
 
-/* Hover effect on the scrollbar thumb */
-.tuition_list::-webkit-scrollbar-thumb:hover,
-.calendar_view::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color); /* Turns blue when you grab it */
+/* Dark mode navigation colors */
+[data-theme="dark"] nav a {
+    color: #ff9999 !important;
+}
+
+[data-theme="dark"] nav a:hover {
+    color: #ffcccc !important;
+}
+
+[data-theme="dark"] nav a.active {
+    color: #ff6b6b !important;
+    border-bottom-color: #ff6b6b !important;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Section Styles */
+section {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.3s ease;
+}
+
+section:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid var(--accent-red);
+    font-weight: 600;
 }
 
 
 
-/* --- Tuition Entries --- */
+/* Tuition Entries */
+.tuition-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .tuition-entry {
-    background: rgba(0, 0, 0, 0.2);
-    border-left: 4px solid var(--accent-color);
-    border-radius: 0 8px 8px 0;
-    padding: 15px;
-    margin-bottom: 15px;
+    background-color: var(--bg-secondary);
+    border-left: 4px solid var(--accent-red);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     transition: all 0.3s ease;
+    box-shadow: var(--shadow);
 }
 
 .tuition-entry:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(5px);
-}
-
-.tuition-id {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 5px;
+    box-shadow: var(--shadow-hover);
+    transform: translateX(3px);
 }
 
 .tuition-details {
@@ -196,249 +142,325 @@ h2 {
 }
 
 .tuition-details p {
-    margin: 4px 0;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.6;
 }
 
 .tuition-details p strong {
-    color: #fff;
-    margin-right: 5px;
+    color: var(--text-primary);
+    margin-right: 0.5rem;
+    font-weight: 600;
 }
 
-.tuition-details p:nth-child(2) {
-    color: #2ecc71;
-    font-weight: bold;
+/* Entry Actions Container */
+.entry-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
-/* Delete Button */
-.btn-delete {
-    background: var(--danger-gradient);
+/* Edit Button */
+.btn-edit {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     border: none;
     color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(255, 65, 108, 0.3);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+}
+
+.btn-edit:active {
+    transform: translateY(0);
+}
+
+/* Delete Button */
+.btn-delete {
+    background: linear-gradient(135deg, var(--accent-red), #c0392b);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
     flex-shrink: 0;
 }
 
 .btn-delete:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(135deg, #c0392b, var(--accent-red));
 }
 
 .btn-delete:active {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 
 /* Progress Update Buttons */
 .btn-progress {
-    background: var(--accent-gradient);
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     border: none;
     color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 210, 255, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
 }
 
 .btn-progress:hover:not(:disabled) {
-    transform: scale(1.15);
-    box-shadow: 0 4px 12px rgba(0, 210, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
 .btn-progress:active:not(:disabled) {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 
 .btn-progress:disabled {
-    opacity: 0.3;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
 .progress-text {
     font-weight: 600;
-    color: var(--accent-color);
+    color: var(--text-primary);
+    padding: 0 0.5rem;
 }
 
 /* Clear Button */
 .btn-clear {
-    background: linear-gradient(90deg, #ff9800, #ff5722);
+    background: linear-gradient(135deg, var(--accent-orange), #e67e22);
     border: none;
     color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
 }
 
 .btn-clear:hover:not(:disabled) {
-    transform: scale(1.15);
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
 .btn-clear:active:not(:disabled) {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 
 .btn-clear:disabled {
-    opacity: 0.3;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* --- Calendar Section --- */
+/* Calendar Section */
 .calendar_view {
-    min-height: 600px;
-    display: block;
+    margin-top: 2rem;
+}
+
+.calendar_view h2 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid var(--accent-red);
+    font-weight: 600;
 }
 
 .weekly-schedule {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
 }
 
 .weekly-schedule thead {
-    background: rgba(0, 210, 255, 0.1);
+    background-color: var(--bg-secondary);
 }
 
 .weekly-schedule th {
-    padding: 12px;
+    padding: 1rem;
     text-align: left;
-    color: var(--accent-color);
+    color: var(--text-primary);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.9rem;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .weekly-schedule .day-column {
-    width: 120px;
+    width: 140px;
 }
 
 .weekly-schedule tbody tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .weekly-schedule tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background-color: var(--bg-secondary);
 }
 
 .day-name {
-    padding: 15px 12px;
+    padding: 1rem;
     font-weight: 600;
-    color: var(--text-main);
+    color: var(--text-primary);
     vertical-align: top;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(var(--accent-red), 0.05);
 }
 
 .schedule-cell {
-    padding: 15px 12px;
-    color: var(--text-muted);
-    min-height: 50px;
+    padding: 1rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .schedule-item {
-    background: rgba(0, 210, 255, 0.1);
-    padding: 8px 12px;
+    background-color: var(--bg-secondary);
+    padding: 0.75rem 1rem;
     border-radius: 6px;
-    margin-bottom: 8px;
-    border-left: 3px solid var(--accent-color);
-    font-size: 0.9rem;
-    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    border-left: 3px solid var(--accent-red);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
 }
 
 .schedule-item:last-child {
     margin-bottom: 0;
 }
 
-/* Schedule Items Wrapper - for multiple tuitions per day */
 .schedule-items-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .schedule-items-wrapper .schedule-item {
-    flex: 0 1 auto;
-    min-width: 150px;
     margin-bottom: 0;
 }
 
-/* --- Buttons --- */
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-message {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-hint {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Button Section */
 .button-section {
-    margin-top: 40px;
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 1rem;
 }
 
-button {
+.btn {
     border: none;
-    padding: 15px 40px;
-    border-radius: 30px;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
     color: white;
     font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
-button:active {
-    transform: scale(0.95);
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-red), #c0392b);
 }
 
-.btn-main {
-    background: var(--accent-gradient);
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
-.btn-main:hover {
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+.btn-primary:active {
+    transform: translateY(0);
 }
 
-.btn-secondary {
-    background: var(--danger-gradient);
-}
-
-.btn-secondary:hover {
-    box-shadow: 0 0 20px rgba(255, 65, 108, 0.5);
-}
-.btn-ret{
-    background: #555555;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-/* --- Mobile --- */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .body-section {
-        flex-direction: column;
+    .page-title {
+        font-size: 2rem;
     }
-    .tuition_list, .calendar_view {
-        width: 100%;
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .tuition-entry {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .btn-delete {
+        align-self: flex-end;
+    }
+    
+    .weekly-schedule {
+        font-size: 0.9rem;
+    }
+    
+    .day-column {
+        width: 100px;
     }
 }

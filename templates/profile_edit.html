@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="page-header">
+        <h1 class="page-title">✏️ Edit Profile</h1>
+        <p class="page-subtitle">Update your profile information</p>
+    </div>
+
+    <section class="profile-form-section">
+        <form action="{{ url_for('profile.edit_profile') }}" method="POST" enctype="multipart/form-data" class="profile-form">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="profile-name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="profile-name" name="profile_name" value="{{ profile.profile_name }}" 
+                           placeholder="John Doe" required aria-required="true" class="form-input">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="picture">Profile Picture</label>
+                    {% if profile.picture_filename %}
+                        <div class="current-picture">
+                            <img src="{{ url_for('static', filename='uploads/profiles/' + profile.picture_filename) }}" 
+                                 alt="Current Profile Picture" class="picture-preview">
+                        </div>
+                    {% endif %}
+                    <input type="file" id="picture" name="picture" accept="image/png,image/jpeg,image/jpg,image/webp" 
+                           class="form-input file-input">
+                    <small class="form-hint">Upload a new picture to replace the current one</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="profession">Profession <span class="required">*</span></label>
+                    <input type="text" id="profession" name="profession" value="{{ profile.profession }}" 
+                           placeholder="e.g., Student, Engineer, Teacher" required aria-required="true" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="institution">Institution <span class="required">*</span></label>
+                    <input type="text" id="institution" name="institution" value="{{ profile.institution }}" 
+                           placeholder="e.g., University Name, Company" required aria-required="true" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="date-of-birth">Date of Birth <span class="required">*</span></label>
+                    <input type="date" id="date-of-birth" name="date_of_birth" 
+                           value="{{ profile.date_of_birth.strftime('%Y-%m-%d') }}" 
+                           required aria-required="true" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="grade">Grade/Year (Optional)</label>
+                    <input type="text" id="grade" name="grade" value="{{ profile.grade or '' }}" 
+                           placeholder="e.g., 10th Grade, Senior Year" class="form-input">
+                    <small class="form-hint">Only if applicable (students)</small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    💾 Save Changes
+                </button>
+                <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">
+                    ❌ Cancel
+                </a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

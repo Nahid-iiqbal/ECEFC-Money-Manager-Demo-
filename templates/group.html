@@ -1,11 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Groups - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/group.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">👥 Group Management</h1>
+    <p class="page-subtitle">Manage shared expenses with your groups</p>
+</div>
+
+<section class="groups-section">
+    <div class="empty-state">
+        <p class="empty-icon">👥</p>
+        <p class="empty-message">Group management coming soon!</p>
+        <p class="empty-hint">This feature is under development.</p>
+    </div>
+</section>
+{% endblock %}

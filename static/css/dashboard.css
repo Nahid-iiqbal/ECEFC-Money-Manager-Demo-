@@ -16,16 +16,16 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #484545;
-    --bg-secondary: #797474;
-    --bg-card: #7b5555;
-    --text-primary: #271414;
-    --text-secondary: #bd2727;
-    --text-tertiary: #700808;
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-card: #3a3a3a;
+    --text-primary: #e8e8e8;
+    --text-secondary: #b8b8b8;
+    --text-tertiary: #999999;
     --border-color: rgba(231, 76, 60, 0.3);
     --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
-    --accent-red: #ff4444;
+    --accent-red: #ff6b6b;
     --accent-purple: #8b7eea;
     --accent-blue: #5bb5f7;
     --accent-orange: #ffb866;
@@ -33,6 +33,15 @@
 }
 
 /* Dashboard-specific nav styling */
+body {
+    background-color: var(--bg-primary);
+}
+
+main {
+    background-color: var(--bg-primary);
+    padding-top: 1rem;
+}
+
 nav a {
     color: #8B2833 !important;
 }
@@ -44,6 +53,20 @@ nav a:hover {
 nav a.active {
     color: #D32F2F !important;
     border-bottom-color: #D32F2F !important;
+}
+
+/* Dark mode navigation colors for dashboard */
+[data-theme="dark"] nav a {
+    color: #ff9999 !important;
+}
+
+[data-theme="dark"] nav a:hover {
+    color: #ffcccc !important;
+}
+
+[data-theme="dark"] nav a.active {
+    color: #ff6b6b !important;
+    border-bottom-color: #ff6b6b !important;
 }
 
 /* Dashboard-specific main content styling */
@@ -118,8 +141,10 @@ main {
 
 .dashboard-header {
     text-align: center;
-    margin: 1rem 0;
+    padding: 1rem 0;
+    margin: 0;
 }
+
 
 .dashboard-header h2 {
     font-size: 2rem;
@@ -130,6 +155,42 @@ main {
 .dashboard-subtitle {
     color: var(--text-secondary);
     font-size: 1rem;
+}
+
+/* Profile Alert */
+.profile-alert {
+    margin: 1.5rem 0;
+}
+
+.profile-alert .alert {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.profile-alert strong {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-alert p {
+    margin: 0.5rem 0;
+}
+
+.btn-sm {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.btn-sm:hover {
+    transform: translateY(-2px);
 }
 
 [data-theme="light"].welcome-text {
@@ -448,16 +509,18 @@ nav a.active {
     text-align: center;
 }
 
-.dashboard-header h2 {
-    font-size: 2rem;
+[data-theme="light"] .dashboard-header h2 {
     color: #333;
-    margin-bottom: 0.5rem;
 }
 
-.dashboard-subtitle {
+[data-theme="light"] .dashboard-subtitle {
     color: #666;
-    font-size: 1rem;
 }
+
+[data-theme="light"] .summary-card {
+    background: white;
+}
+
 
 .welcome-text {
     margin-top: 0.5rem;

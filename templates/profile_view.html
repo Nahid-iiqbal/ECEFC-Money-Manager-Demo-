@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - FeinBuddy{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="page-header">
+        <h1 class="page-title">👤 My Profile</h1>
+        <p class="page-subtitle">View and manage your profile information</p>
+    </div>
+
+    <section class="profile-view-section">
+        <div class="profile-card">
+            <div class="profile-picture-section">
+                {% if profile.picture_filename %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + profile.picture_filename) }}" 
+                         alt="Profile Picture" class="profile-picture">
+                {% else %}
+                    <div class="profile-picture-placeholder">
+                        <span class="placeholder-icon">👤</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-row">
+                    <span class="detail-label">Full Name:</span>
+                    <span class="detail-value">{{ profile.profile_name }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Username:</span>
+                    <span class="detail-value">{{ current_user.username }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Profession:</span>
+                    <span class="detail-value">{{ profile.profession }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Institution:</span>
+                    <span class="detail-value">{{ profile.institution }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Date of Birth:</span>
+                    <span class="detail-value">{{ profile.date_of_birth.strftime('%B %d, %Y') }}</span>
+                </div>
+
+                {% if profile.grade %}
+                <div class="detail-row">
+                    <span class="detail-label">Grade/Year:</span>
+                    <span class="detail-value">{{ profile.grade }}</span>
+                </div>
+                {% endif %}
+
+                <div class="detail-row">
+                    <span class="detail-label">Member Since:</span>
+                    <span class="detail-value">{{ profile.created_at.strftime('%B %d, %Y') }}</span>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="{{ url_for('profile.edit_profile') }}" class="btn btn-primary">
+                    ✏️ Edit Profile
+                </a>
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
+                    📊 Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

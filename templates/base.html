@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FeinBuddy - Personal Finance Management">
+    <title>{% block title %}FeinBuddy{% endblock %}</title>
+    
+    <!-- Global Styles -->
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    
+    <!-- Page-specific Styles -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-theme="light">
+    <!-- Header with Brand and Theme Toggle -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1 class="brand-title flicker">💰 FeinBuddy</h1>
+                <div class="header-right">
+                    {% if current_user.is_authenticated %}
+                        <p class="welcome-text">Welcome back, <strong>{{ current_user.username }}</strong>!</p>
+                    {% endif %}
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Upside Down Mode" title="Toggle Upside Down Mode">
+                        <span class="theme-icon" aria-hidden="true">🌙</span>
+                        <span class="theme-label">Upside Down</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Navigation -->
+    {% if current_user.is_authenticated %}
+    <nav role="navigation" aria-label="Main navigation">
+        <ul>
+            <li><a href="{{ url_for('dashboard.dashboard') }}" {% if request.endpoint == 'dashboard.dashboard' %}class="active" aria-current="page"{% endif %}>Dashboard</a></li>
+            <li><a href="{{ url_for('expense.personal') }}" {% if request.endpoint and 'expense' in request.endpoint %}class="active" aria-current="page"{% endif %}>Personal Expenses</a></li>
+            <li><a href="{{ url_for('group.group_list') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>Groups</a></li>
+            <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>Tuition</a></li>
+            <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+    {% endif %}
+    
+    <!-- Flash Messages -->
+    <main class="container main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" role="alert" aria-live="polite">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                            <button class="alert-close" aria-label="Close alert">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 FeinBuddy. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Global Scripts -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    
+    <!-- Page-specific Scripts -->
+    {% block extra_js %}{% endblock %}
+    
+    <!-- Alert Close Handler -->
+    <script>
+        document.querySelectorAll('.alert-close').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+    </script>
+</body>
+</html>
