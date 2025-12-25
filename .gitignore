@@ -1,12 +1,5 @@
-<<<<<<< HEAD
-.venv/
-.env
-__pycache__/
-*.pyc
-
-=======
 # Virtual environment
-.venv
+.venv/
 venv/
 
 # Environment variables
@@ -16,10 +9,12 @@ venv/
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 *.so
 
 # Database
 *.db
+database.db
 finance.db
 instance/
 
@@ -38,4 +33,3 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
->>>>>>> ba3f55c (Remove __pycache__ files and update .gitignore)
