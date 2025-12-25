@@ -26,9 +26,9 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('dashboard.dashboard') }}" class="active">Dashboard</a></li>
-            <li><a href="#" class="disabled">Personal Expenses</a></li>
-            <li><a href="#" class="disabled">Groups</a></li>
-            <li><a href="#" class="disabled">Tuition</a></li>
+            <li><a href="{{ url_for('expense.personal') }}">Personal Expenses</a></li>
+            <li><a href="{{ url_for('group.group_list') }}">Groups</a></li>
+            <li><a href="{{ url_for('tuition.tuition_list') }}">Tuition</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
         </ul>
     </nav>
