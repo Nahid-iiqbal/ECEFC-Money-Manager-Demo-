@@ -33,7 +33,6 @@
             <div class="panel-header">
                 <div>
                     <h2 class="section-title">📚 Your Students</h2>
-                    <p class="section-subtitle">Manage and track all tuition records</p>
                 </div>
                 <a href="{{ url_for('tuition.add_tuition') }}" class="btn-add-compact">
                     ➕ Add New Student
@@ -47,7 +46,7 @@
                             <div class="tuition-details">
                                 <div class="student-header">
                                     <h3 class="student-name-header">👤 {{ entry.student_name }}</h3>
-                                    <span class="tuition-fee">৳{{ (entry.amount / entry.total_days) | round(2) }}/class</span>
+                                    <span class="tuition-fee">৳{{ (entry.amount) | round(2) }}</span>
                                 </div>
                                 <div class="progress-section">
                                     <div class="progress-info">
@@ -69,6 +68,7 @@
                                 </div>
                             </div>
                             <div class="entry-actions">
+                                
                                 <a href="{{ url_for('tuition.reschedule_class', record_id=entry.id) }}" class="action-btn reschedule-btn" title="Reschedule this class">
                                     <span class="action-icon">📅</span>
                                     <span class="action-text">Reschedule</span>
@@ -83,6 +83,14 @@
                                         <span class="action-text">Delete</span>
                                     </button>
                                 </form>
+                                {% if entry.total_completed >= entry.total_days %}
+                                <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='clear') }}" style="margin: 0; width: 100%;">
+                                    <button type="submit" class="action-btn btn-start-month" title="Reset progress for new month">
+                                        <span class="action-icon">🔄</span>
+                                        <span class="action-text">Start New Month</span>
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -107,9 +115,14 @@
             <!-- Weekly Calendar -->
             <div class="calendar-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 class="section-title" style="margin-bottom: 0;">📅 Weekly Schedule</h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h2 class="section-title" style="margin-bottom: 0;">📅 Weekly Schedule</h2>
+                        {% if recent_reschedules %}
+                        <div class="reschedule-count-box">Rescheduled: {{ recent_reschedules|length }}</div>
+                        {% endif %}
+                    </div>
                     <a href="{{ url_for('tuition.export_routine_pdf') }}" class="btn-export-pdf" title="Export as PDF">
-                        📄 Export PDF
+                        📄 Export Weekly Routine
                     </a>
                 </div>
                 {% if tuition_list %}
@@ -137,17 +150,19 @@
                                     {% if schedule_by_day[day_idx] %}
                                     <div class="schedule-tiles-wrapper">
                                         {% for entry in schedule_by_day[day_idx] %}
-                                        <div class="schedule-tile">
+                                        <div class="schedule-tile" id="tile-{{ entry.id }}">
+                                            <div class="tile-top">
+                                                {% if entry.tuition_time %}
+                                                <div class="tile-time">⏰ {{ entry.tuition_time }}</div>
+                                                {% endif %}
+                                                <div class="tile-actions" id="actions-{{ entry.id }}" {% if entry.total_completed >= entry.total_days %}style="display: none !important;"{% endif %}>
+                                                    <button type="button" class="btn-tile btn-tick" onclick="incrementProgress({{ entry.id }}, '{{ entry.student_name }}', {{ entry.total_completed }}, {{ entry.total_days }})" {% if entry.total_completed >= entry.total_days %}disabled{% endif %} title="Increment progress">✓</button>
+                                                    <button type="button" class="btn-tile btn-skip" onclick="openRescheduleModal({{ entry.id }}, '{{ entry.student_name }}', '{{ entry.tuition_time }}', {{ entry.amount }}, {{ entry.total_days }})" title="Skip/Reschedule">⏭️</button>
+                                                </div>
+                                                <div class="tile-completed" id="completed-{{ entry.id }}" {% if entry.total_completed < entry.total_days %}style="display: none;"{% endif %}>Completed</div>
+                                            </div>
                                             <div class="tile-header">
                                                 <div class="tile-student">{{ entry.student_name }}</div>
-                                            </div>
-                                            {% if entry.tuition_time %}
-                                            <div class="tile-time">⏰ {{ entry.tuition_time }}</div>
-                                            {% endif %}
-                                            
-                                            <div class="tile-actions">
-                                                <button type="button" class="btn-tile btn-tick" onclick="incrementProgress({{ entry.id }}, '{{ entry.student_name }}', {{ entry.total_completed }}, {{ entry.total_days }})" {% if entry.total_completed >= entry.total_days %}disabled{% endif %} title="Increment progress">✓</button>
-                                                <button type="button" class="btn-tile btn-skip" onclick="openRescheduleModal({{ entry.id }}, '{{ entry.student_name }}', '{{ entry.tuition_time }}', {{ entry.amount }}, {{ entry.total_days }})" title="Skip/Reschedule">⏭️</button>
                                             </div>
                                         </div>
                                         {% endfor %}
@@ -233,227 +248,16 @@
     <!-- Hidden form for incrementing progress -->
 </form>
 
-<style>
-.modal {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(2px);
-}
-
-.modal-content {
-    background-color: var(--bg-card);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 90%;
-    animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1rem;
-}
-
-.modal-header h2 {
-    color: var(--accent-red);
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.close-btn {
-    color: var(--text-secondary);
-    float: right;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1;
-    transition: color 0.3s ease;
-}
-
-.close-btn:hover {
-    color: var(--accent-red);
-}
-
-.random-message-box {
-    background: var(--bg-secondary);
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid var(--accent-orange);
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-}
-
-#randomMessage {
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin: 0;
-    font-weight: 500;
-}
-
-.modal-student-info {
-    background: var(--bg-secondary);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-}
-
-.modal-student-info p {
-    margin: 0.5rem 0;
-    color: var(--text-primary);
-}
-
-.modal-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-.btn-modal {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-reschedule-confirm {
-    background: linear-gradient(135deg, var(--accent-red), #c0392b);
-    color: white;
-}
-
-.btn-reschedule-confirm:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-}
-
-.btn-cancel-modal {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border: 2px solid var(--border-color);
-}
-
-.btn-cancel-modal:hover {
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-}
-
-.tile-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-    justify-content: center;
-}
-
-.btn-tile {
-    flex: 1;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.btn-tick {
-    background: var(--accent-green);
-    color: white;
-}
-
-.btn-tick:hover:not(:disabled) {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(72, 187, 120, 0.4);
-}
-
-.btn-tick:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--text-tertiary);
-}
-
-.btn-skip {
-    background: var(--accent-orange);
-    color: white;
-}
-
-.btn-skip:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(246, 173, 85, 0.4);
-}
-
-.btn-tile:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.tile-date {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-align: center;
-    margin: 0.25rem 0;
-}
-
-.tile-header {
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        padding: 1.5rem;
-    }
-    
-    .modal-actions {
-        flex-direction: column;
-    }
-    
-    .btn-modal {
-        width: 100%;
-    }
-}
-</style>
-
 <script>
 // Guilt-based messages for skipping classes
 function getGuiltMessages(perClassCost) {
     return [
-        `💸 Ouch! You just burned ${perClassCost} BDT. Hope the skip was worth it.`,
-        `😬 Congratulations! You just paid ${perClassCost} BDT to do nothing.`,
-        `😭 Your bank account is crying. That's ${perClassCost} BDT down the drain!`,
-        `🤔 Imagine what else you could have bought with ${perClassCost} BDT...`,
-        `🎓 You're paying ${perClassCost} BDT per class. Calculated decision? Or just lazy?`,
-        `☕ That's ${perClassCost} BDT wasted. One less coffee treat this month.`,
-        `⏰ At ${perClassCost} BDT per class, is this really worth skipping?`,
-        `💰 Throwing away ${perClassCost} BDT just to skip? Really?`,
-        `😰 ${perClassCost} BDT per lesson. Every skip costs you.`,
-        `🚫 You invested ${perClassCost} BDT in this class. Skipping = money wasted.`
+        `Ouch! You just burned ${perClassCost} BDT. Hope the nap was worth it.`,
+        `Congratulations, you just paid to do nothing.`,
+        `Your bank account is crying right now.`,
+        `Imagine what else you could have bought with ${perClassCost} BDT...`,
+        `Calculated decision? or just lazy?`,
+        `That's one less treat for yourself this month.`
     ];
 }
 
@@ -461,7 +265,7 @@ function getGuiltMessage(totalAmount, totalDays) {
     const perClassCost = Math.round(totalAmount / totalDays);
     
     // If the per-class amount is huge, give a special message
-    if (perClassCost > 500) {
+    if (perClassCost > 2000) {
         return `⚠️ ARE YOU CRAZY?! That's ${perClassCost} BDT per class down the drain!`;
     }
     
@@ -501,16 +305,42 @@ function incrementProgress(recordId, studentName, completed, total) {
         return;
     }
     
-    const form = document.getElementById('progressForm');
-    form.action = `/tuition/update-completed/${recordId}/increment`;
-    form.method = 'POST';
-    
-    // Show confirmation with progress update info
     const newProgress = completed + 1;
-    if (confirm(`Increment ${studentName}'s progress to ${newProgress}/${total}?`)) {
-        form.submit();
+    if (confirm(`Mark ${studentName}'s class as completed?`)) {
+        // Disable the button and hide actions to prevent double clicks
+        const tickButton = event.target;
+        tickButton.disabled = true;
+        
+        const actionsDiv = document.getElementById(`actions-${recordId}`);
+        if (actionsDiv) {
+            actionsDiv.style.pointerEvents = 'none';
+            actionsDiv.style.opacity = '0.5';
+        }
+        
+        const form = document.getElementById('progressForm');
+        form.action = `/tuition/update-completed/${recordId}/increment`;
+        form.method = 'POST';
+        
+        // Ensure form is submitted and page reloads
+        setTimeout(() => {
+            form.submit();
+        }, 100);
     }
 }
+
+// Ensure completed items have buttons hidden on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const completedBadges = document.querySelectorAll('.tile-completed[style*="display"]');
+    completedBadges.forEach(badge => {
+        if (badge.style.display !== 'none') {
+            const tileId = badge.id.replace('completed-', '');
+            const actionsDiv = document.getElementById(`actions-${tileId}`);
+            if (actionsDiv) {
+                actionsDiv.style.display = 'none !important';
+            }
+        }
+    });
+});
 
 // Close modal when clicking outside of it
 window.onclick = function(event) {
