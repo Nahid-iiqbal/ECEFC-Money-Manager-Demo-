@@ -713,31 +713,24 @@ nav a.active {
     color: #667eea;
     font-weight: 600;
 }
-
 [data-theme="dark"] nav a.active {
     color: #e74c3c;
     text-align: center;
 }
 [data-theme="dark"] .quick-actions-section h3 {
-    color: rgb(168, 62, 62);
-    text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+    color: #551313;
+    text-shadow: 4px 3px 5px #b46666;
 }
-[data-theme="dark"] .recent-activity-section{
-    background-color: rgba(200, 187, 187, 0.467);
+[data-theme="dark"] .recent-activity-section {
+    background-color: #e3cdcdae;
 }
 [data-theme="dark"] .recent-activity-section h3 {
-    color: rgb(168, 62, 62);
-    text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
-}
-[data-theme="dark"] .activity-item {
-    background: var(--bg-secondary);
-}
-[data-theme="dark"] .activity-item:hover {
-    background: var(--bg-card);
+    color: #551313;
+    text-shadow: 4px 3px 5px #b46666;
 }
 [data-theme="dark"] .empty-subtext {
-    color: rgba(45, 5, 5, 0.975);
+    color: #4b0707;
 }
 [data-theme="dark"] .empty-text {
-    color: rgb(76, 41, 16);
+    color: rgb(134, 65, 65);
 }

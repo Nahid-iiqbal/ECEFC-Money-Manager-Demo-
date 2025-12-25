@@ -1,8 +1,12 @@
 from flask import Flask, render_template, session, redirect, url_for
 from routes.database import db, User
 from routes.auth import auth_bp
-from routes import register_blueprints
-from flask_login import LoginManager
+from routes.expense import expense
+from routes.dashboard import dashboard_bp
+from routes.personal_expense import personal_bp
+from routes.group import group_bp
+from routes.tuition_app import tuition_bp
+from flask_login import LoginManager, current_user
 import os
 
 app = Flask(__name__)
@@ -27,17 +31,23 @@ login_manager.login_view = 'auth.login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
-# Register all blueprints
-register_blueprints(app)
-
+# Register blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(expense)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(personal_bp)
+app.register_blueprint(group_bp)
+app.register_blueprint(tuition_bp)
 
 @app.route('/')
 def home():
-    """Homepage - shows welcome page."""
-    return render_template('index.html')
+    """Redirect to dashboard if logged in, otherwise to login page."""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.dashboard'))
+    return redirect(url_for('auth.login'))
 
 
 if __name__ == '__main__':
