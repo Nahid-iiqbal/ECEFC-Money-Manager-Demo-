@@ -1,7 +1,7 @@
 :root {
-    --bg-primary: #f7f9fc;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
+    --bg-primary: #aacee0;
+    --bg-secondary: #c5dfe0dc;
+    --bg-card: #d4ddea;
     --text-primary: #333;
     --text-secondary: #666;
     --text-tertiary: #888;
@@ -17,7 +17,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
+    --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
     --bg-card: #3a3a3a;
     --text-primary: #e8e8e8;
@@ -38,6 +38,10 @@
 .expense-page {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+nav{
+    background-color: var(--bg-primary);
 }
 
 /* Navigation styling */
@@ -108,6 +112,13 @@ section:hover {
     padding-bottom: 0.75rem;
     border-bottom: 3px solid var(--accent-red);
     font-weight: 600;
+}
+
+.section-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: -0.75rem 0 1.5rem 0;
+    line-height: 1.5;
 }
 
 /* Dues & Owes Section Styles */
@@ -194,6 +205,17 @@ section:hover {
 
 .debt-amount.negative {
     color: var(--accent-red);
+}
+
+/* Add Debt Section Styles */
+.add-debt-section {
+    margin-top: 3rem;
+    border-top: 2px dashed var(--border-color);
+    padding-top: 2rem;
+}
+
+.debt-form {
+    margin-top: 1rem;
 }
 
 /*Expense Table Styles*/
@@ -393,6 +415,14 @@ section:hover {
 
 .required {
     color: var(--accent-red);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-style: italic;
 }
 
 .form-input,

@@ -6,6 +6,16 @@ from sqlalchemy import extract, func, text
 
 expense = Blueprint("expense", __name__)
 
+@expense.route('/debug_expenses')
+@login_required
+def debug_expenses():
+    """Debug route to check expense data."""
+    result = db.session.execute(text("SELECT * FROM expense WHERE user_id = :user_id"), {"user_id": current_user.id})
+    expenses = []
+    for row in result:
+        expenses.append(dict(row._mapping))
+    return {"expenses": expenses}
+
 @expense.route('/personal')
 @login_required
 def personal():
@@ -128,6 +138,58 @@ def add_expense():
     except Exception as e:
         db.session.rollback()
         flash(f'Error adding expense: {str(e)}', 'danger')
+    
+    return redirect(url_for('expense.personal'))
+
+@expense.route('/personal/add_debt', methods=['POST'])
+@login_required
+def add_debt():
+    """Add a new debt record (due or owe)."""
+    try:
+        debt_type = request.form.get('debt_type')
+        person = request.form.get('person')
+        amount = float(request.form.get('amount', 0))
+        note = request.form.get('note', '')
+        date_str = request.form.get('date')
+        reminder_date_str = request.form.get('reminder_date')
+        
+        if not debt_type or not person or amount <= 0:
+            flash('Please fill in all required fields with valid values.', 'danger')
+            return redirect(url_for('expense.add_expense_form'))
+        
+        if debt_type not in ['due', 'owe']:
+            flash('Invalid debt type selected.', 'danger')
+            return redirect(url_for('expense.add_expense_form'))
+        
+        debt_data = {
+            'user_id': current_user.id,
+            'debt_type': debt_type,
+            'person': person,
+            'amount': amount,
+            'note': note
+        }
+        
+        if date_str:
+            debt_data['date'] = datetime.strptime(date_str, '%Y-%m-%d').date()
+        else:
+            debt_data['date'] = datetime.utcnow().date()
+        
+        # Only set reminder for dues
+        if reminder_date_str and debt_type == 'due':
+            debt_data['reminder_date'] = datetime.strptime(reminder_date_str, '%Y-%m-%d').date()
+        
+        new_debt = Debt(**debt_data)
+        db.session.add(new_debt)
+        db.session.commit()
+        
+        debt_label = 'Due' if debt_type == 'due' else 'Owe'
+        flash(f'{debt_label} record added successfully!', 'success')
+    except ValueError as ve:
+        db.session.rollback()
+        flash('Invalid amount format. Please enter a valid number.', 'danger')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error adding record: {str(e)}', 'danger')
     
     return redirect(url_for('expense.personal'))
 

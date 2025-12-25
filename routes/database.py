@@ -34,6 +34,7 @@ class Debt(db.Model):
     amount = db.Column(db.Float, nullable=False)
     note = db.Column(db.Text, nullable=True)
     date = db.Column(db.Date, nullable=True, default=datetime.utcnow)
+    reminder_date = db.Column(db.Date, nullable=True)  # For dues reminders
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class TuitionRecord(db.Model):

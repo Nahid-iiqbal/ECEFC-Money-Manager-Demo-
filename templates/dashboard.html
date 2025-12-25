@@ -117,8 +117,206 @@
     {% endif %}
 </div>
 
+<!-- Spending Analytics -->
+{% if category_data or monthly_data %}
+<div class="analytics-section">
+    <h3>📊 Spending Analytics</h3>
+    <p class="analytics-subtitle">Visual insights into your spending patterns</p>
+    
+    <div class="charts-container">
+        <!-- Category Chart -->
+        {% if category_data %}
+        <div class="chart-wrapper">
+            <div class="chart-header">
+                <h4>💰 Spending by Category</h4>
+                <p class="chart-description">See where your money goes</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Monthly Chart -->
+        {% if monthly_data %}
+        <div class="chart-wrapper">
+            <div class="chart-header">
+                <h4>📅 Monthly Spending Trend</h4>
+                <p class="chart-description">Track your expenses over time</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% if category_data or monthly_data %}
+<script>
+    // Get current theme
+    const currentTheme = document.body.getAttribute('data-theme');
+    const isDark = currentTheme === 'dark';
+    
+    // Theme-aware colors
+    const textColor = isDark ? '#e8e8e8' : '#333';
+    const gridColor = isDark ? 'rgba(231, 76, 60, 0.2)' : 'rgba(0, 0, 0, 0.1)';
+    const bgColor = isDark ? '#3a3a3a' : '#ffffff';
+    
+    // Chart.js default options
+    Chart.defaults.color = textColor;
+    Chart.defaults.borderColor = gridColor;
+    
+    {% if category_data %}
+    // Category Chart Data
+    const categoryData = {{ category_data|tojson }};
+    const categoryLabels = Object.keys(categoryData);
+    const categoryValues = Object.values(categoryData);
+    
+    // Category color mapping with emoji icons
+    const categoryColors = {
+        'Food': '#ff6b6b',
+        'Transport': '#4299e1',
+        'Entertainment': '#9f7aea',
+        'Shopping': '#ed8936',
+        'Bills': '#48bb78',
+        'Health': '#f56565',
+        'Education': '#667eea',
+        'Other': '#718096'
+    };
+    
+    const categoryBgColors = categoryLabels.map(label => categoryColors[label] || '#718096');
+    
+    // Create Category Chart (Doughnut)
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                data: categoryValues,
+                backgroundColor: categoryBgColors,
+                borderColor: bgColor,
+                borderWidth: 3,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: textColor,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ৳${value.toFixed(2)} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    {% endif %}
+    
+    {% if monthly_data %}
+    // Monthly Chart Data
+    const monthlyData = {{ monthly_data|tojson }};
+    const monthlyLabels = Object.keys(monthlyData);
+    const monthlyValues = Object.values(monthlyData);
+    
+    // Create Monthly Chart (Bar)
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'Spending (৳)',
+                data: monthlyValues,
+                backgroundColor: isDark ? 'rgba(255, 107, 107, 0.7)' : 'rgba(102, 126, 234, 0.7)',
+                borderColor: isDark ? '#ff6b6b' : '#667eea',
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: gridColor,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return '৳' + value;
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: isDark ? '#2d2d2d' : 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Spent: ৳' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+    {% endif %}
+</script>
+{% endif %}
 {% endblock %}
