@@ -24,6 +24,19 @@ class Expense(db.Model):
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+class TuitionRecord(db.Model):
+    """Tuition Record model"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    student_name = db.Column(db.String(100), nullable=False)
+    total_days = db.Column(db.Integer, nullable=False)
+    total_completed = db.Column(db.Integer, nullable=False)
+    address = db.Column(db.String(200), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    days = db.Column(db.PickleType, nullable=True)
+    tuition_time = db.Column(db.String(10), nullable=True)
+
+
 class Profile(db.Model):
     """Profile model for user profiles"""
     id = db.Column(db.Integer, primary_key=True)

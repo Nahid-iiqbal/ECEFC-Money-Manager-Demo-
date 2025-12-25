@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from routes.auth import login_required
-import database
+from routes.database import db
+from flask_login import current_user
 
 group_bp = Blueprint('group', __name__)
 
@@ -11,7 +12,7 @@ def group_list():
     """Display list of groups user is part of."""
     user_id = session.get('user_id')
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Get all groups user is a member of
     groups = conn.execute(
@@ -42,7 +43,7 @@ def create_group():
         flash('Group name is required!', 'error')
         return redirect(url_for('group.group_list'))
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Create group
     cursor = conn.execute(
@@ -70,7 +71,7 @@ def group_detail(group_id):
     """Display group details and expenses."""
     user_id = session.get('user_id')
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Check if user is member
     membership = conn.execute(
@@ -168,7 +169,7 @@ def add_group_expense(group_id):
         flash('Invalid amount!', 'error')
         return redirect(url_for('group.group_detail', group_id=group_id))
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Verify membership
     membership = conn.execute(
@@ -225,7 +226,7 @@ def add_member(group_id):
         flash('Username is required!', 'error')
         return redirect(url_for('group.group_detail', group_id=group_id))
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Verify user is admin/creator
     group = conn.execute(
@@ -278,7 +279,7 @@ def settle_expense(group_id, expense_id):
     """Mark an expense as settled."""
     user_id = session.get('user_id')
     
-    conn = database.get_db_connection()
+    conn = db.session.connection()
     
     # Update split as paid
     conn.execute(
