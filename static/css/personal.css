@@ -234,6 +234,7 @@ section:hover {
     border-spacing: 0;
 }
 
+
 .expense-table thead {
     background-color: var(--bg-secondary);
 }
@@ -392,6 +393,7 @@ section:hover {
 /*Form Styles*/
 .expense-form {
     margin-top: 1rem;
+    border-color: var(--border-color);
 }
 
 .form-grid {
@@ -404,6 +406,7 @@ section:hover {
 .form-group {
     display: flex;
     flex-direction: column;
+    border-color: var(--border-color);
 }
 
 .form-group.full-width {

@@ -240,10 +240,10 @@ main {
     align-items: center;
     gap: 1rem;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 1px solid var(--border-color);
 }
 [data-theme="dark"] .summary-card {
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     background-color: #cfcaca;
     color:rgb(76, 41, 16)
 }
@@ -351,10 +351,11 @@ main {
     border-radius: 12px;
     padding: 2rem;
     box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
 }
 
 [data-theme="dark"] .recent-activity-section {
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
 }
 
 .recent-activity-section h3 {
