@@ -125,7 +125,7 @@
                 <td>{{ e.amount }}</td>
                 <td>
                     <form action="/expenses_pop" method="POST" style="display:inline;">
-                        <input type="hidden" name="idx" value="{{ loop.index0 }}">
+                        <input type="hidden" name="id" value="{{ e.id }}">
                         <button class="delete-btn" type="submit">Delete</button>
                     </form>
                 </td>
