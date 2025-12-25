@@ -1,557 +1,444 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* --- Dark Theme & Glassmorphism Variables --- */
+:root {
+    --bg-gradient: linear-gradient(135deg, #1e0533 0%, #110b29 100%);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --text-main: #ffffff;
+    --text-muted: #b3b3b3;
+    --accent-color: #00d2ff;
+    --accent-gradient: linear-gradient(90deg, #00d2ff, #3a7bd5);
+    --danger-gradient: linear-gradient(90deg, #ff416c, #ff4b2b);
 }
 
-:root {
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-danger: #dc2626;
-    --color-danger-dark: #b91c1c;
-    --color-success: #16a34a;
-    --color-success-dark: #15803d;
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-200: #e5e7eb;
-    --color-gray-300: #d1d5db;
-    --color-gray-400: #9ca3af;
-    --color-gray-500: #6b7280;
-    --color-gray-600: #4b5563;
-    --color-gray-700: #374151;
-    --color-gray-800: #1f2937;
-    --color-gray-900: #111827;
-    --color-blue-50: #eff6ff;
-    --color-blue-100: #dbeafe;
-    --color-green-50: #f0fdf4;
-    --color-green-600: #16a34a;
-
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
-    --transition: all 0.3s ease;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-    background: linear-gradient(to bottom right, var(--color-blue-50), var(--color-gray-100));
-    color: var(--color-gray-900);
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
     min-height: 100vh;
-    line-height: 1.6;
+    padding: 40px 20px;
 }
 
-.app-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.main-content {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.header {
-    margin-bottom: 2rem;
+/* --- Typography --- */
+h1 {
     text-align: center;
-}
-
-.title {
-    font-size: 2.25rem;
     font-weight: 700;
-    color: var(--color-gray-900);
-}
-
-.body-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.left-section,
-.right-section {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow-md);
-    padding: 1.5rem;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-gray-900);
-}
-
-.tuition-count {
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
-}
-
-.tuitions-list {
-    max-height: 600px;
-    overflow-y: auto;
-    space-y: 0.75rem;
-}
-
-.tuitions-list > * + * {
-    margin-top: 0.75rem;
-}
-
-.empty-state {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    text-align: center;
-    border: 1px solid var(--color-gray-200);
-}
-
-.empty-text {
-    color: var(--color-gray-500);
-    font-weight: 500;
-}
-
-.empty-subtext {
-    font-size: 0.875rem;
-    color: var(--color-gray-400);
-    margin-top: 0.5rem;
-}
-
-.tuition-card {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    border: 1px solid var(--color-gray-200);
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-}
-
-.tuition-card:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-.card-header {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-
-.card-icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.5rem;
-    background: var(--color-blue-100);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 1.25rem;
-}
-
-.card-title {
-    font-weight: 600;
-    color: var(--color-gray-900);
-    font-size: 0.95rem;
-}
-
-.card-description {
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
-}
-
-.card-meta {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: var(--color-gray-600);
-    margin-top: 0.75rem;
-}
-
-.card-meta-item {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.day-badge {
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    background: -webkit-linear-gradient(#fff, #999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     display: inline-block;
-    padding: 0.25rem 0.5rem;
-    background: var(--color-blue-50);
-    color: var(--color-primary);
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
+    width: 100%;
+    position: relative;
 }
 
-.calendar-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-gray-900);
-    margin-bottom: 1rem;
+h1::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 650px;
+    height: 80px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    border-radius: 50px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    z-index: -1;
 }
 
-.week-days {
+h2 {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+/* --- Alert Messages --- */
+.alert {
+    max-width: 1100px;
+    margin: 0 auto 20px auto;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    animation: slideDown 0.4s ease-out;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-error {
+    border-left: 4px solid #ff416c;
+    color: #ffcdd2;
+}
+
+.alert-success {
+    border-left: 4px solid #4caf50;
+    color: #c8e6c9;
+}
+
+.alert-warning {
+    border-left: 4px solid #ff9800;
+    color: #ffe0b2;
+}
+
+.alert-info {
+    border-left: 4px solid var(--accent-color);
+    color: #b3e5fc;
+}
+
+/* --- Layout --- */
+.body-section {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-height: 600px;
+    flex-wrap: wrap;
+    gap: 25px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* --- Glass Container Styling --- */
+.tuition_list, .calendar_view {
+    flex: 1;
+    min-width: 320px;
+    height: 70vh;
+    min-height: 600px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+}
+/* Custom Scrollbar for both containers */
+.tuition_list::-webkit-scrollbar,
+.calendar_view::-webkit-scrollbar {
+    width: 8px;
 }
 
-.day-card {
-    border: 1px solid var(--color-gray-200);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    transition: var(--transition);
+/* The background track of the scrollbar */
+.tuition_list::-webkit-scrollbar-track,
+.calendar_view::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 10px;
 }
 
-.day-card.today {
-    border-color: var(--color-primary);
-    background: var(--color-blue-50);
+/* The moving part of the scrollbar (The Thumb) */
+.tuition_list::-webkit-scrollbar-thumb,
+.calendar_view::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    border-radius: 10px;
 }
 
-.day-header {
+/* Hover effect on the scrollbar thumb */
+.tuition_list::-webkit-scrollbar-thumb:hover,
+.calendar_view::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color); /* Turns blue when you grab it */
+}
+
+
+
+/* --- Tuition Entries --- */
+.tuition-entry {
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 0 8px 8px 0;
+    padding: 15px;
+    margin-bottom: 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.tuition-entry:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+
+.tuition-id {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.tuition-details {
+    flex: 1;
+}
+
+.tuition-details p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.tuition-details p strong {
+    color: #fff;
+    margin-right: 5px;
+}
+
+.tuition-details p:nth-child(2) {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+/* Delete Button */
+.btn-delete {
+    background: var(--danger-gradient);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 65, 108, 0.3);
+    flex-shrink: 0;
+}
+
+.btn-delete:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.5);
+}
+
+.btn-delete:active {
+    transform: scale(0.95);
+}
+
+/* Progress Update Buttons */
+.btn-progress {
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 210, 255, 0.3);
+}
+
+.btn-progress:hover:not(:disabled) {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 210, 255, 0.5);
+}
+
+.btn-progress:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.btn-progress:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.progress-text {
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* Clear Button */
+.btn-clear {
+    background: linear-gradient(90deg, #ff9800, #ff5722);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.btn-clear:hover:not(:disabled) {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+}
+
+.btn-clear:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.btn-clear:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* --- Calendar Section --- */
+.calendar_view {
+    min-height: 600px;
+    display: block;
+}
+
+.weekly-schedule {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.weekly-schedule thead {
+    background: rgba(0, 210, 255, 0.1);
+}
+
+.weekly-schedule th {
+    padding: 12px;
+    text-align: left;
+    color: var(--accent-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.weekly-schedule .day-column {
+    width: 120px;
+}
+
+.weekly-schedule tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease;
+}
+
+.weekly-schedule tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .day-name {
+    padding: 15px 12px;
     font-weight: 600;
-    color: var(--color-gray-900);
+    color: var(--text-main);
+    vertical-align: top;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.day-date {
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
+.schedule-cell {
+    padding: 15px 12px;
+    color: var(--text-muted);
+    min-height: 50px;
 }
 
-.today-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: var(--color-primary);
-    color: white;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
+.schedule-item {
+    background: rgba(0, 210, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--accent-color);
+    font-size: 0.9rem;
+    color: var(--text-main);
 }
 
-.no-tuitions {
-    font-size: 0.875rem;
-    color: var(--color-gray-400);
+.schedule-item:last-child {
+    margin-bottom: 0;
 }
 
-.tuition-item {
+/* Schedule Items Wrapper - for multiple tuitions per day */
+.schedule-items-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 0.75rem;
-    border-radius: 0.375rem;
-    border: 1px solid var(--color-gray-100);
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
 }
 
-.tuition-item-name {
-    font-weight: 500;
-    color: var(--color-gray-900);
-    font-size: 0.95rem;
+.schedule-items-wrapper .schedule-item {
+    flex: 0 1 auto;
+    min-width: 150px;
+    margin-bottom: 0;
 }
 
-.tuition-item-time {
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
-}
-
-.mark-complete-btn {
-    padding: 0.5rem 1rem;
-    background: var(--color-success);
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.mark-complete-btn:hover {
-    background: var(--color-success-dark);
-}
-
-.completed-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-success);
-    font-weight: 500;
-    font-size: 0.875rem;
-}
-
+/* --- Buttons --- */
 .button-section {
+    margin-top: 40px;
     display: flex;
-    gap: 1rem;
     justify-content: center;
+    gap: 20px;
 }
 
-.btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+button {
     border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
+    padding: 15px 40px;
+    border-radius: 30px;
+    color: white;
     font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.btn:hover {
-    box-shadow: var(--shadow-lg);
+button:active {
+    transform: scale(0.95);
 }
 
-.btn-primary {
-    background: var(--color-primary);
-    color: white;
+.btn-main {
+    background: var(--accent-gradient);
 }
 
-.btn-primary:hover {
-    background: var(--color-primary-dark);
+.btn-main:hover {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
 }
 
-.btn-danger {
-    background: var(--color-danger);
-    color: white;
+.btn-secondary {
+    background: var(--danger-gradient);
 }
 
-.btn-danger:hover {
-    background: var(--color-danger-dark);
+.btn-secondary:hover {
+    box-shadow: 0 0 20px rgba(255, 65, 108, 0.5);
 }
-
-.btn-icon {
-    font-size: 1.25rem;
+.btn-ret{
+    background: #555555;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
-
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 50;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 28rem;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.modal-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-gray-900);
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--color-gray-400);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.modal-close:hover {
-    color: var(--color-gray-600);
-}
-
-.modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-gray-700);
-    margin-bottom: 0.25rem;
-}
-
-.form-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-gray-300);
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: var(--transition);
-}
-
-.form-input:focus {
-    outline: none;
-    ring: 2px;
-    ring-color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-.form-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-.btn-cancel {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid var(--color-gray-300);
-    color: var(--color-gray-700);
-    border-radius: 0.375rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-cancel:hover {
-    background: var(--color-gray-50);
-}
-
-.btn-submit {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-submit:hover {
-    background: var(--color-primary-dark);
-}
-
-.tuitions-remove-list {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-}
-
-.remove-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    border: 1px solid var(--color-gray-200);
-    border-radius: 0.375rem;
-    margin-bottom: 0.5rem;
-    transition: var(--transition);
-}
-
-.remove-item:hover {
-    border-color: #fca5a5;
-    background: #fef2f2;
-}
-
-.remove-item-name {
-    font-weight: 500;
-    color: var(--color-gray-900);
-    font-size: 0.95rem;
-}
-
-.remove-item-time {
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
-}
-
-.remove-btn {
-    padding: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--color-danger);
-    cursor: pointer;
-    font-size: 1.25rem;
-    transition: var(--transition);
-}
-
-.remove-btn:hover {
-    background: #fef2f2;
-    border-radius: 0.375rem;
-}
-
-@media (max-width: 1024px) {
+/* --- Mobile --- */
+@media (max-width: 768px) {
     .body-section {
-        grid-template-columns: 1fr;
-    }
-
-    .button-section {
         flex-direction: column;
     }
-
-    .btn {
+    .tuition_list, .calendar_view {
         width: 100%;
-        justify-content: center;
-    }
-}
-
-@media (max-width: 640px) {
-    .main-content {
-        padding: 1rem;
-    }
-
-    .title {
-        font-size: 1.875rem;
-    }
-
-    .body-section {
-        gap: 1rem;
-    }
-
-    .left-section,
-    .right-section {
-        padding: 1rem;
-    }
-
-    .modal-content {
-        width: 90%;
     }
 }

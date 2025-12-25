@@ -1,0 +1,185 @@
+/* --- Variables & Reset --- */
+:root {
+    --bg-gradient: linear-gradient(135deg, #1e0533 0%, #110b29 100%);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --text-main: #ffffff;
+    --text-muted: #b3b3b3;
+    --accent-color: #00d2ff;
+    --accent-gradient: linear-gradient(90deg, #00d2ff, #3a7bd5);
+    --danger-gradient: linear-gradient(90deg, #ff416c, #ff4b2b);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* --- Form Card Styling --- */
+.form-container {
+    width: 100%;
+    max-width: 550px; /* Slightly wider to fit checkboxes */
+}
+
+.form-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--glass-border);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 200;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: -webkit-linear-gradient(#fff, #999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* --- Input Fields --- */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group input[type="date"] {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+}
+
+/* --- Checkbox "Tag" Styling --- */
+.days-checkbox-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.days-checkbox-container label {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 14px;
+    border-radius: 20px; /* Rounded pill shape */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    margin-bottom: 0; /* Override default label margin */
+}
+
+.days-checkbox-container label:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--accent-color);
+}
+
+/* Style for the actual check box inside the tag */
+.days-checkbox-container input {
+    accent-color: var(--accent-color); /* Makes the checkmark blue */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* --- Layout --- */
+.row {
+    display: flex;
+    gap: 20px;
+}
+
+.half {
+    flex: 1;
+}
+
+/* --- Buttons --- */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-main {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-gradient);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-main:active {
+    transform: scale(0.98);
+}
+
+.btn-main:hover {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+}
+
+.btn-cancel {
+    text-align: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 10px;
+    transition: color 0.3s;
+}
+
+.btn-cancel:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* --- Placeholder Text Color --- */
+::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}

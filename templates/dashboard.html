@@ -28,7 +28,7 @@
             <li><a href="{{ url_for('dashboard.dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="#" class="disabled">Personal Expenses</a></li>
             <li><a href="#" class="disabled">Groups</a></li>
-            <li><a href="#" class="disabled">Tuition</a></li>
+            <li><a href="{{ url_for('tuition.tuition_list') }}">Tuition</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
         </ul>
     </nav>
@@ -96,15 +96,15 @@
         <div class="quick-actions-section">
             <h3>⚡ Quick Actions</h3>
             <div class="quick-actions">
-                <button class="action-btn btn-purple" disabled style="opacity: 0.5; cursor: not-allowed;">
+                <button class="action-btn btn-purple">
                     <span class="btn-icon">➕</span>
                     Add Personal Expense
                 </button>
-                <button class="action-btn btn-blue" disabled style="opacity: 0.5; cursor: not-allowed;">
+                <button class="action-btn btn-blue">
                     <span class="btn-icon">➕</span>
                     Add Group Expense
                 </button>
-                <button class="action-btn btn-orange" disabled style="opacity: 0.5; cursor: not-allowed;">
+                <button class="action-btn btn-orange" onclick="location.href='{{ url_for('tuition.add_tuition') }}'">
                     <span class="btn-icon">➕</span>
                     Add Tuition Payment
                 </button>

@@ -3,37 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tuition Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tuition.css') }}">
 </head>
 <body>
     <h1>Tuition Management</h1>
-    <div class="body-section">
-        <div class = "tuition_list">
-            <h2>Tuition Entries</h2>
-            {% for tuition in tuitions %}
-                <div class="tuition-entry">
-                    <div class ="tuition-id">
-                        <p><strong>ID:</strong> {{ tuition.id }}</p>
-
-                    </div>
-                    <div class ="tuition-details">
-                        <p><strong>Student:</strong> {{ tuition.student_name }}</p>
-                        <p><strong>Salary:</strong> ${{ tuition.salery }}</p>
-                        <p><strong>Due Date:</strong> {{ tuition.due_date }}</p>
-                    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
                 </div>
-            {% else %}
-                <p>No tuition entries found.</p>
             {% endfor %}
-        </div>
-        <div class = "calendar_view">
-            
-        </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="body-section">
+        <div class="tuition_list">
+            <h2>Current Entries</h2>
+            {% if tuition_list %}
+            {% for entry in tuition_list %}
+            <div class="tuition-entry">
+                <div class="tuition-details">
+                    <p><strong>Student:</strong> {{ entry.student_name }}</p>
+                    <p><strong>Amount:</strong> ৳{{ entry.amount }}</p>
+                    <p>
+                        <strong>Progress:</strong> 
+                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                            <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='decrement') }}" style="margin: 0; display: inline;">
+                                <button type="submit" class="btn-progress" {% if entry.total_completed <= 0 %}disabled{% endif %}>−</button>
+                            </form>
+                            <span class="progress-text">{{ entry.total_completed }}/{{ entry.total_days }} days</span>
+                            <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='increment') }}" style="margin: 0; display: inline;">
+                                <button type="submit" class="btn-progress" {% if entry.total_completed >= entry.total_days %}disabled{% endif %}>+</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='clear') }}" style="margin: 0; display: inline;">
+                                <button type="submit" class="btn-clear" {% if entry.total_completed <= 0 %}disabled{% endif %} title="Reset to 0">↻</button>
+                            </form>
+                        </span>
+                    </p>
+                    <p><strong>Address:</strong> {{ entry.address }}</p>
+                </div>
+                <form method="POST" action="{{ url_for('tuition.delete_tuition', record_id=entry.id) }}" style="margin: 0;">
+                    <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this tuition entry?');">✕</button>
+                </form>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: var(--text-muted); text-align: center; padding: 20px;">No tuition entries found.</p>
+            {% endif %}
 
+            </div>
+
+        <div class="calendar_view">
+            <h2>Weekly Schedule</h2>
+            <table class="weekly-schedule">
+                <thead>
+                    <tr>
+                        <th class="day-column">Day</th>
+                        <th class="schedule-column">Tuition Schedule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="day-name">Sunday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[0] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[0] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Monday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[1] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[1] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Tuesday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[2] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[2] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Wednesday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[3] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[3] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Thursday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[4] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[4] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Friday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[5] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[5] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="day-name">Saturday</td>
+                        <td class="schedule-cell">
+                            {% if schedule_by_day[6] %}
+                            <div class="schedule-items-wrapper">
+                                {% for entry in schedule_by_day[6] %}
+                                <div class="schedule-item">
+                                    <strong>{{ entry.student_name }}</strong>
+                                    {% if entry.tuition_time %}<br><span style="font-size: 0.85em;">⏰ {{ entry.tuition_time }}</span>{% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span style="opacity: 0.5;">No classes</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="button-section">
+        <a href="{{ url_for('tuition.add_tuition') }}"><button class="btn-main">Add Entry</button></a>
     </div>
     <div class="button-section">
-        <button class="btn-main">Add Tuition</button>
-        <button class="btn-secondary">Remove Tuition</button>
+        <a href="{{ url_for('dashboard.dashboard') }}"><button class="btn-ret">Return to Dashboard</button></a>
     </div>
 </body>
 </html>
