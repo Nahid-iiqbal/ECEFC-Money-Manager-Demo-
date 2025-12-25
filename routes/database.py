@@ -72,6 +72,25 @@ class Profile(db.Model):
                            default=datetime.utcnow)
 
 
+class TuitionReschedule(db.Model):
+    """TuitionReschedule model for tracking class rescheduling history"""
+    id = db.Column(db.Integer, primary_key=True)
+    tuition_id = db.Column(db.Integer, db.ForeignKey(
+        'tuition_record.id'), nullable=False)
+    original_date = db.Column(db.Date, nullable=False)
+    new_date = db.Column(db.Date, nullable=False)
+    original_time = db.Column(db.String(10), nullable=False)
+    new_time = db.Column(db.String(10), nullable=False)
+    reason = db.Column(db.Text, nullable=True)
+    # pending, confirmed, cancelled
+    reschedule_status = db.Column(
+        db.String(20), nullable=False, default='pending')
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=datetime.utcnow)
+
+    tuition = db.relationship('TuitionRecord', backref='reschedules')
+
+
 class Group(db.Model):
     """Group model for group expenses"""
     id = db.Column(db.Integer, primary_key=True)
