@@ -47,31 +47,8 @@ header h1 {
     margin-bottom: 0.5rem;
 }
 
-/* Navigation */
-nav {
-    background-color: #444;
-    padding: 1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
-    font-weight: 500;
-}
-
-nav a:hover {
-    color: #667eea;
-}
+/* Navigation - Legacy styles (overridden by navbar.css) */
+/* Keeping for backwards compatibility, but navbar.css takes precedence */
 
 /* Main Content */
 main {
