@@ -40,7 +40,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user)
+            login_user(user, remember=True)
             return redirect(url_for('dashboard.dashboard'))
         else:
             flash('Invalid username or password', 'danger')
@@ -58,7 +58,7 @@ def register():
                             password_hash=hashed_password)
             db.session.add(new_user)
             db.session.commit()
-            login_user(new_user)
+            login_user(new_user, remember=True)
             flash('Account created successfully!', 'success')
             return redirect(url_for('dashboard.dashboard'))
         except IntegrityError:
