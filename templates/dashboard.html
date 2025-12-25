@@ -26,8 +26,8 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('dashboard.dashboard') }}" class="active">Dashboard</a></li>
-            <li><a href="#" class="disabled">Personal Expenses</a></li>
-            <li><a href="#" class="disabled">Groups</a></li>
+            <li><a href="{{ url_for('expense.personal') }}">Personal Expenses</a></li>
+            <li><a href="{{ url_for('group.group_list') }}">Groups</a></li>
             <li><a href="{{ url_for('tuition.tuition_list') }}">Tuition</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
         </ul>
@@ -104,10 +104,12 @@
                     <span class="btn-icon">➕</span>
                     Add Group Expense
                 </button>
-                <button class="action-btn btn-orange" onclick="location.href='{{ url_for('tuition.add_tuition') }}'">
-                    <span class="btn-icon">➕</span>
-                    Add Tuition Payment
-                </button>
+                <a href="{{ url_for('tuition.add_tuition') }}" style="text-decoration: none; display: contents;">
+                    <button class="action-btn btn-orange">
+                        <span class="btn-icon">➕</span>
+                        Add Tuition Payment
+                    </button>
+                </a>
             </div>
         </div>
         

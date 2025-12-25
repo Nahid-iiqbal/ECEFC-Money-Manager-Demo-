@@ -6,6 +6,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from routes.database import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
+from sqlalchemy.exc import IntegrityError
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -25,12 +26,11 @@ class RegisterForm(FlaskForm):
                              InputRequired(), Length(min=8, max=80)])
     submit = SubmitField('Register')
 
-
-def validate_username(self, username):
-    existing_user = User.query.filter_by(username=username.data).first()
-    if existing_user:
-        raise ValidationError(
-            'Username already exists. Please choose a different one.')
+    def validate_username(self, username):
+        existing_user = User.query.filter_by(username=username.data).first()
+        if existing_user:
+            raise ValidationError(
+                'Username already exists. Please choose a different one.')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -41,8 +41,6 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
-            session['user_id'] = user.id
-            session['username'] = user.username
             return redirect(url_for('dashboard.dashboard'))
         else:
             flash('Invalid username or password', 'danger')
@@ -54,16 +52,18 @@ def register():
     # Register logic
     form = RegisterForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data,
-                        password_hash=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user)
-        session['user_id'] = new_user.id
-        session['username'] = new_user.username
-        flash('Account created successfully!', 'success')
-        return redirect(url_for('auth.login'))
+        try:
+            hashed_password = generate_password_hash(form.password.data)
+            new_user = User(username=form.username.data,
+                            password_hash=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            flash('Account created successfully!', 'success')
+            return redirect(url_for('dashboard.dashboard'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Username already exists. Please choose a different one.', 'danger')
     return render_template('register.html', form=form)
 
 
