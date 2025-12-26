@@ -97,6 +97,9 @@ def add_expense():
     try:
         name = request.form.get('name') or request.form.get('title')
         amount = float(request.form.get('amount', 0))
+
+
+<< << << < HEAD
         category = request.form.get('category', 'Other')
         description = request.form.get('description', '')
         date_str = request.form.get('date')
@@ -207,6 +210,75 @@ def add_expense():
             })
         except Exception as e:
             print(f"Error broadcasting expense update: {e}")
+
+== == == =
+
+        # Check which columns exist in the database
+        result = db.session.execute(text("PRAGMA table_info(expense)"))
+        existing_columns = [row[1] for row in result.fetchall()]
+
+        if 'category' in existing_columns:
+            # New schema - use ORM with all fields
+            category = request.form.get('category', 'Other')
+            description = request.form.get('description', '')
+            date_str = request.form.get('date')
+            expense_type = request.form.get('type', '')
+
+            # Handle reminder fields (only for Bills, Monthly Bill, Dues, Owes)
+            reminder_at_str = request.form.get('reminder_at', '')
+            reminder_note = request.form.get('reminder_note', '')
+            reminder_at = None
+
+            # Only process reminder if category supports it
+            reminder_categories = ['Bills', 'Monthly Bill', 'Dues', 'Owes']
+            if category in reminder_categories and reminder_at_str:
+                try:
+                    reminder_at = datetime.strptime(
+                        reminder_at_str, '%Y-%m-%dT%H:%M')
+                except ValueError:
+                    flash('Invalid reminder date format. Reminder not set.', 'warning')
+
+            expense_data = {
+                'name': name,
+                'amount': amount,
+                'category': category,
+                'description': description,
+                'type': expense_type,
+                'user_id': current_user.id,
+                'reminder_at': reminder_at,
+                'reminder_note': reminder_note if reminder_at else None,
+                'reminder_sent': False
+            }
+
+            if date_str:
+                expense_data['date'] = datetime.strptime(
+                    date_str, '%Y-%m-%d').date()
+            else:
+                expense_data['date'] = datetime.utcnow().date()
+
+            new_expense = Expense(**expense_data)
+            db.session.add(new_expense)
+            db.session.commit()
+
+            # Schedule email reminder if set
+            if reminder_at and reminder_at > datetime.utcnow():
+                from app import schedule_reminder_email
+                schedule_reminder_email(new_expense.id, reminder_at)
+                flash(
+                    f"Expense added with reminder set for {reminder_at.strftime('%Y-%m-%d %H:%M')}", 'success')
+            else:
+                flash('Expense added successfully!', 'success')
+        else:
+            # Old schema - use raw SQL with only basic columns
+            query = text(
+                "INSERT INTO expense (name, amount, user_id) VALUES (:name, :amount, :user_id)")
+            db.session.execute(query, {
+                "name": name,
+                "amount": amount,
+                "user_id": current_user.id
+            })
+            db.session.commit()
+            flash('Expense added successfully!', 'success')
 
     except Exception as e:
         db.session.rollback()

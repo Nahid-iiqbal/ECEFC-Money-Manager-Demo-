@@ -32,6 +32,9 @@ class Expense(db.Model):
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     type = db.Column(db.String(50), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    reminder_at = db.Column(db.DateTime, nullable=True)  # When to send reminder
+    reminder_sent = db.Column(db.Boolean, default=False, nullable=False)  # Track if sent
+    reminder_note = db.Column(db.Text, nullable=True)  # Optional reminder message
 
 
 class Debt(db.Model):

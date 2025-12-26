@@ -12,6 +12,7 @@ from flask_login import LoginManager, current_user
 from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import os
+import re
 
 try:
     from groq import Groq
@@ -31,6 +32,291 @@ if Groq and GROQ_API_KEY:
         print(f"Groq initialized with model: {GROQ_MODEL_NAME}")
     except Exception as e:
         print(f"Groq setup failed: {e}")
+
+
+# =======================
+# Intelligent Chatbot Fallback System
+# =======================
+
+def get_intelligent_fallback_response(user_message, user_context):
+    """
+    Provides intelligent, context-aware responses when AI API is unavailable.
+    Uses pattern matching and FAQ-style responses to guide users.
+    
+    Args:
+        user_message: The user's query (lowercase)
+        user_context: Dict with user's profile and financial data
+    
+    Returns:
+        String response or None if no pattern matches
+    """
+    msg = user_message.lower().strip()
+    
+    # Extract context variables
+    display_name = user_context.get('display_name', 'there')
+    total_recent = user_context.get('total_recent', 0)
+    total_all_time = user_context.get('total_all_time', 0)
+    category_str = user_context.get('category_str', '')
+    tuition_income = user_context.get('tuition_income', 0)
+    tuition_progress = user_context.get('tuition_progress', 0)
+    group_count = user_context.get('group_count', 0)
+    
+    # ===== Greetings =====
+    if re.search(r'\b(hi|hello|hey|greetings|good\s+(morning|afternoon|evening))\b', msg):
+        return (
+            f"Hi {display_name}! 👋 Welcome to FeinBuddy! I'm here to help you navigate this webapp. "
+            f"You can ask me about features, how to use different sections, or what you can do here. "
+            f"What would you like to know?"
+        )
+    
+    # ===== What is this / Overview =====
+    if re.search(r'\b(what\s+(is|does)|about|overview|purpose|tell\s+me\s+about)\b', msg) and \
+       re.search(r'\b(this|app|webapp|website|feinbuddy|platform)\b', msg):
+        return (
+            f"FeinBuddy is your personal finance manager! 💰 It helps you:\n"
+            f"📊 Track daily expenses by category\n"
+            f"👥 Manage group expenses with friends\n"
+            f"🎓 Track tuition classes and income\n"
+            f"📈 View spending trends on your dashboard\n"
+            f"You're currently managing ৳{total_all_time:,.0f} in total expenses!"
+        )
+    
+    # ===== Features List =====
+    if re.search(r'\b(feature|can\s+i|what\s+can|what\s+do|capabilities|options)\b', msg):
+        return (
+            "✨ **FeinBuddy Features**\n\n"
+            "═══════════════════════════════════════\n\n"
+            "💸 **EXPENSES**\n"
+            "   ├─ Add with category, date, description\n"
+            "   ├─ Edit or delete entries\n"
+            "   ├─ Filter by date & category\n"
+            "   └─ Track daily/weekly/monthly totals\n\n"
+            "👥 **GROUPS**\n"
+            "   ├─ Create shared expense groups\n"
+            "   ├─ Add multiple members\n"
+            "   ├─ Auto-split calculations\n"
+            "   └─ Track who owes what\n\n"
+            "🎓 **TUITION**\n"
+            "   ├─ Add students with rates\n"
+            "   ├─ Set weekly routine (days)\n"
+            "   ├─ Mark attendance day-by-day\n"
+            "   ├─ Calculate income\n"
+            "   └─ Export PDF routine\n\n"
+            "📊 **DASHBOARD**\n"
+            "   ├─ Visual charts (pie, bar)\n"
+            "   ├─ Weekly summaries\n"
+            "   ├─ Category breakdown\n"
+            "   └─ Recent transactions\n\n"
+            "👤 **PROFILE**\n"
+            "   └─ Update name, email, profession\n\n"
+            "🎨 **THEMES**\n"
+            "   └─ Light/dark mode toggle\n\n"
+            "═══════════════════════════════════════\n\n"
+            "Ask: 'How do I add expenses?' or 'Tell me about routine system'"
+        )
+    
+    # ===== Dashboard Help =====
+    if re.search(r'\b(dashboard|home|overview|summary|charts?|graphs?)\b', msg):
+        return (
+            "📊 **Dashboard** is your finance overview!\n\n"
+            "You'll see:\n"
+            "• Weekly spending summary\n"
+            "• Expense breakdown by category (pie chart)\n"
+            "• Recent transactions\n"
+            "• Quick stats cards\n\n"
+            "Navigate to Dashboard from the navbar to see your financial snapshot!"
+        )
+    
+    # ===== Expense Tracking =====
+    if re.search(r'\b(expense|add\s+expense|track|spending|record|log)\b', msg) and \
+       not re.search(r'\bgroup', msg):
+        return (
+            "💸 **Expense Tracking** is easy!\n\n"
+            "**To add an expense:**\n"
+            "1. Go to 'Expenses' in the navbar\n"
+            "2. Click 'Add Expense' button\n"
+            "3. Fill in amount, category, date, description\n"
+            "4. Submit!\n\n"
+            "**Categories available:** Food, Transport, Entertainment, Shopping, Bills, Health, Education\n\n"
+            f"So far you've tracked ৳{total_all_time:,.0f} across all categories!"
+        )
+    
+    # ===== Group Management =====
+    if re.search(r'\b(group|groups|split|shared|friends|owe|dues?|settle)\b', msg):
+        return (
+            "👥 **Group Expense Management**\n\n"
+            "═══════════════════════════════════════\n\n"
+            "**📝 Step-by-Step:**\n\n"
+            "**1. Create Group**\n"
+            "   → Groups page → 'Create New'\n"
+            "   → Name it (Trip, Apartment, etc.)\n\n"
+            "**2. Add Members**\n"
+            "   → Enter each person's name\n"
+            "   → Add/remove anytime\n\n"
+            "**3. Log Shared Expenses**\n"
+            "   → Click group → Add expense\n"
+            "   → Enter amount & description\n"
+            "   → Choose who paid\n"
+            "   → Auto-splits equally\n\n"
+            "**4. Track Balances**\n"
+            "   → 'Who Owes What' section\n"
+            "   → Clear breakdown shown\n"
+            "   → Auto-calculated\n\n"
+            "**5. Settle Dues**\n"
+            "   → Mark payments settled\n"
+            "   → Keep transaction history\n\n"
+            "═══════════════════════════════════════\n\n"
+            "**💡 Perfect For:**\n"
+            "• Weekend trips • Shared apartments\n"
+            "• Restaurant bills • Event planning\n\n"
+            f"**Your Groups:** {group_count} active group(s)"
+        )
+    
+    # ===== Tuition Management =====
+    if re.search(r'\b(tuition|class|classes|teaching|student|income|attendance|routine)\b', msg):
+        return (
+            "🎓 **Tuition Tracker** - Complete Teaching Management\n\n"
+            "═══════════════════════════════════════\n\n"
+            "**📚 Core Features:**\n\n"
+            "1️⃣ **Add Students/Classes**\n"
+            "   • Set student name & rate per session\n"
+            "   • Define total number of classes\n"
+            "   • Choose specific days (Mon-Sun)\n"
+            "   • Set start date\n\n"
+            "2️⃣ **Track Attendance**\n"
+            "   • Mark Present/Absent for each class\n"
+            "   • Visual progress bars\n"
+            "   • Auto-calculates completion\n\n"
+            "3️⃣ **Income Calculator**\n"
+            "   • Real-time: Rate × Total Classes\n"
+            "   • Track completed vs remaining\n\n"
+            "4️⃣ **Routine System** 📅\n"
+            "   • Personalized routine per student\n"
+            "   • Shows: Name, Days, Classes, Rate\n"
+            "   • Day-by-day attendance tracking\n"
+            "   • Visual status (✓ Present / ✗ Absent)\n"
+            "   • Export as PDF with one click!\n\n"
+            "═══════════════════════════════════════\n\n"
+            f"**Your Status:** {tuition_progress}% complete | ৳{tuition_income:,.0f} potential\n\n"
+            "**Quick Actions:**\n"
+            "• Tuition page → Add New Student\n"
+            "• Click student → Mark attendance\n"
+            "• 'Export Routine PDF' → Download"
+        )
+    
+    # ===== Profile/Settings =====
+    if re.search(r'\b(profile|account|settings|personal|edit|update|change)\b', msg):
+        return (
+            "👤 **Profile** lets you manage your account!\n\n"
+            "**You can:**\n"
+            "• Update profile name\n"
+            "• Set email address\n"
+            "• Add profession & institution\n"
+            "• View account details\n\n"
+            "Go to 'Profile' in the navbar to make changes!"
+        )
+    
+    # ===== Navigation Help =====
+    if re.search(r'\b(navigate|navigation|where|find|go\s+to|menu|page)\b', msg):
+        return (
+            "🧭 **Navigation Guide:**\n\n"
+            "Top navbar has these sections:\n"
+            "• 🏠 Dashboard - Your finance overview\n"
+            "• 💸 Expenses - Track daily spending\n"
+            "• 👥 Groups - Shared expenses\n"
+            "• 🎓 Tuition - Class management\n"
+            "• 👤 Profile - Account settings\n"
+            "• 🌙 Theme Toggle - Switch light/dark mode\n\n"
+            "Click any section to jump there!"
+        )
+    
+    # ===== Theme/Appearance =====
+    if re.search(r'\b(theme|dark\s+mode|light\s+mode|appearance|color|design)\b', msg):
+        return (
+            "🎨 **Theme Options:**\n\n"
+            "FeinBuddy supports light & dark themes!\n\n"
+            "**To switch:**\n"
+            "• Click the 🌙/☀️ icon in the navbar\n"
+            "• Instantly toggles between light (purple) and dark (maroon) themes\n"
+            "• Your preference is saved automatically\n\n"
+            "Try it now for a fresh look!"
+        )
+    
+    # ===== How to use / Getting Started =====
+    if re.search(r'\b(how\s+to|getting\s+started|start|begin|tutorial|guide)\b', msg):
+        return (
+            "🚀 **Getting Started with FeinBuddy:**\n\n"
+            "**Step 1:** Complete your profile (add name, profession)\n"
+            "**Step 2:** Start tracking expenses (Expenses page)\n"
+            "**Step 3:** Check your Dashboard for insights\n"
+            "**Step 4:** Create groups for shared expenses (optional)\n"
+            "**Step 5:** Add tuition classes if you teach (optional)\n\n"
+            "Need help with a specific feature? Just ask!"
+        )
+    
+    # ===== Data/Reports =====
+    if re.search(r'\b(report|export|download|pdf|data|statistics|analytics)\b', msg):
+        return (
+            "📈 **Reports & Data Export**\n\n"
+            "═══════════════════════════════════════\n\n"
+            "**📊 Dashboard Analytics:**\n"
+            "   • Pie charts (category breakdown)\n"
+            "   • Bar graphs (spending trends)\n"
+            "   • Weekly summary cards\n"
+            "   • Real-time statistics\n\n"
+            "**💸 Expense Reports:**\n"
+            "   • Filterable table\n"
+            "   • Sort by date/amount/category\n"
+            "   • Search functionality\n"
+            "   • Date range selection\n\n"
+            "**📑 PDF Export (Tuition):**\n"
+            "   • Professional routine format\n"
+            "   • Student details & rates\n"
+            "   • Complete attendance records\n"
+            "   • Day-by-day breakdown\n"
+            "   • One-click download\n\n"
+            "**🔐 Data Security:**\n"
+            "   • Securely stored\n"
+            "   • Private to your account\n"
+            "   • Encrypted database\n\n"
+            "═══════════════════════════════════════\n\n"
+            "**To Export PDF:**\n"
+            "1. Go to Tuition page\n"
+            "2. Click 'Export Routine PDF'\n"
+            "3. PDF downloads automatically!"
+        )
+    
+    # ===== Current Status (personalized) =====
+    if re.search(r'\b(my|current|status|summary|stats?|spending)\b', msg):
+        response = f"Here's your quick status, {display_name}:\n\n"
+        response += f"💰 This week: ৳{total_recent:,.0f}\n"
+        response += f"💰 All-time total: ৳{total_all_time:,.0f}\n"
+        if category_str:
+            response += f"📊 Top spending: {category_str}\n"
+        if tuition_income > 0:
+            response += f"🎓 Tuition income potential: ৳{tuition_income:,.0f} ({tuition_progress}% done)\n"
+        if group_count > 0:
+            response += f"👥 Active groups: {group_count}\n"
+        response += "\nCheck your Dashboard for detailed insights!"
+        return response
+    
+    # ===== Thanks / Appreciation =====
+    if re.search(r'\b(thanks?|thank\s+you|appreciate|helpful)\b', msg):
+        return (
+            f"You're very welcome, {display_name}! 😊 I'm always here to help you navigate FeinBuddy. "
+            "Feel free to ask anything else about the app's features or how to use them!"
+        )
+    
+    # ===== Default fallback for unknown queries =====
+    return (
+        "I'm not quite sure about that specific query, but I'm here to help with FeinBuddy! 🤔\n\n"
+        "I can assist you with:\n"
+        "• What FeinBuddy does\n"
+        "• How to use features (Expenses, Groups, Tuition)\n"
+        "• Navigation and settings\n"
+        "• Your current financial status\n\n"
+        "What would you like to know?"
+    )
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
@@ -86,6 +372,118 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 # Scheduler setup
 scheduler = APScheduler()
 scheduler.init_app(app)
+scheduler.start()
+
+
+def send_reminder_email(expense_id):
+    """Send a reminder email for a specific expense."""
+    from routes.database import Expense, User
+    
+    with app.app_context():
+        expense = Expense.query.get(expense_id)
+        if not expense or expense.reminder_sent:
+            return
+        
+        user = User.query.get(expense.user_id)
+        if not user or not user.profile:
+            return
+        
+        email = user.profile.email
+        if not email:
+            return
+        
+        try:
+            # Create email message
+            msg = Message(
+                subject=f'Reminder: {expense.category} - {expense.name}',
+                recipients=[email],
+                html=f'''
+                <html>
+                    <head>
+                        <style>
+                            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                      color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }}
+                            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                            .expense-details {{ background: white; padding: 20px; border-radius: 8px; 
+                                               margin: 20px 0; border-left: 4px solid #667eea; }}
+                            .amount {{ font-size: 24px; font-weight: bold; color: #667eea; }}
+                            .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>💰 Payment Reminder</h1>
+                            </div>
+                            <div class="content">
+                                <p>Hello {user.username},</p>
+                                <p>This is a friendly reminder about your upcoming {expense.category.lower()}:</p>
+                                
+                                <div class="expense-details">
+                                    <h2>{expense.name}</h2>
+                                    <p><strong>Category:</strong> {expense.category}</p>
+                                    <p><strong>Amount:</strong> <span class="amount">${expense.amount:.2f}</span></p>
+                                    {f'<p><strong>Description:</strong> {expense.description}</p>' if expense.description else ''}
+                                    {f'<p><strong>Note:</strong> {expense.reminder_note}</p>' if expense.reminder_note else ''}
+                                </div>
+                                
+                                <p>Please make sure to process this payment on time.</p>
+                                
+                                <div class="footer">
+                                    <p>This is an automated reminder from FeinBuddy Money Manager</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+                '''
+            )
+            
+            mail.send(msg)
+            
+            # Mark as sent
+            expense.reminder_sent = True
+            db.session.commit()
+            
+        except Exception as e:
+            print(f'Error sending reminder email: {str(e)}')
+
+
+def schedule_reminder_email(expense_id, reminder_datetime):
+    """Schedule a reminder email for a specific datetime."""
+    try:
+        scheduler.add_job(
+            func=send_reminder_email,
+            trigger='date',
+            run_date=reminder_datetime,
+            args=[expense_id],
+            id=f'reminder_{expense_id}',
+            replace_existing=True
+        )
+    except Exception as e:
+        print(f'Error scheduling reminder: {str(e)}')
+
+
+@scheduler.task('interval', id='check_reminders', minutes=15)
+def check_and_send_reminders():
+    """Periodic job to check for due reminders and send them."""
+    from datetime import datetime
+    from routes.database import Expense
+    
+    with scheduler.app.app_context():
+        now = datetime.utcnow()
+        
+        # Find expenses with reminders that are due and not yet sent
+        due_expenses = Expense.query.filter(
+            Expense.reminder_at <= now,
+            Expense.reminder_sent == False,
+            Expense.reminder_at.isnot(None)
+        ).all()
+        
+        for expense in due_expenses:
+            send_reminder_email(expense.id)
 
 
 def _username_maybe_email(username: str) -> bool:
@@ -479,8 +877,25 @@ def ai_chatbot():
         greeting += f"🎓 Tuition income potential: ৳{total_tuition_income:,.0f} ({tuition_progress}% progress) | Groups: {group_count}"
         return jsonify({'reply': greeting})
 
+    # Prepare context for both AI and fallback
+    user_context = {
+        'display_name': display_name,
+        'email': email,
+        'profession': profession,
+        'institution': institution,
+        'total_recent': total_recent,
+        'total_all_time': total_all_time,
+        'category_str': category_str,
+        'tuition_income': total_tuition_income,
+        'tuition_progress': tuition_progress,
+        'group_count': group_count,
+        'recent_expense_count': len(recent_expenses)
+    }
+
+    # If Groq is not configured, use intelligent fallback
     if not groq_client:
-        return jsonify({'error': 'Groq not configured. Set GROQ_API_KEY and restart the app.'}), 503
+        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        return jsonify({'reply': fallback_response})
 
     # Build rich context for AI
     context = (
@@ -523,8 +938,10 @@ def ai_chatbot():
         ) or "I couldn't draft a reply just now."
         return jsonify({'reply': reply})
     except Exception as e:
-        app.logger.exception("Groq call failed")
-        return jsonify({'error': f'Groq error: {e}'}), 500
+        app.logger.exception("Groq call failed - falling back to intelligent response")
+        # If AI fails, use intelligent fallback instead of showing error
+        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        return jsonify({'reply': fallback_response})
 
 
 @app.route('/')
