@@ -37,6 +37,13 @@
                     <span class="detail-value">{{ current_user.username }}</span>
                 </div>
 
+                {% if profile.email %}
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ profile.email }}</span>
+                </div>
+                {% endif %}
+
                 <div class="detail-row">
                     <span class="detail-label">Profession:</span>
                     <span class="detail-value">{{ profile.profession }}</span>

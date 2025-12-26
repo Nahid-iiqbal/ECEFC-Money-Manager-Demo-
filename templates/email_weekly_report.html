@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Expense Report</title>
+</head>
+<body style="margin:0;padding:20px;background-color:#0f1115;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#f3f4f6">
+    <div style="max-width:600px;margin:0 auto;background-color:#131720;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.35);border:1px solid #1f2a3a">
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#0b1220 0%,#1b2535 60%,#0b1220 100%);padding:30px;border-radius:12px 12px 0 0;border-bottom:1px solid #1f2a3a">
+            <h1 style="color:#ffffff;margin:0;font-size:26px;font-weight:800;letter-spacing:0.3px">📊 Weekly Expense Summary</h1>
+            <p style="color:#cbd5e1;margin:10px 0 0;font-size:14px;font-weight:700">Period: {{ start_date }} to {{ end_date }}</p>
+        </div>
+        
+        <!-- Content -->
+        <div style="padding:28px">
+            <!-- Total Summary Card -->
+            <div style="background:linear-gradient(120deg,rgba(231,76,60,0.28),rgba(231,76,60,0));border:1px solid rgba(231,76,60,0.45);padding:18px 20px;margin-bottom:24px;border-radius:10px">
+                <p style="margin:0;color:#f8fafc;font-size:13px;font-weight:800;letter-spacing:0.3px;text-transform:uppercase">Total Spent This Week</p>
+                <p style="margin:10px 0 0;color:#fca5a5;font-size:36px;font-weight:900">৳{{ total }}</p>
+            </div>
+            
+            <!-- Category Breakdown -->
+            <h3 style="color:#f8fafc;margin:0 0 14px;font-size:17px;font-weight:800">Category Breakdown</h3>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:24px;background-color:#0f131c;border:1px solid #273245;border-radius:10px;overflow:hidden">
+                <thead>
+                    <tr style="background:linear-gradient(135deg,#0c1220,#0b1118)">
+                        <th style="text-align:left;padding:12px;border-bottom:1px solid #273245;color:#f1f5f9;font-weight:800;font-size:13px;letter-spacing:0.35px">Category</th>
+                        <th style="text-align:right;padding:12px;border-bottom:1px solid #273245;color:#f1f5f9;font-weight:800;font-size:13px;letter-spacing:0.35px">Amount</th>
+                        <th style="text-align:right;padding:12px;border-bottom:1px solid #273245;color:#f1f5f9;font-weight:800;font-size:13px;letter-spacing:0.35px">Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ category_rows }}
+                </tbody>
+            </table>
+            
+            <!-- Transaction Details -->
+            <h3 style="color:#f8fafc;margin:22px 0 12px;font-size:17px;font-weight:800">Recent Transactions</h3>
+            <div style="background-color:#0f131c;border:1px solid #273245;border-radius:10px;padding:14px">
+                {{ transaction_rows }}
+            </div>
+            
+            <!-- No expenses message -->
+            {{ no_expenses_message }}
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color:#0f1115;padding:18px;border-radius:0 0 12px 12px;text-align:center;border-top:1px solid #1f2a3a">
+            <p style="margin:0;color:#d1d5db;font-size:12px;letter-spacing:0.2px;font-weight:700">
+                💼 Automated weekly report from <strong style="color:#a78bfa">FeinBuddy</strong>
+            </p>
+            <p style="margin:8px 0 0;color:#9ca3af;font-size:11.5px;font-weight:600">
+                Keep track of your expenses and achieve your financial goals!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

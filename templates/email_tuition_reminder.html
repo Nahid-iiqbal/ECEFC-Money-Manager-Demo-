@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuition Reminder</title>
+</head>
+<body style="margin:0;padding:20px;background-color:#0f1115;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#e6e9ef">
+    <div style="max-width:500px;margin:0 auto;background-color:#131720;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.35);border:1px solid #1f2a3a">
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#0f172a 0%,#111827 50%,#0f172a 100%);padding:25px;border-radius:12px 12px 0 0;border-bottom:1px solid #1f2a3a">
+            <h1 style="color:#f9fafb;margin:0;font-size:24px;font-weight:700">🔔 Tuition Reminder</h1>
+            <p style="color:#9ca3af;margin:10px 0 0;font-size:13px">{{ reminder_time }}</p>
+        </div>
+        
+        <!-- Content -->
+        <div style="padding:24px">
+            <!-- Alert Box -->
+            <div style="background:linear-gradient(120deg,rgba(255,193,7,0.15),rgba(255,193,7,0));border:1px solid rgba(255,193,7,0.35);padding:14px 16px;margin-bottom:18px;border-radius:10px">
+                <p style="margin:0;color:#fcd34d;font-weight:700;font-size:14px;letter-spacing:0.2px">⏰ Class starting in {{ hours_remaining }}</p>
+            </div>
+            
+            <!-- Student Info Card -->
+            <div style="background-color:#0f131c;border:1px solid #1f2a3a;border-radius:10px;padding:18px;margin-bottom:14px">
+                <div style="margin-bottom:14px">
+                    <p style="margin:0;color:#9ca3af;font-size:12px;font-weight:600;letter-spacing:0.3px">STUDENT NAME</p>
+                    <p style="margin:6px 0 0;color:#e5e7eb;font-size:17px;font-weight:700">{{ student_name }}</p>
+                </div>
+                
+                <div style="margin-bottom:14px">
+                    <p style="margin:0;color:#9ca3af;font-size:12px;font-weight:600;letter-spacing:0.3px">⏰ CLASS TIME</p>
+                    <p style="margin:6px 0 0;color:#e5e7eb;font-size:17px;font-weight:700">{{ class_time }} (Today)</p>
+                </div>
+                
+                <div style="margin-bottom:14px">
+                    <p style="margin:0;color:#9ca3af;font-size:12px;font-weight:600;letter-spacing:0.3px">📍 LOCATION</p>
+                    <p style="margin:6px 0 0;color:#d1d5db;font-size:14px">{{ address }}</p>
+                </div>
+                
+                <div>
+                    <p style="margin:0;color:#9ca3af;font-size:12px;font-weight:600;letter-spacing:0.3px">💰 AMOUNT PER CLASS</p>
+                    <p style="margin:6px 0 0;color:#34d399;font-size:18px;font-weight:700">৳{{ amount }}</p>
+                </div>
+            </div>
+            
+            <!-- Action Tip -->
+            <div style="background:linear-gradient(120deg,rgba(59,130,246,0.12),rgba(59,130,246,0));border:1px solid rgba(59,130,246,0.35);border-radius:10px;padding:14px 16px;margin-top:18px">
+                <p style="margin:0;color:#bfdbfe;font-size:12.5px;line-height:1.6">
+                    💡 <strong style="color:#e5e7eb">Tip:</strong> Prepare materials in advance and leave early to arrive on time.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color:#0f1115;padding:18px;border-radius:0 0 12px 12px;text-align:center;border-top:1px solid #1f2a3a">
+            <p style="margin:0;color:#9ca3af;font-size:12px">
+                📚 Automatic reminder from <strong style="color:#f5576c">FeinBuddy</strong>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
