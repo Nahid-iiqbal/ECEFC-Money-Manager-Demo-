@@ -24,7 +24,8 @@
 
                 <div class="form-group full-width">
                     <label for="email">Email (for reports)</label>
-                    <input type="email" id="email" name="email" placeholder="you@example.com" class="form-input">
+                    <input type="email" id="email" name="email" placeholder="you@example.com" 
+                           value="{{ pending_email or '' }}" class="form-input">
                     <small class="form-hint">Used for weekly expense reports. Optional.</small>
                 </div>
 

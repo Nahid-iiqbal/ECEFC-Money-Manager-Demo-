@@ -610,21 +610,21 @@ main {
 .card-amount {
     font-size: 1.75rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text-primary);
 }
 
-.card-purple { border-left: 4px solid #667eea; }
-.card-blue { border-left: 4px solid #4299e1; }
-.card-orange { border-left: 4px solid #f6ad55; }
-.card-green { border-left: 4px solid #48bb78; }
+.card-purple { border-left: 4px solid var(--accent-purple); }
+.card-blue { border-left: 4px solid var(--accent-blue); }
+.card-orange { border-left: 4px solid var(--accent-orange); }
+.card-green { border-left: 4px solid var(--accent-green); }
 
-.card-purple:hover { background: linear-gradient(135deg, #f7f9fc 0%, #e8ecff 100%); }
-.card-blue:hover { background: linear-gradient(135deg, #f7f9fc 0%, #e3f2fd 100%); }
-.card-orange:hover { background: linear-gradient(135deg, #f7f9fc 0%, #fff3e0 100%); }
-.card-green:hover { background: linear-gradient(135deg, #f7f9fc 0%, #e8f5e9 100%); }
+.card-purple:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(102, 126, 234, 0.1) 100%); }
+.card-blue:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(66, 153, 225, 0.1) 100%); }
+.card-orange:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(246, 173, 85, 0.1) 100%); }
+.card-green:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(72, 187, 120, 0.1) 100%); }
 
-.card-amount.positive { color: #48bb78; }
-.card-amount.negative { color: #f56565; }
+.card-amount.positive { color: var(--accent-green); }
+.card-amount.negative { color: var(--accent-red); }
 
 .quick-actions-section {
     margin-bottom: 3rem;
@@ -632,7 +632,7 @@ main {
 
 .quick-actions-section h3 {
     font-size: 1.5rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 

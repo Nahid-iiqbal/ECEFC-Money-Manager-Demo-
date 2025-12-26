@@ -443,16 +443,37 @@ function showToastNotification(message, type = 'info') {
         animation: slideIn 0.3s ease;
     `;
     
-    // Color based on type
+    // Get current theme
+    const isDarkTheme = document.body.getAttribute('data-theme') === 'dark';
+    
+    // Colors based on type and theme
     const colors = {
-        success: '#4caf50',
-        error: '#f44336',
-        warning: '#ff9800',
-        info: '#2196f3'
+        success: {
+            light: { bg: '#a9e5abff', text: '#1b5e20' },
+            dark: { bg: '#f4bdc7ff', text: '#650606ff' }
+        },
+        error: {
+            light: { bg: '#f44336', text: '#ffffff' },
+            dark: { bg: '#d32f2f', text: '#ffebee' }
+        },
+        warning: {
+            light: { bg: '#ff9800', text: '#ffffff' },
+            dark: { bg: '#f57c00', text: '#fff3e0' }
+        },
+        info: {
+            light: { bg: '#2196f3', text: '#ffffff' },
+            dark: { bg: '#1976d2', text: '#e3f2fd' }
+        }
     };
     
-    toast.style.backgroundColor = colors[type] || colors.info;
-    toast.style.color = 'white';
+    const theme = isDarkTheme ? 'dark' : 'light';
+    const colorScheme = colors[type] || colors.info;
+    
+    toast.style.backgroundColor = colorScheme[theme].bg;
+    toast.style.color = colorScheme[theme].text;
+    toast.style.boxShadow = isDarkTheme 
+        ? '0 4px 12px rgba(0, 0, 0, 0.5)' 
+        : '0 4px 12px rgba(0, 0, 0, 0.15)';
     
     document.body.appendChild(toast);
     setTimeout(() => {
@@ -569,8 +590,16 @@ style.textContent = `
         color: #4caf50;
     }
     
+    [data-theme="dark"] .stat-amount.positive {
+        color: #81c784;
+    }
+    
     .stat-amount.negative {
         color: #f44336;
+    }
+    
+    [data-theme="dark"] .stat-amount.negative {
+        color: #e57373;
     }
     
     body.realtime-connected::before {
@@ -580,11 +609,15 @@ style.textContent = `
         right: 20px;
         width: 12px;
         height: 12px;
-        background-color: #4caf50;
+        background-color: #7dd0b5ff;
         border-radius: 50%;
         z-index: 10000;
         animation: blink 2s infinite;
-        box-shadow: 0 0 5px #4caf50;
+        box-shadow: 0 0 5px #245525ff;
+    }
+    [data-theme="dark"] body.realtime-connected::before{
+        background-color: #e2bec3ff;
+        box-shadow: 0 0 5px #8b2833ff;
     }
     
     @keyframes blink {

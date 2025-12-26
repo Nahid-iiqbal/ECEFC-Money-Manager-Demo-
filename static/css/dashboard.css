@@ -89,8 +89,11 @@ nav{
     justify-content: space-between;
     align-items: center;
 }
+[data-theme="dark"] .header{
+    background: linear-gradient(105deg, rgb(60, 8, 8), maroon);
+}
 [data-theme="dark"] .header-content {
-    background-color: rgb(114, 31, 31);
+    background: linear-gradient(105deg, rgb(60, 8, 8), maroon);
 }
 
 .header-right {
@@ -101,7 +104,7 @@ nav{
 
 /* Settings Button in Dashboard */
 .btn-settings-dashboard {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #054a51, #5fa46c);
     color: white;
     border: none;
     border-radius: 50%;
@@ -122,7 +125,7 @@ nav{
 }
 
 [data-theme="dark"] .btn-settings-dashboard {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: linear-gradient(135deg, #d6746a, #42100b);
     box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
 }
 
@@ -151,14 +154,14 @@ nav{
 
 .dashboard-header {
     text-align: center;
-    padding: 1rem 0;
+    padding: 0.7rem 0;
     margin: 0;
-    margin-top: -1.5rem;
+    margin-top: -1rem;
 }
 
 
 .dashboard-header h2 {
-    font-size: 2rem;
+    font-size: 1.7rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
@@ -192,40 +195,21 @@ nav{
     display: inline-block;
     padding: 0.5rem 1rem;
     margin-top: 0.5rem;
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    background: linear-gradient(145deg, rgb(6, 31, 87), rgb(84, 154, 154));
     color: white;
     text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
     transition: transform 0.2s ease;
 }
+[data-theme="dark"] .btn-sm {
+    background: linear-gradient(145deg, rgb(97, 16, 51), rgb(185, 111, 111));
+}
 
 .btn-sm:hover {
     transform: translateY(-2px);
 }
 
-/* [data-theme="light"].welcome-text {
-    margin-top: 0.5rem;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-    color: #61a3c2; 
-} */
-
-/* [data-theme="light"] .welcome-text strong {
-    color: var(--text-primary);
-    color: #fff;
-} */
-/* [data-theme="dark"] .welcome-text {
-    margin-top: 0.5rem;
-    font-size: 0.95rem; */
-    /* color: var(--text-primary);
-    color: #e85151; */
-/* } */
-
-/* [data-theme="dark"] .welcome-text strong {
-    color: var(--accent-red);
-    text-shadow: 0 0 8px rgba(235, 114, 101, 0.836);
-} */
 
 .welcome-text {
     margin: 0;
@@ -237,24 +221,23 @@ nav{
 [data-theme="dark"] .welcome-text {
     color: #e8e8e8;
 }
-
 .welcome-text strong {
-    color: var(--accent-blue);
-    font-weight: 700;
+    color: #fff;
+    font-weight: 800;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="dark"] .welcome-text strong {
-    color: #ffeb3b;
+    color: #ecd8b5;
 }
 
-header {
-    background: linear-gradient(135deg, #75a8d2, #a24b86);
+header {    
+    background: linear-gradient(105deg, rgb(2, 21, 48), rgb(48, 71, 98));
     padding: 0.75rem 0;
     position: relative;
 }
-
-[data-theme="dark"] header {
-    background: linear-gradient(135deg, #8b3a3a, #5c2626);
+[data-theme="dark"] header{
+    background: linear-gradient(105deg, rgb(60, 8, 8), maroon);
 }
 
 header .container {
@@ -280,20 +263,6 @@ header .container {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.welcome-text strong {
-    color: #fff;
-    font-weight: 800;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-[data-theme="dark"] .welcome-text strong {
-    color: #ffeb3b;
-}
-
-[data-theme="dark"] .welcome-text strong {
-    color: #5bb5f7;
-}
-
 header {
     padding: 1rem 0;
 }
@@ -304,7 +273,7 @@ header .container {
 
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -397,6 +366,10 @@ header .container {
     color: var(--accent-green);
 }
 
+.card-green .card-icon {
+    color: var(--accent-green);
+}
+
 .balance-item.to-owe .balance-value {
     color: var(--accent-red);
 }
@@ -411,7 +384,7 @@ header .container {
 .card-orange:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(246, 173, 85, 0.1) 100%); }
 .card-green:hover { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(72, 187, 120, 0.1) 100%); }
 
-.card-amount.positive { color: var(--accent-green); }
+.card-amount.positive { color: rgb(13, 58, 106); }
 .card-amount.negative { color: var(--accent-red); }
 
 .quick-actions-section {
@@ -438,10 +411,11 @@ header .container {
     padding: 1rem 1.5rem;
     border-radius: 8px;
     text-decoration: none;
-    color: white;
     font-weight: 600;
     transition: all 0.3s ease;
     box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    cursor: pointer;
 }
 
 .action-btn:hover {
@@ -457,9 +431,61 @@ header .container {
     font-size: 1.25rem;
 }
 
-.btn-purple { background: linear-gradient(135deg, var(--accent-purple) 0%, #764ba2 100%); }
-.btn-blue { background: linear-gradient(135deg, var(--accent-blue) 0%, #3182ce 100%); }
-.btn-orange { background: linear-gradient(135deg, var(--accent-orange) 0%, #ed8936 100%); }
+/* Filled button colors for Quick Actions - Light Theme */
+.btn-purple { 
+    background: linear-gradient(135deg, #60a5fa 0%, #0b4198 100%);
+    color: white;
+    border: none;
+}
+
+.btn-purple:hover {
+    background: linear-gradient(135deg, #0b429a 0%, #87a6e8 100%);
+}
+
+.btn-blue { 
+    background: linear-gradient(135deg, #519f91 0%, #0d6447 100%);
+    color: white;
+    border: none;
+}
+
+.btn-blue:hover {
+    background: linear-gradient(135deg, #097c56 0%, #548f7c 100%);
+}
+
+.btn-orange { 
+    background: linear-gradient(135deg, #519cb5 0%, #085a75 100%);
+    color: white;
+    border: none;
+}
+
+.btn-orange:hover {
+    background: linear-gradient(135deg, #076c80 0%, #54a4aa 100%);
+}
+
+/* Dark theme button colors */
+[data-theme="dark"] .btn-purple {
+    background: linear-gradient(135deg, #7c0d0d 0%, #e36868 100%);
+}
+
+[data-theme="dark"] .btn-purple:hover {
+    background: linear-gradient(135deg, #e27070 0%, #740a0a 100%);
+}
+
+[data-theme="dark"] .btn-blue {
+    background: linear-gradient(135deg, #b9530a 0%, #daa88e 100%);
+}
+
+[data-theme="dark"] .btn-blue:hover {
+    background: linear-gradient(135deg, #dc946d 0%, #99340b 100%);
+}
+
+[data-theme="dark"] .btn-orange {
+    background: linear-gradient(135deg, #b67807 0%, #ceb681 100%);
+}
+
+[data-theme="dark"] .btn-orange:hover {
+    background: linear-gradient(135deg, #d6ab6f 0%, #9d600b 100%);
+}
 
 .recent-activity-section {
     background: var(--bg-card);
@@ -698,7 +724,7 @@ header .container {
 
 @media (max-width: 768px) {
     .summary-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .quick-actions {

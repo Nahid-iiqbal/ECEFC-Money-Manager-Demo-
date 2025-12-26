@@ -1,73 +1,30 @@
-/* ============================================
-   PROFESSIONAL NAVBAR SCROLL EFFECTS
-   ============================================
-   
-   Purpose: Enhance sticky navbar with scroll-based visual feedback
-   
-   Features:
-   - Adds 'scrolled' class when user scrolls down
-   - Debounced for performance (60fps target)
-   - Intersection Observer for efficient detection
-   - No layout shifts or jank
-   
-   Why JavaScript is needed:
-   - CSS :stuck pseudo-class has poor browser support
-   - We want dynamic shadow/style changes based on scroll position
-   - Provides smooth, performant transitions
-   ============================================ */
 
 (function() {
     'use strict';
     
     // Configuration
-    const SCROLL_THRESHOLD = 50; // Pixels scrolled before triggering 'scrolled' class
-    const DEBOUNCE_DELAY = 10; // Milliseconds to wait before processing scroll
-    
-    // Get navbar element
+    const SCROLL_THRESHOLD = 50; 
+    const DEBOUNCE_DELAY = 10; 
     const navbar = document.getElementById('mainNav');
-    
-    // Exit if navbar doesn't exist (e.g., logged out pages)
     if (!navbar) return;
-    
-    // Track last scroll position to prevent unnecessary updates
     let lastScrollY = window.scrollY;
-    let ticking = false; // RequestAnimationFrame ticking flag
-    
-    /**
-     * Update navbar appearance based on scroll position
-     * Uses requestAnimationFrame for smooth 60fps updates
-     */
+    let ticking = false; 
     function updateNavbar() {
         const scrollY = window.scrollY;
-        
-        // Add 'scrolled' class when scrolled past threshold
         if (scrollY > SCROLL_THRESHOLD) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-        
-        // Update last position
         lastScrollY = scrollY;
         ticking = false;
     }
-    
-    /**
-     * Debounced scroll handler
-     * Requests animation frame only when needed for performance
-     */
     function onScroll() {
         if (!ticking) {
             window.requestAnimationFrame(updateNavbar);
             ticking = true;
         }
     }
-    
-    /**
-     * Alternative: Intersection Observer method (more modern)
-     * Detects when a sentinel element enters/exits viewport
-     * More efficient than scroll events for simple threshold detection
-     */
     function initIntersectionObserver() {
         // Create a sentinel element at the top of the page
         const sentinel = document.createElement('div');

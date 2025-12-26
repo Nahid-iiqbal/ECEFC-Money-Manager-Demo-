@@ -163,6 +163,7 @@ nav{
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .btn {
@@ -187,11 +188,14 @@ nav{
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    background: linear-gradient(135deg, rgb(3, 45, 101), rgb(70, 94, 137));
     color: white;
     box-shadow: var(--shadow-sm);
     align-items: flex-end;
     align-items: center ;
+}
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, rgb(48, 8, 8), rgb(112, 31, 31));
 }
 
 .btn-primary:hover {

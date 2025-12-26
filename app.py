@@ -344,6 +344,19 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
+# Add cache control headers for authenticated pages
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to prevent caching of sensitive pages."""
+    # Only apply to authenticated routes (not static files or public pages)
+    if request.endpoint and request.endpoint not in ['static', 'home', 'auth.login', 'auth.register']:
+        if current_user.is_authenticated:
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+    return response
+
+
 # Register blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(expense)
@@ -946,10 +959,10 @@ def ai_chatbot():
 
 @app.route('/')
 def home():
-    """Display homepage or redirect to dashboard if logged in."""
+    """Redirect to dashboard if logged in, otherwise redirect to login."""
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.dashboard'))
-    return render_template('index.html')
+    return redirect(url_for('auth.login'))
 
 
 @app.route('/toggle-email-notifications', methods=['POST'])
