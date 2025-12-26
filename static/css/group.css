@@ -325,12 +325,12 @@ main {
     font-size: 1.25rem;
 }
 
-.btn-purple { background: linear-gradient(165deg, var(--accent-purple) 0%, #764ba2 100%); }
-.btn-blue { background: linear-gradient(165deg, var(--accent-blue) 0%, #3182ce 100%); }
+.btn-purple { background: linear-gradient(165deg, rgb(61, 0, 130), #9477b5); }
+.btn-blue { background: linear-gradient(105deg, rgb(5, 40, 86), #1e5689); }
 .btn-orange { background: linear-gradient(165deg, var(--accent-orange) 0%, #ed8936 100%); }
 [data-theme="dark"] .btn-orange { background: linear-gradient(165deg, #90470c, rgb(130, 44, 4)); }
 [data-theme="dark"] .btn-blue { background: linear-gradient(150deg, #0e3158, rgb(19, 81, 113)); }
-[data-theme="dark"] .btn-purple { background: linear-gradient(150deg, #39255e, rgb(107, 73, 136)); }
+[data-theme="dark"] .btn-purple { background: linear-gradient(150deg, #5e2547, rgb(201, 141, 167)); }
 .recent-activity-section {
     background: var(--bg-card);
     border-radius: 12px;
