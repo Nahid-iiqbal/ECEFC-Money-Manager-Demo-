@@ -171,7 +171,7 @@ def update_completed(record_id, action):
         if action == 'increment' and record.total_completed < record.total_days:
             record.total_completed += 1
             db.session.commit()
-            flash('Progress updated!', 'success')
+            flash('✅ Class marked as completed!', 'success')
         elif action == 'decrement' and record.total_completed > 0:
             record.total_completed -= 1
             db.session.commit()
