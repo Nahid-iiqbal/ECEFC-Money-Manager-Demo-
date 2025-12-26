@@ -23,6 +23,12 @@
                 </div>
 
                 <div class="form-group full-width">
+                    <label for="email">Email (for reports)</label>
+                    <input type="email" id="email" name="email" value="{{ profile.email or '' }}" placeholder="you@example.com" class="form-input">
+                    <small class="form-hint">Used for weekly expense reports. Optional.</small>
+                </div>
+
+                <div class="form-group full-width">
                     <label for="picture">Profile Picture</label>
                     {% if profile.picture_filename %}
                         <div class="current-picture">

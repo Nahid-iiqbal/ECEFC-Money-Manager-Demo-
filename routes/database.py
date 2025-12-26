@@ -64,6 +64,7 @@ class Profile(db.Model):
         'user.id'), unique=True, nullable=False)
     profile_name = db.Column(db.String(100), nullable=False)
     picture_filename = db.Column(db.String(255), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
     profession = db.Column(db.String(100), nullable=False)
     institution = db.Column(db.String(100), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
