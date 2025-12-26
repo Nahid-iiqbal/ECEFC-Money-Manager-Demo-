@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
 from dotenv import load_dotenv
 from routes.database import db, User
 from routes.auth import auth_bp
@@ -12,8 +12,24 @@ from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import os
 
+try:
+    from groq import Groq
+except ImportError:
+    Groq = None
+
 load_dotenv()
 app = Flask(__name__)
+
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+GROQ_MODEL_NAME = os.environ.get('GROQ_MODEL_NAME', 'mixtral-8x7b-32768')
+groq_client = None
+
+if Groq and GROQ_API_KEY:
+    try:
+        groq_client = Groq(api_key=GROQ_API_KEY)
+        print(f"Groq initialized with model: {GROQ_MODEL_NAME}")
+    except Exception as e:
+        print(f"Groq setup failed: {e}")
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
@@ -58,6 +74,8 @@ app.config['MAIL_USE_SSL'] = os.environ.get(
     'MAIL_USE_SSL', 'false').lower() == 'true'
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
+    'MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME', 'noreply@feinbuddy.com')
 
 mail = Mail(app)
 
@@ -384,6 +402,125 @@ def send_tuition_reminders_now():
     except Exception as e:
         flash(f'Failed to send tuition reminder: {e}', 'error')
     return redirect(url_for('tuition.tuition_list'))
+
+
+@app.route('/api/chatbot', methods=['POST'])
+def ai_chatbot():
+    """AI responder with full user context from database."""
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'unauthorized'}), 401
+
+    payload = request.get_json(silent=True) or {}
+    user_message = (payload.get('message') or '').strip()
+
+    # Gather user information from database
+    from routes.database import Expense, TuitionRecord, GroupMember
+    from datetime import datetime, timedelta
+
+    profile = getattr(current_user, 'profile', None)
+    display_name = getattr(profile, 'profile_name',
+                           None) or current_user.username
+    email = getattr(profile, 'email', None) or 'not set'
+    profession = getattr(profile, 'profession', None) or 'not set'
+    institution = getattr(profile, 'institution', None) or 'not set'
+
+    # Recent expenses (last 7 days)
+    week_ago = datetime.utcnow().date() - timedelta(days=7)
+    recent_expenses = Expense.query.filter(
+        Expense.user_id == current_user.id,
+        Expense.date >= week_ago
+    ).all()
+    total_recent = sum((e.amount or 0) for e in recent_expenses)
+
+    # Total spending all time
+    all_expenses = Expense.query.filter(
+        Expense.user_id == current_user.id).all()
+    total_all_time = sum((e.amount or 0) for e in all_expenses)
+
+    # Expense categories breakdown (last 7 days)
+    category_summary = {}
+    for e in recent_expenses:
+        cat = e.category or 'Other'
+        category_summary[cat] = category_summary.get(cat, 0) + (e.amount or 0)
+
+    # Tuition info (income earned once 100% complete)
+    tuition_records = TuitionRecord.query.filter(
+        TuitionRecord.user_id == current_user.id).all()
+    tuition_count = len(tuition_records) if tuition_records else 0
+    total_tuition_income = sum((t.amount or 0)
+                               for t in tuition_records) if tuition_records else 0
+
+    # Calculate progress for tuition
+    tuition_progress = 0
+    if tuition_records:
+        total_classes = sum((t.total_days or 0) for t in tuition_records)
+        total_completed = sum((t.total_completed or 0)
+                              for t in tuition_records)
+        if total_classes > 0:
+            tuition_progress = int((total_completed / total_classes) * 100)
+
+    # Group memberships
+    group_count = GroupMember.query.filter(
+        GroupMember.user_id == current_user.id).count()
+
+    # Build context summary
+    category_str = ', '.join([f"{k}: ৳{v:,.0f}" for k, v in sorted(
+        category_summary.items(), key=lambda x: -x[1])[:3]])
+
+    if not user_message:
+        greeting = f"Hi {display_name}! 👋 Here's your quick summary:\n"
+        greeting += f"💰 This week: ৳{total_recent:,.0f} spent | All-time: ৳{total_all_time:,.0f}\n"
+        if category_str:
+            greeting += f"📊 Top categories: {category_str}\n"
+        greeting += f"🎓 Tuition income potential: ৳{total_tuition_income:,.0f} ({tuition_progress}% progress) | Groups: {group_count}"
+        return jsonify({'reply': greeting})
+
+    if not groq_client:
+        return jsonify({'error': 'Groq not configured. Set GROQ_API_KEY and restart the app.'}), 503
+
+    # Build rich context for AI
+    context = (
+        f"User: {display_name} ({email})\n"
+        f"Profession: {profession} | Institution: {institution}\n"
+        f"📈 Finance Summary:\n"
+        f"  - This week: ৳{total_recent:,.2f} ({len(recent_expenses)} expenses)\n"
+        f"  - All-time total: ৳{total_all_time:,.2f}\n"
+    )
+
+    if category_str:
+        context += f"  - Categories: {category_str}\n"
+
+    context += (
+        f"  - Tuition income potential: ৳{total_tuition_income:,.2f} ({tuition_progress}% progress, {tuition_count} classes)\n"
+        f"  - Groups: {group_count} joined\n"
+        f"Recent expenses: {', '.join([f'{e.name}(৳{e.amount:,.0f})' for e in recent_expenses[-5:]])}"
+    )
+
+    system_prompt = (
+        "You are FeinBuddy, a friendly personal finance assistant. "
+        f"You know the user's financial data: {context}\n\n"
+        "CHAT naturally like a friend, NOT like a report. Keep it SHORT (2-3 sentences max). "
+        "Use their data to give relevant, personalized insights and advice. "
+        "Be conversational, supportive, and encouraging. Use 1-2 emoji if it fits. "
+        "Never start with 'Hi', 'Hello', or greetings."
+    )
+
+    try:
+        completion = groq_client.chat.completions.create(
+            model=GROQ_MODEL_NAME,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        reply = (completion.choices[0].message.content or '').strip(
+        ) or "I couldn't draft a reply just now."
+        return jsonify({'reply': reply})
+    except Exception as e:
+        app.logger.exception("Groq call failed")
+        return jsonify({'error': f'Groq error: {e}'}), 500
 
 
 @app.route('/')
