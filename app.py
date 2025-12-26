@@ -58,17 +58,12 @@ app.config['MAIL_USE_SSL'] = os.environ.get(
     'MAIL_USE_SSL', 'false').lower() == 'true'
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-per_class = (record.amount / record.total_days) if getattr(record,
-                                                           'total_days', 0) else record.amount
-html = _render_email(
-    'templates/email_tuition_reminder.html',
-    reminder_time=f"Class in {offset_hours} hour{'s' if offset_hours > 1 else ''}",
-    hours_remaining=f"{offset_hours} hour{'s' if offset_hours > 1 else ''}",
-    student_name=record.student_name,
-    class_time=at_time,
-    address=record.address,
-    amount=f"{per_class:,.2f}",
-)
+
+mail = Mail(app)
+
+# Scheduler setup
+scheduler = APScheduler()
+scheduler.init_app(app)
 
 
 def _username_maybe_email(username: str) -> bool:
