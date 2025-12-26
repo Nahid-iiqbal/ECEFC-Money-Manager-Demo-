@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Add Expense - FeinBuddy{% endblock %}
+{% block title %}Add Expense - FinBuddy{% endblock %}
 
 {% block extra_css %}
 <link href="{{ url_for('static', filename='css/personal.css') }}" rel="stylesheet">
@@ -50,12 +50,26 @@
 
                 <div class="form-group">
                     <label for="expense-type">Type <span class="required">*</span></label>
-                    <select id="expense-type" name="type" required aria-required="true" class="form-select">
+                    <select id="expense-type" name="type" required aria-required="true" class="form-select" onchange="toggleGroupSelector()">
                         <option value="">Select Type</option>
                         <option value="Personal">👤 Personal</option>
+                        {% if user_groups %}
                         <option value="Group">👥 Group</option>
+                        {% endif %}
                     </select>
                 </div>
+
+                {% if user_groups %}
+                <div class="form-group" id="group-selector" style="display: none;">
+                    <label for="expense-group">Which group would you like to add this expense to? <span class="required">*</span></label>
+                    <select id="expense-group" name="group_id" aria-required="true" class="form-select">
+                        <option value="">Select a group</option>
+                        {% for group in user_groups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
 
                 <div class="form-group">
                     <label for="expense-date">Date <span class="required">*</span></label>
@@ -82,4 +96,21 @@
     </section>
 
 </div>
+
+<script>
+function toggleGroupSelector() {
+    const expenseType = document.getElementById('expense-type').value;
+    const groupSelector = document.getElementById('group-selector');
+    const groupInput = document.getElementById('expense-group');
+    
+    if (expenseType === 'Group') {
+        groupSelector.style.display = 'block';
+        groupInput.required = true;
+    } else {
+        groupSelector.style.display = 'none';
+        groupInput.required = false;
+        groupInput.value = '';
+    }
+}
+</script>
 {% endblock %}

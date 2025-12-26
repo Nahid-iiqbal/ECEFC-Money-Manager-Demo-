@@ -5,7 +5,7 @@ from flask_login import current_user
 from datetime import datetime, timedelta
 from io import BytesIO
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
@@ -458,26 +458,21 @@ def export_routine_pdf():
 
     # Group tuitions by day of week
     schedule_by_day = {i: [] for i in range(7)}
-    day_mapping = {
-        'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
-        'Thursday': 4, 'Friday': 5, 'Saturday': 6
-    }
-    
+
     for record in records:
-        # record.days is a list of day names (e.g., ['Monday', 'Wednesday', 'Friday'])
+        # record.days is a list of integers (e.g., [0, 1, 3] for Sunday, Monday, Wednesday)
         if record.days:
-            for day_name in record.days:
-                day_idx = day_mapping.get(day_name, -1)
-                if day_idx != -1:
+            for day_idx in record.days:
+                if isinstance(day_idx, int) and 0 <= day_idx <= 6:
                     schedule_by_day[day_idx].append(record)
 
     # Sort by time
     for day in schedule_by_day:
         schedule_by_day[day].sort(key=lambda x: x.tuition_time or "00:00")
 
-    # Create PDF
+    # Create PDF in landscape orientation for horizontal routine
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=30,
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=30,
                             leftMargin=30, topMargin=30, bottomMargin=30)
     elements = []
 
@@ -503,7 +498,7 @@ def export_routine_pdf():
     )
 
     # Title
-    elements.append(Paragraph("🎓 Tuition Routine", title_style))
+    elements.append(Paragraph("🎓 Weekly Tuition Routine", title_style))
     elements.append(Paragraph(
         f"Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}", subtitle_style))
     elements.append(Spacer(1, 0.3*inch))
@@ -512,70 +507,104 @@ def export_routine_pdf():
     days = ['Sunday', 'Monday', 'Tuesday',
             'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-    # Prepare table data
-    table_data = [['Day', 'Student Name', 'Time', 'Progress', 'Address']]
+    # Prepare table data - Days as columns
+    # First row: Day names
+    header_row = days
 
-    for day_idx in range(7):
-        day_classes = schedule_by_day[day_idx]
-        if day_classes:
-            for i, entry in enumerate(day_classes):
-                progress = f"{entry.total_completed}/{entry.total_days}"
-                time_str = entry.tuition_time or "N/A"
-                address = entry.address[:30] + \
-                    "..." if len(entry.address) > 30 else entry.address
+    # Find the maximum number of classes on any day
+    max_classes = max(len(schedule_by_day[day_idx]) for day_idx in range(7))
+    if max_classes == 0:
+        max_classes = 1  # At least one row for empty message
 
-                if i == 0:
-                    table_data.append([
-                        days[day_idx],
-                        entry.student_name,
-                        time_str,
-                        progress,
-                        address
-                    ])
+    # Initialize table data with header
+    table_data = [header_row]
+
+    # Create rows for each class slot
+    for row_idx in range(max_classes):
+        row = []
+        for day_idx in range(7):
+            day_classes = schedule_by_day[day_idx]
+            if row_idx < len(day_classes):
+                entry = day_classes[row_idx]
+                # Create a formatted cell with student name, time, and address
+                time_str = entry.tuition_time or "Time: N/A"
+                address = entry.address[:20] + \
+                    "..." if len(entry.address) > 20 else entry.address
+
+                cell_content = Paragraph(
+                    f"<b>{entry.student_name}</b><br/>"
+                    f"<font size=9>⏰ {time_str}</font><br/>"
+                    f"<font size=8>📍 {address}</font>",
+                    ParagraphStyle(
+                        'CellStyle',
+                        parent=styles['Normal'],
+                        fontSize=10,
+                        leading=12,
+                        alignment=TA_CENTER
+                    )
+                )
+                row.append(cell_content)
+            else:
+                # Empty cell if no class at this time slot
+                if row_idx == 0 and len(day_classes) == 0:
+                    row.append(Paragraph("<i>No classes</i>",
+                                         ParagraphStyle('EmptyStyle', parent=styles['Normal'],
+                                                        fontSize=9, alignment=TA_CENTER, textColor=colors.grey)))
                 else:
-                    table_data.append([
-                        '',
-                        entry.student_name,
-                        time_str,
-                        progress,
-                        address
-                    ])
-        else:
-            table_data.append([days[day_idx], 'No classes', '', '', ''])
+                    row.append('')
+        table_data.append(row)
 
-    # Create table
-    table = Table(table_data, colWidths=[
-                  1.2*inch, 1.8*inch, 0.9*inch, 0.9*inch, 2.2*inch])
+    # Create table with equal column widths for landscape orientation
+    col_width = 10.5*inch / 7  # Distribute width evenly across 7 days in landscape
+    table = Table(table_data, colWidths=[col_width] * 7,
+                  rowHeights=[0.4*inch] + [1*inch] * max_classes)
 
     # Table style
-    table.setStyle(TableStyle([
-        # Header row
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#e74c3c')),
+    table_style = [
+        # Header row (days)
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4a90e2')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('TOPPADDING', (0, 0), (-1, 0), 10),
 
         # Data rows
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-        ('ALIGN', (0, 1), (0, -1), 'CENTER'),  # Day column centered
-        ('ALIGN', (2, 1), (3, -1), 'CENTER'),  # Time and Progress centered
+        ('VALIGN', (0, 1), (-1, -1), 'TOP'),
+        ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('GRID', (0, 0), (-1, -1), 1.5, colors.HexColor('#cccccc')),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
         ('TOPPADDING', (0, 1), (-1, -1), 8),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
+        ('BOX', (0, 0), (-1, -1), 2, colors.HexColor('#4a90e2')),
+    ]
 
-        # Alternate row colors
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1),
-         [colors.white, colors.HexColor('#f5f5f5')]),
-    ]))
+    # Add alternating colors for data rows
+    for row_idx in range(1, len(table_data)):
+        if row_idx % 2 == 1:
+            table_style.append(
+                ('BACKGROUND', (0, row_idx),
+                 (-1, row_idx), colors.HexColor('#f8f9fa'))
+            )
+        else:
+            table_style.append(
+                ('BACKGROUND', (0, row_idx), (-1, row_idx), colors.white)
+            )
+
+    # Add light background to cells with content
+    for day_idx in range(7):
+        for row_idx in range(1, len(table_data)):
+            if schedule_by_day[day_idx] and (row_idx - 1) < len(schedule_by_day[day_idx]):
+                table_style.append(
+                    ('BACKGROUND', (day_idx, row_idx), (day_idx, row_idx),
+                     colors.HexColor('#e3f2fd'))
+                )
+
+    table.setStyle(TableStyle(table_style))
 
     elements.append(table)
     elements.append(Spacer(1, 0.5*inch))
@@ -583,16 +612,13 @@ def export_routine_pdf():
     # Summary statistics
     total_students = len(records)
     total_amount = sum(rec.amount for rec in records)
-    total_completed = sum(rec.total_completed for rec in records)
     total_classes = sum(rec.total_days for rec in records)
 
     summary_data = [
         ['Summary Statistics', ''],
         ['Total Students', str(total_students)],
-        ['Total Amount', f"৳{total_amount:,.2f}"],
-        ['Completed Classes', f"{total_completed}/{total_classes}"],
-        ['Completion Rate',
-            f"{(total_completed/total_classes*100) if total_classes > 0 else 0:.1f}%"]
+        ['Total Income', f"{total_amount:,.2f} bdt."],
+        ['Total Classes', str(total_classes)]
     ]
 
     summary_table = Table(summary_data, colWidths=[2.5*inch, 2*inch])
@@ -619,8 +645,25 @@ def export_routine_pdf():
 
     elements.append(summary_table)
 
-    # Build PDF
-    doc.build(elements)
+    # Branding: header/footer on each page
+    def draw_branding(canvas_obj, doc_obj):
+        width, height = landscape(A4)
+        # Header bar
+        canvas_obj.setFillColor(colors.HexColor('#667eea'))
+        canvas_obj.rect(0, height - 25, width, 25, fill=1, stroke=0)
+        # Brand text
+        canvas_obj.setFillColor(colors.whitesmoke)
+        canvas_obj.setFont('Helvetica-Bold', 14)
+        canvas_obj.drawCentredString(width / 2, height - 18, 'FinBuddy')
+        # Footer
+        canvas_obj.setFillColor(colors.HexColor('#888888'))
+        canvas_obj.setFont('Helvetica', 9)
+        canvas_obj.drawString(
+            30, 15, f"Generated on {datetime.now().strftime('%b %d, %Y')} • FinBuddy")
+        canvas_obj.drawRightString(width - 30, 15, f"Page {doc_obj.page}")
+
+    # Build PDF with branding
+    doc.build(elements, onFirstPage=draw_branding, onLaterPages=draw_branding)
 
     # Get PDF from buffer
     pdf = buffer.getvalue()
@@ -630,6 +673,6 @@ def export_routine_pdf():
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers[
-        'Content-Disposition'] = f'attachment; filename=tuition_routine_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+        'Content-Disposition'] = f'attachment; filename=Weekly_Routine_for_{current_user.username}.pdf'
 
     return response

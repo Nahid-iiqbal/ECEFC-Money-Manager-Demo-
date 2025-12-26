@@ -2,7 +2,7 @@
 
 ## 🤖 Overview
 
-The FeinBuddy AI Chatbot is a floating widget providing intelligent assistance with full access to user profile, expenses, and tuition data. It features complete **light and dark theme support** with gradient color schemes matching the app's design system.
+The FinBuddy AI Chatbot is a floating widget providing intelligent assistance with full access to user profile, expenses, and tuition data. It features complete **light and dark theme support** with gradient color schemes matching the app's design system.
 
 ---
 
@@ -79,7 +79,7 @@ The FeinBuddy AI Chatbot is a floating widget providing intelligent assistance w
     <div class="ai-chat-header">
       <div>
         <h4 class="ai-chat-title">AI Assistant</h4>
-        <p class="ai-chat-subtitle">FeinBuddy</p>
+        <p class="ai-chat-subtitle">FinBuddy</p>
       </div>
       <button id="ai-chat-close">×</button>
     </div>

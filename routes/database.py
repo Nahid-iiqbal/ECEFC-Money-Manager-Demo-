@@ -10,6 +10,9 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(80), nullable=False)
+    weekly_expense_report = db.Column(
+        db.Boolean, default=False, nullable=False)
+    tuition_reminder = db.Column(db.Boolean, default=False, nullable=False)
     expenses = db.relationship(
         'Expense', backref='user', lazy=True, cascade='all, delete-orphan')
     debts = db.relationship('Debt', backref='user',

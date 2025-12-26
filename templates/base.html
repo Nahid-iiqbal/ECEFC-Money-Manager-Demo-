@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FeinBuddy - Personal Finance Management">
-    <title>{% block title %}FeinBuddy{% endblock %}</title>
+    <meta name="description" content="FinBuddy - Personal Finance Management">
+    <title>{% block title %}FinBuddy{% endblock %}</title>
     
     <!-- Global Styles -->
     <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
@@ -30,15 +30,14 @@
                 <li><a href="{{ url_for('group.my_groups') }}" {% if request.endpoint and 'group' in request.endpoint %}class="active" aria-current="page"{% endif %}>👥 Groups</a></li>
                 <li><a href="{{ url_for('tuition.tuition_list') }}" {% if request.endpoint and 'tuition' in request.endpoint %}class="active" aria-current="page"{% endif %}>🎓 Tuition</a></li>
                 <li><a href="{{ url_for('profile.view_profile') }}" {% if request.endpoint and 'profile' in request.endpoint %}class="active" aria-current="page"{% endif %}>👤 Profile</a></li>
-                <li><a href="{{ url_for('auth.logout') }}" class="logout-btn">🚪 Logout</a></li>
             </ul>
-            <!-- Theme Toggle in Navbar (non-dashboard pages) -->
-            {% if request.endpoint != 'dashboard.dashboard' %}
-            <button id="themeToggle" class="theme-toggle theme-toggle-nav" aria-label="Toggle Upside Down Mode" title="Toggle Upside Down Mode">
-                <span class="theme-icon" aria-hidden="true">🌙</span>
-                <span class="theme-label">Upside Down</span>
-            </button>
-            {% endif %}
+            <!-- Settings in Navbar -->
+            <div class="nav-actions">
+                <button class="btn-settings-nav" onclick="openSettingsModal()" title="Settings">
+                    ⚙️
+                </button>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout-nav">🚪 Logout</a>
+            </div>
         </div>
     </nav>
     {% endif %}
@@ -65,11 +64,11 @@
         {% if current_user.is_authenticated %}
         <!-- Floating AI Chatbot -->
         <div id="ai-chatbot" class="ai-chatbot" aria-live="polite">
-            <button id="ai-chat-toggle" class="ai-chat-toggle" aria-label="Open AI assistant" aria-expanded="false">💬 Ask FeinBuddy AI</button>
+            <button id="ai-chat-toggle" class="ai-chat-toggle" aria-label="Open AI assistant" aria-expanded="false">💬 Ask FinBuddy AI</button>
             <div id="ai-chat-panel" class="ai-chat-panel" hidden>
                 <div class="ai-chat-header">
                     <div>
-                        <p class="ai-chat-title">FeinBuddy AI</p>
+                        <p class="ai-chat-title">FinBuddy AI</p>
                         <p class="ai-chat-subtitle">Knows your profile & context</p>
                     </div>
                     <button id="ai-chat-close" class="ai-chat-close" aria-label="Close chat" type="button">×</button>
@@ -83,10 +82,56 @@
         </div>
         {% endif %}
     
+    <!-- Settings Modal -->
+    {% if current_user.is_authenticated %}
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeSettingsModal()">&times;</span>
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>🌓 Dark Mode</strong>
+                            <p class="setting-description">Switch between light and dark theme</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>📅 Weekly Expense Report</strong>
+                            <p class="setting-description">Receive weekly expense summary via email</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="weeklyExpenseReportToggle" onchange="toggleWeeklyExpenseReport()" {{ 'checked' if current_user.weekly_expense_report else '' }}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>🔔 Tuition Reminder</strong>
+                            <p class="setting-description">Get reminders for upcoming tuition classes</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="tuitionReminderToggle" onchange="toggleTuitionReminder()" {{ 'checked' if current_user.tuition_reminder else '' }}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 FeinBuddy. All rights reserved.</p>
+            <p>&copy; 2025 FinBuddy. All rights reserved.</p>
         </div>
     </footer>
     
@@ -95,6 +140,9 @@
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
     
+    <!-- Socket.IO for Real-time Updates -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/realtime.js') }}"></script>
     
     <!-- Chart.js Library (must load before page scripts that use it) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -112,6 +160,128 @@
             btn.addEventListener('click', function() {
                 this.parentElement.remove();
             });
+        });
+        
+        // Settings Modal Functions
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.style.display = 'flex';
+            
+            // Set dark mode toggle state
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.getElementById('darkModeToggle').checked = isDark;
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.style.display = 'none';
+        }
+
+        function toggleDarkMode() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('FinBuddy_theme', newTheme);
+            
+            // Update theme toggle button if it exists
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                const icon = themeToggle.querySelector('.theme-icon');
+                const label = themeToggle.querySelector('.theme-label');
+                if (newTheme === 'dark') {
+                    icon.textContent = '☀️';
+                    label.textContent = 'Normal Mode';
+                } else {
+                    icon.textContent = '🌙';
+                    label.textContent = 'Upside Down';
+                }
+            }
+            
+            // Dispatch event for charts
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+        }
+
+        function toggleEmailNotifications() {
+            const isEnabled = document.getElementById('emailNotificationsToggle').checked;
+            
+            fetch('/toggle-email-notifications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ enabled: isEnabled })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update email notification settings');
+            });
+        }
+        
+        function toggleWeeklyExpenseReport() {
+            const isEnabled = document.getElementById('weeklyExpenseReportToggle').checked;
+            
+            fetch('/toggle-weekly-expense-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ enabled: isEnabled })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update weekly expense report settings');
+            });
+        }
+        
+        function toggleTuitionReminder() {
+            const isEnabled = document.getElementById('tuitionReminderToggle').checked;
+            
+            fetch('/toggle-tuition-reminder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ enabled: isEnabled })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update tuition reminder settings');
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Close settings modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const settingsModal = document.getElementById('settingsModal');
+            if (event.target == settingsModal) {
+                closeSettingsModal();
+            }
         });
     </script>
 </body>

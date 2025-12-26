@@ -1,7 +1,7 @@
-# 📊 Dashboard Implementation Guide - FeinBuddy
+# 📊 Dashboard Implementation Guide - FinBuddy
 
 ## Overview
-This document explains the complete dashboard implementation for FeinBuddy, a Flask-based expense tracker for BUET students.
+This document explains the complete dashboard implementation for FinBuddy, a Flask-based expense tracker for BUET students.
 
 ---
 

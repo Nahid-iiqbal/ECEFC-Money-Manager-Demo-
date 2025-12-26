@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     
-    const THEME_KEY = 'feinbuddy_theme';
+    const THEME_KEY = 'FinBuddy_theme';
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from dotenv import load_dotenv
 from routes.database import db, User
 from routes.auth import auth_bp
@@ -75,9 +76,12 @@ app.config['MAIL_USE_SSL'] = os.environ.get(
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
-    'MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME', 'noreply@feinbuddy.com')
+    'MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME', 'noreply@FinBuddy.com')
 
 mail = Mail(app)
+
+# Initialize SocketIO for real-time updates
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Scheduler setup
 scheduler = APScheduler()
@@ -171,7 +175,7 @@ def _build_weekly_report_html(user_id: int):
         no_expenses_message=no_expenses_message,
     )
 
-    subject = f"FeinBuddy Weekly Report ({start_date} - {end_date})"
+    subject = f"FinBuddy Weekly Report ({start_date} - {end_date})"
     return subject, html
 
 
@@ -497,7 +501,7 @@ def ai_chatbot():
     )
 
     system_prompt = (
-        "You are FeinBuddy, a friendly personal finance assistant. "
+        "You are FinBuddy, a friendly personal finance assistant. "
         f"You know the user's financial data: {context}\n\n"
         "CHAT naturally like a friend, NOT like a report. Keep it SHORT (2-3 sentences max). "
         "Use their data to give relevant, personalized insights and advice. "
@@ -531,14 +535,223 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/toggle-email-notifications', methods=['POST'])
+def toggle_email_notifications():
+    """Toggle email notifications for the current user."""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+
+    try:
+        data = request.get_json()
+        enabled = data.get('enabled', False)
+
+        # Update user's email notification preference
+        current_user.email_notifications = enabled
+        db.session.commit()
+
+        message = 'Email notifications enabled' if enabled else 'Email notifications disabled'
+        return jsonify({'success': True, 'message': message})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/toggle-weekly-expense-report', methods=['POST'])
+def toggle_weekly_expense_report():
+    """Toggle weekly expense report for the current user."""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+
+    try:
+        data = request.get_json()
+        enabled = data.get('enabled', False)
+
+        # Update user's weekly expense report preference
+        current_user.weekly_expense_report = enabled
+        db.session.commit()
+
+        message = '📊 Weekly expense reports enabled' if enabled else '📊 Weekly expense reports disabled'
+        return jsonify({'success': True, 'message': message})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/toggle-tuition-reminder', methods=['POST'])
+def toggle_tuition_reminder():
+    """Toggle tuition reminder for the current user."""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+
+    try:
+        data = request.get_json()
+        enabled = data.get('enabled', False)
+
+        # Update user's tuition reminder preference
+        current_user.tuition_reminder = enabled
+        db.session.commit()
+
+        message = '🔔 Tuition reminders enabled' if enabled else '🔔 Tuition reminders disabled'
+        return jsonify({'success': True, 'message': message})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# ============================================
+# WEBSOCKET EVENTS FOR REAL-TIME UPDATES
+# ============================================
+
+@socketio.on('connect')
+def handle_connect():
+    """Handle user connection to WebSocket"""
+    if current_user.is_authenticated:
+        # Join a room with user's ID for personalized updates
+        join_room(f'user_{current_user.id}')
+        print(f"User {current_user.username} connected")
+    return True
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Handle user disconnection"""
+    if current_user.is_authenticated:
+        leave_room(f'user_{current_user.id}')
+        print(f"User {current_user.username} disconnected")
+
+
+@socketio.on('request_dashboard_update')
+def handle_dashboard_update(data):
+    """Send updated dashboard data to user"""
+    if not current_user.is_authenticated:
+        return False
+
+    try:
+        from routes.dashboard import get_dashboard_data
+        data = get_dashboard_data()
+        emit('dashboard_updated', data, to=f'user_{current_user.id}')
+        return True
+    except Exception as e:
+        print(f"Error sending dashboard update: {e}")
+        return False
+
+
+@socketio.on('request_activity_update')
+def handle_activity_update(data):
+    """Send updated activity feed to user"""
+    if not current_user.is_authenticated:
+        return False
+
+    try:
+        from routes.dashboard import get_recent_activities
+        activities = get_recent_activities()
+        emit('activity_updated', {
+             'activities': activities}, to=f'user_{current_user.id}')
+        return True
+    except Exception as e:
+        print(f"Error sending activity update: {e}")
+        return False
+
+
+@socketio.on('request_group_update')
+def handle_group_update(data):
+    """Send updated group data to user"""
+    if not current_user.is_authenticated:
+        return False
+
+    try:
+        from routes.group import get_group_details_data
+        group_id = data.get('group_id')
+        group_data = get_group_details_data(group_id)
+        emit('group_updated', group_data, to=f'user_{current_user.id}')
+        return True
+    except Exception as e:
+        print(f"Error sending group update: {e}")
+        return False
+
+
+@socketio.on('join_group')
+def handle_join_group(data):
+    """User joins a group room for real-time updates"""
+    if not current_user.is_authenticated:
+        return False
+
+    try:
+        group_id = data.get('group_id')
+        # Verify user is member of group
+        from routes.database import GroupMember
+        is_member = GroupMember.query.filter_by(
+            group_id=group_id,
+            user_id=current_user.id
+        ).first()
+
+        if is_member:
+            join_room(f'group_{group_id}')
+            print(f"User {current_user.username} joined group room {group_id}")
+            # Broadcast to group that user is viewing
+            socketio.emit('user_viewing_group', {
+                'user_id': current_user.id,
+                'username': current_user.username
+            }, to=f'group_{group_id}')
+            return True
+        return False
+    except Exception as e:
+        print(f"Error joining group: {e}")
+        return False
+
+
+@socketio.on('leave_group')
+def handle_leave_group(data):
+    """User leaves a group room"""
+    if not current_user.is_authenticated:
+        return False
+
+    try:
+        group_id = data.get('group_id')
+        leave_room(f'group_{group_id}')
+        print(f"User {current_user.username} left group room {group_id}")
+        return True
+    except Exception as e:
+        print(f"Error leaving group: {e}")
+        return False
+
+
+def broadcast_expense_update(user_id, expense_data):
+    """Broadcast expense update to user's session"""
+    socketio.emit('expense_added', expense_data, to=f'user_{user_id}')
+
+
+def broadcast_group_expense_update(group_id, expense_data):
+    """Broadcast group expense update to all group members"""
+    try:
+        from routes.group import get_group_details_data, get_group_members_ids
+
+        # Send to all group members in the group room
+        group_data = get_group_details_data(group_id)
+        socketio.emit('group_updated', group_data, to=f'group_{group_id}')
+
+        # Also send to each member's personal room (if not in group room)
+        member_ids = get_group_members_ids(group_id)
+        for member_id in member_ids:
+            socketio.emit('group_expense_added', {
+                'group_id': group_id,
+                'message': 'New expense added to your group!',
+                'expense': expense_data
+            }, to=f'user_{member_id}')
+
+        print(
+            f"Group {group_id} expense update broadcasted to {len(member_ids)} members")
+    except Exception as e:
+        print(f"Error broadcasting group expense update: {e}")
+
+
 if __name__ == '__main__':
-    # Run the application
+    # Run the application with socketio
     print("=" * 50)
-    print("FeinBuddy - Starting Application")
+    print("FinBuddy - Starting Application")
     print("=" * 50)
     print(f"Database: {app.config['SQLALCHEMY_DATABASE_URI']}")
     print("Server starting on http://localhost:5000")
     print("Press Ctrl+C to stop the server")
-    print("=" * 50)
-
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0',
+                 port=5000, allow_unsafe_werkzeug=True)

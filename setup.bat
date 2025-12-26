@@ -1,6 +1,6 @@
 @echo off
 echo ====================================
-echo FeinBuddy Setup
+echo FinBuddy Setup
 echo ====================================
 echo.
 

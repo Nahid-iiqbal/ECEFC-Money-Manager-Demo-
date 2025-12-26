@@ -58,12 +58,13 @@ nav{
 
 .page-header {
     text-align: center;
-    margin-bottom: 2rem;
-    padding: 2rem 0;
+    padding: 1rem 0;
+    margin: 0;
+    margin-top: -1.5rem;
 }
 
 .page-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-weight: 700;
@@ -106,6 +107,7 @@ nav{
     margin-bottom: 0.5rem;
     color: var(--text-primary);
     font-size: 0.95rem;
+    text-align: center;
 }
 
 .required {
@@ -121,6 +123,7 @@ nav{
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .form-input:focus {
@@ -172,8 +175,10 @@ nav{
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     text-decoration: none;
+    text-align: center;
 }
 
 .btn:focus {
@@ -186,6 +191,7 @@ nav{
     color: white;
     box-shadow: var(--shadow-sm);
     align-items: flex-end;
+    align-items: center ;
 }
 
 .btn-primary:hover {
@@ -282,6 +288,107 @@ nav{
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+.btn-success {
+    background: var(--accent-green);
+    color: white;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.btn-danger {
+    background: var(--accent-red);
+    color: white;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    background: #c0392b;
+}
+
+/* Delete Modal Styles */
+.delete-modal {
+    max-width: 500px;
+}
+
+.warning-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-red);
+    margin-bottom: 0.75rem;
+}
+
+.warning-subtext {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.warning-note {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+[data-theme="dark"] .warning-note {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.modal-footer form {
+    margin: 0;
+    display: flex;
+}
+
+.modal-footer .btn {
+    margin: 0;
+}
+
+/* Password confirmation in delete modal */
+.password-confirmation {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.password-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.password-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.password-input:focus {
+    outline: none;
+    border-color: var(--accent-red);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
 }
 
 /* ============================================

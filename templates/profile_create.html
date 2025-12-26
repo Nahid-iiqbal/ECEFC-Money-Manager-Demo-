@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Create Profile - FeinBuddy{% endblock %}
+{% block title %}Create Profile - FinBuddy{% endblock %}
 
 {% block extra_css %}
 <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
@@ -65,8 +65,96 @@
                 <button type="submit" class="btn btn-primary">
                     ✅ Create Profile
                 </button>
+                <button type="button" class="btn btn-danger" onclick="openDeleteModal()">
+                    🗑️ Delete Account
+                </button>
             </div>
         </form>
     </section>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteProfileModal" class="modal" style="display: none;">
+    <div class="modal-content delete-modal">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <div class="modal-header">
+            <h2>⚠️ Delete Account</h2>
+        </div>
+        <div class="modal-body">
+            <p class="warning-text">Are you sure you want to delete your account?</p>
+            <p class="warning-subtext">This action cannot be undone. Your entire account, profile, expenses, and all associated data will be permanently deleted.</p>
+            <p class="warning-note">You will be logged out and redirected to the login page.</p>
+            
+            <div class="password-confirmation">
+                <label for="deletePassword" class="password-label">Enter your password to confirm:</label>
+                <input type="password" id="deletePassword" name="password" class="password-input" placeholder="Your password" required autocomplete="current-password">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" onclick="submitDelete()">Yes, Delete My Account</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal() {
+        const modal = document.getElementById('deleteProfileModal');
+        modal.style.display = 'flex';
+        document.getElementById('deletePassword').value = '';
+        setTimeout(() => document.getElementById('deletePassword').focus(), 100);
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteProfileModal');
+        modal.style.display = 'none';
+        document.getElementById('deletePassword').value = '';
+    }
+    
+    function submitDelete() {
+        const password = document.getElementById('deletePassword').value;
+        if (!password) {
+            alert('Please enter your password to confirm account deletion.');
+            return;
+        }
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("profile.delete_profile") }}';
+        
+        const passwordInput = document.createElement('input');
+        passwordInput.type = 'hidden';
+        passwordInput.name = 'password';
+        passwordInput.value = password;
+        
+        form.appendChild(passwordInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('deletePassword');
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitDelete();
+                }
+            });
+        }
+    });
+
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('deleteProfileModal');
+        if (event.target == modal) {
+            closeDeleteModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
+</script>
 {% endblock %}

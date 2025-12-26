@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-This implementation provides a production-ready, accessible, and performant sticky navigation bar for the FeinBuddy Flask application. The navbar remains visible at the top of the viewport when scrolling and includes sophisticated visual feedback.
+This implementation provides a production-ready, accessible, and performant sticky navigation bar for the FinBuddy Flask application. The navbar remains visible at the top of the viewport when scrolling and includes sophisticated visual feedback.
 
 ---
 
