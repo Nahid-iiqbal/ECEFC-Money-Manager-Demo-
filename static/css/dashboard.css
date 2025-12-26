@@ -606,3 +606,11 @@ nav a.active {
         padding: 1.5rem;
     }
 }
+.main-nav .nav-list {
+    margin-left: 7rem;          /* adjust: 0.5rem–2rem */
+}
+
+/* If your navbar uses flex and you want spacing from the left edge instead */
+.main-nav .nav-container {
+    padding-left: 7rem;         /* optional alternative */
+}
