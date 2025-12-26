@@ -93,13 +93,29 @@ def add_expense():
             date_str = request.form.get('date')
             expense_type = request.form.get('type', '')
             
+            # Handle reminder fields (only for Bills, Monthly Bill, Dues, Owes)
+            reminder_at_str = request.form.get('reminder_at', '')
+            reminder_note = request.form.get('reminder_note', '')
+            reminder_at = None
+            
+            # Only process reminder if category supports it
+            reminder_categories = ['Bills', 'Monthly Bill', 'Dues', 'Owes']
+            if category in reminder_categories and reminder_at_str:
+                try:
+                    reminder_at = datetime.strptime(reminder_at_str, '%Y-%m-%dT%H:%M')
+                except ValueError:
+                    flash('Invalid reminder date format. Reminder not set.', 'warning')
+            
             expense_data = {
                 'name': name,
                 'amount': amount,
                 'category': category,
                 'description': description,
                 'type': expense_type,
-                'user_id': current_user.id
+                'user_id': current_user.id,
+                'reminder_at': reminder_at,
+                'reminder_note': reminder_note if reminder_at else None,
+                'reminder_sent': False
             }
             
             if date_str:
@@ -109,6 +125,15 @@ def add_expense():
             
             new_expense = Expense(**expense_data)
             db.session.add(new_expense)
+            db.session.commit()
+            
+            # Schedule email reminder if set
+            if reminder_at and reminder_at > datetime.utcnow():
+                from app import schedule_reminder_email
+                schedule_reminder_email(new_expense.id, reminder_at)
+                flash(f"Expense added with reminder set for {reminder_at.strftime('%Y-%m-%d %H:%M')}", 'success')
+            else:
+                flash('Expense added successfully!', 'success')
         else:
             # Old schema - use raw SQL with only basic columns
             query = text("INSERT INTO expense (name, amount, user_id) VALUES (:name, :amount, :user_id)")
@@ -117,9 +142,9 @@ def add_expense():
                 "amount": amount,
                 "user_id": current_user.id
             })
+            db.session.commit()
+            flash('Expense added successfully!', 'success')
         
-        db.session.commit()
-        flash('Expense added successfully!', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Error adding expense: {str(e)}', 'danger')

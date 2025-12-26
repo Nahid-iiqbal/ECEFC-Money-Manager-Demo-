@@ -40,10 +40,11 @@
                         <option value="Entertainment">🎬 Entertainment</option>
                         <option value="Shopping">🛍️ Shopping</option>
                         <option value="Bills">💡 Bills</option>
+                        <option value="Monthly Bill">📅 Monthly Bill</option>
                         <option value="Health">⚕️ Health</option>
                         <option value="Education">📚 Education</option>
-                        <option value="Dues">Dues</option>
-                        <option value="Owes">Owes</option>
+                        <option value="Dues">⏰ Dues</option>
+                        <option value="Owes">💳 Owes</option>
                         <option value="Other">📦 Other</option>
                     </select>
                 </div>
@@ -70,6 +71,22 @@
                           placeholder="Add any additional details..." class="form-textarea"></textarea>
             </div>
 
+            <!-- Reminder fields (shown only for Bills/Dues/Owes) -->
+            <div id="reminder-section" class="reminder-section" style="display: none;">
+                <h3 class="reminder-title">🔔 Set Reminder</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="reminder-datetime">Reminder Date & Time</label>
+                        <input type="datetime-local" id="reminder-datetime" name="reminder_at" class="form-input">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="reminder-note">Reminder Note (Optional)</label>
+                        <input type="text" id="reminder-note" name="reminder_note" 
+                               placeholder="e.g., Pay electricity bill" class="form-input">
+                    </div>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
                     💾 Save Expense
@@ -82,4 +99,37 @@
     </section>
 
 </div>
+
+<script>
+// Show/hide reminder section based on category
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('expense-category');
+    const reminderSection = document.getElementById('reminder-section');
+    const reminderDatetime = document.getElementById('reminder-datetime');
+    const reminderNote = document.getElementById('reminder-note');
+    
+    // Categories that support reminders
+    const reminderCategories = ['Bills', 'Monthly Bill', 'Dues', 'Owes'];
+    
+    function toggleReminderSection() {
+        const selectedCategory = categorySelect.value;
+        
+        if (reminderCategories.includes(selectedCategory)) {
+            reminderSection.style.display = 'block';
+        } else {
+            reminderSection.style.display = 'none';
+            // Clear values when hidden
+            reminderDatetime.value = '';
+            reminderNote.value = '';
+        }
+    }
+    
+    // Listen for category changes
+    categorySelect.addEventListener('change', toggleReminderSection);
+    
+    // Check on page load (for edit forms)
+    toggleReminderSection();
+});
+</script>
+
 {% endblock %}
