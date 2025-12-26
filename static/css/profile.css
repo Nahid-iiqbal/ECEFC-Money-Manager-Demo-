@@ -51,7 +51,7 @@ nav{
     background-color: var(--bg-primary);
 }
 
-/* Navigation styling */
+/* Navigation styling
 nav a {
     color: #8B2833 !important;
 }
@@ -65,7 +65,7 @@ nav a.active {
     border-bottom-color: #D32F2F !important;
 }
 
-/* Dark mode navigation colors */
+Dark mode navigation colors 
 [data-theme="dark"] nav a {
     color: #ff9999 !important;
 }
@@ -77,7 +77,7 @@ nav a.active {
 [data-theme="dark"] nav a.active {
     color: #ff6b6b !important;
     border-bottom-color: #ff6b6b !important;
-}
+} */
 
 .profile-page {
     max-width: 900px;

@@ -105,8 +105,15 @@ header {
 
 .welcome-text {
     color: var(--text-inverse);
-    margin: 0;
-    font-size: 1rem;
+    margin-top: 0.2rem;
+    font-size: 1.2rem;
+}
+.welcome-text strong{
+    color: #fff;
+}
+[data-theme="dark"] .welcome-text strong {
+    color: rgb(222, 186, 186);
+    text-shadow: 0 0 8px rgba(235, 114, 101, 0.836);
 }
 
 /* Theme Toggle Button */
