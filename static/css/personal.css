@@ -48,39 +48,7 @@ nav{
     background: var(--bg-primary);
 }
 
-/* Navigation styling */
-nav a {
-    color: #031a35 !important;
-}
 
-nav a:hover {
-    color: #07295c !important;
-}
-
-nav a.active {
-    color: #c2d1ec !important;
-    border-bottom-color: #05323f !important;
-    background: linear-gradient(165deg, rgb(3, 32, 65), rgb(119, 162, 227))
-}
-nav a.logout-btn{
-    color:rgb(3, 32, 65);
-    background-color: rgba(74, 60, 231, 0.1);
-    border: 1px solid rgba(60, 109, 231, 0.3);
-}
-
-/* Dark mode navigation colors */
-[data-theme="dark"] nav a {
-    color: #ff9999 !important;
-}
-
-[data-theme="dark"] nav a:hover {
-    color: #ffcccc !important;
-}
-
-[data-theme="dark"] nav a.active {
-    color: #e1aeae !important;
-    border-bottom-color: #ff6b6b !important;
-}
 
 .page-header {
     text-align: center;

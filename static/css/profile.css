@@ -51,34 +51,6 @@ nav{
     background-color: var(--bg-primary);
 }
 
-/* Navigation styling
-nav a {
-    color: #8B2833 !important;
-}
-
-nav a:hover {
-    color: #D32F2F !important;
-}
-
-nav a.active {
-    color: #D32F2F !important;
-    border-bottom-color: #D32F2F !important;
-}
-
-Dark mode navigation colors 
-[data-theme="dark"] nav a {
-    color: #ff9999 !important;
-}
-
-[data-theme="dark"] nav a:hover {
-    color: #ffcccc !important;
-}
-
-[data-theme="dark"] nav a.active {
-    color: #ff6b6b !important;
-    border-bottom-color: #ff6b6b !important;
-} */
-
 .profile-page {
     max-width: 900px;
     margin: 0 auto;
