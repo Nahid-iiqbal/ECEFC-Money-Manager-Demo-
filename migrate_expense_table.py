@@ -26,6 +26,8 @@ if 'date' not in columns:
     columns_to_add.append(("date", "DATE"))
 if 'created_at' not in columns:
     columns_to_add.append(("created_at", "DATETIME"))
+if 'type' not in columns:
+    columns_to_add.append(("type", "VARCHAR(50)"))
 
 if columns_to_add:
     print(f"\n=== Adding {len(columns_to_add)} missing columns ===")
@@ -39,12 +41,14 @@ if columns_to_add:
         except Exception as e:
             print(f"✗ Error adding {col_name}: {e}")
             db.session.rollback()
-    
+
     # Update NULL values with current date
     print("\n=== Updating NULL dates ===")
     try:
-        db.session.execute(text("UPDATE expense SET date = DATE('now') WHERE date IS NULL"))
-        db.session.execute(text("UPDATE expense SET created_at = DATETIME('now') WHERE created_at IS NULL"))
+        db.session.execute(
+            text("UPDATE expense SET date = DATE('now') WHERE date IS NULL"))
+        db.session.execute(
+            text("UPDATE expense SET created_at = DATETIME('now') WHERE created_at IS NULL"))
         db.session.commit()
         print("✓ Updated NULL dates to current date")
     except Exception as e:

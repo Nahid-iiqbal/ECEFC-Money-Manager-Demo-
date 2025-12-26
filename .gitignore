@@ -21,6 +21,7 @@ database.db
 database.db
 finance.db
 instance/
+secure/
 
 # IDE
 .vscode/
