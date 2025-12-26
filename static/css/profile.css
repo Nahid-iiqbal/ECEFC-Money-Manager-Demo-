@@ -2,7 +2,7 @@
     --bg-primary: #aacee0;
     --bg-secondary: #c5dfe0dc;
     --bg-card: #becee3;
-    --bg-input: #ffffff;
+    --bg-input: #c5f5ea6a;
     --text-primary: #333;
     --text-secondary: #666;
     --text-tertiary: #888;
@@ -117,7 +117,7 @@ nav{
     border: 2px solid var(--border-color);
     border-radius: 8px;
     background-color: var(--bg-input);
-    color: var(--text-primary);
+    color: rgb(4, 27, 60);
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;

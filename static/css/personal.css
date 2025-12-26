@@ -442,11 +442,17 @@ section:hover {
     border: 2px solid var(--border-color);
     border-radius: 8px;
     background-color: var(--bg-input);
-    color: var(--text-primary) !important;
+    color: rgb(5, 5, 73) !important;
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;
     -webkit-text-fill-color: var(--text-primary);
+}
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea {
+    background-color: #4b4545;
+    color: #e7dbdb !important;
 }
 
 .form-input::placeholder,

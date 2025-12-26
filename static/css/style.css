@@ -296,24 +296,46 @@ input:focus, select:focus, textarea:focus {
     background-color: #fee;
     color: #c33;
     border-left: 4px solid #c33;
+    font-size:1.2rem;
 }
 
 .alert-success {
     background-color: #e8f5e9;
     color: #2e7d32;
     border-left: 4px solid #4caf50;
+    font-size: 1.2rem;
 }
 
 .alert-warning {
     background-color: #fff3e0;
     color: #e65100;
     border-left: 4px solid #ff9800;
+    font-size: 1.2rem;
 }
 
 .alert-info {
     background-color: #e3f2fd;
     color: #0d47a1;
     border-left: 4px solid #2196f3;
+    font-size:1.2rem;
+}
+[data-theme="dark"] .alert-error {
+    border-left: 4px solid #e99696;
+    background-color: rgb(241, 185, 185); /* Lighter red for dark mode */
+    border: 1px solid #e99696;
+    color:#3e0b05;
+    font-size: 1.2rem;
+}
+[data-theme="dark"] .alert-success {
+    border-left: 4px solid #40690f;
+    background-color: rgb(69, 107, 15); /* Darker green for dark mode */
+    color:#abc9ad;
+    font-size: 1.2rem;
+}
+[data-theme="dark"] .alert-info {
+    background-color: #bfaaa7;
+    color:#541d32;
+    border-left: 4px solid #5c3434;
 }
 
 /* Footer */
@@ -382,21 +404,24 @@ footer {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #fff;
+    color: #e7dbdb;
     font-weight: 500;
     font-size: 0.9rem;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem;
+    border: 2px solid rgb(78, 101, 149);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 1rem;
+    background-color: var(--bg-input);
+    color: rgb(4, 27, 60);
+    font-size: 1.1rem;
+    font-family: inherit;
     transition: all 0.3s ease;
-    box-sizing: border-box;
+}
+[data-theme="dark"] .form-group input{
+    background-color: #4b4545;
+    color: #e7dbdb;
 }
 
 .form-group input::placeholder {
