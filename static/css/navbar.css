@@ -124,23 +124,26 @@
 
 /* Logout button - distinct styling */
 .nav-list a.logout-btn {
-    color:rgb(3, 32, 65);
-    background-color: rgba(74, 60, 231, 0.1);
-    border: 1px solid rgba(60, 109, 231, 0.3);
-}
-[data-theme="dark"] .nav-list a.logout-btn {
-    color:rgb(212, 188, 181);
-    background-color: rgba(200, 127, 127, 0.1);
-    border: 1px solid rgba(231, 60, 60, 0.3);
-}
-/* Dark mode logout button hover */
-[data-theme="dark"] .nav-list a.logout-btn:hover {
-    background-color: rgba(231, 76, 60, 0.1);
-    transform: translateY(-2px);
+    background-color: rgba(89, 153, 190, 0.262);
+    color: rgb(6, 39, 63);
+    border: 1px solid rgba(60, 171, 231, 0.3);
 }
 
 .nav-list a.logout-btn:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgb(10, 49, 77);
+    color: white;
+    border-color: rgb(6, 39, 63);
+    transform: translateY(-2px);
+}
+[data-theme="dark"] .nav-list a.logout-btn {
+    background-color: #5a0f072c;
+    color:#ede4e4;
+    border: 1px solid rgba(231, 60, 63, 0.3);
+}
+[data-theme="dark"] .nav-list a.logout-btn:hover {
+    background-color: rgba(77, 11, 10, 0.567);
+    color: rgb(219, 194, 194);
+    border-color: rgba(224, 141, 141, 0.323);
     transform: translateY(-2px);
 }
 
@@ -233,5 +236,90 @@ body {
     
     .nav-list a:not(.active) {
         display: none;
+    }
+}
+
+/* ============================================
+   THEME TOGGLE IN NAVBAR
+   ============================================ */
+
+/* Container with flexbox layout for nav + toggle */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Theme toggle button in navbar */
+.theme-toggle-nav {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.theme-toggle-nav:hover {
+    border-color: var(--accent-red);
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
+    transform: translateY(-2px);
+}
+
+.theme-toggle-nav:focus {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
+}
+
+/* Dark mode theme toggle in navbar */
+[data-theme="dark"] .theme-toggle-nav {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .theme-toggle-nav:hover {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+.theme-toggle-nav .theme-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.theme-toggle-nav .theme-label {
+    font-size: 0.85rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .theme-toggle-nav {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .theme-toggle-nav .theme-label {
+        display: none; /* Hide label text on mobile, keep icon only */
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        gap: 0.5rem;
     }
 }
