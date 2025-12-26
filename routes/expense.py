@@ -98,121 +98,6 @@ def add_expense():
         name = request.form.get('name') or request.form.get('title')
         amount = float(request.form.get('amount', 0))
 
-
-<< << << < HEAD
-        category = request.form.get('category', 'Other')
-        description = request.form.get('description', '')
-        date_str = request.form.get('date')
-        expense_type = request.form.get('type', '')
-        group_id = request.form.get('group_id')
-
-        # Parse date
-        if date_str:
-            expense_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        else:
-            expense_date = datetime.utcnow().date()
-
-        # Handle group expense
-        if expense_type == 'Group' and group_id:
-            # Verify user is a member of this group
-            group_member = GroupMember.query.filter_by(
-                group_id=int(group_id),
-                user_id=current_user.id
-            ).first()
-
-            if not group_member:
-                flash('You are not a member of this group!', 'danger')
-                return redirect(url_for('expense.add_expense_form'))
-
-            # Create group expense
-            new_group_expense = GroupExpense(
-                group_id=int(group_id),
-                title=name,
-                amount=amount,
-                description=description,
-                date=expense_date,
-                paid_by=current_user.id
-            )
-            db.session.add(new_group_expense)
-            db.session.flush()  # Get the ID
-
-            # Create expense split for the payer
-            from routes.database import ExpenseSplit
-            expense_split = ExpenseSplit(
-                expense_id=new_group_expense.id,
-                user_id=current_user.id,
-                share_amount=amount,
-                is_paid=True
-            )
-            db.session.add(expense_split)
-
-            flash('Group expense added successfully!', 'success')
-            db.session.commit()
-
-            # Broadcast real-time update to all group members
-            try:
-                from app import broadcast_group_expense_update
-                broadcast_group_expense_update(int(group_id), {
-                    'name': name,
-                    'amount': float(amount),
-                    'category': category,
-                    'type': 'Group',
-                    'date': str(expense_date),
-                    'paid_by_user': current_user.username
-                })
-            except Exception as e:
-                print(f"Error broadcasting group expense update: {e}")
-
-            return redirect(url_for('group.group_details', group_id=int(group_id)))
-        else:
-            # Handle personal expense
-            # Check which columns exist in the database
-            result = db.session.execute(text("PRAGMA table_info(expense)"))
-            existing_columns = [row[1] for row in result.fetchall()]
-
-            if 'category' in existing_columns:
-                # New schema - use ORM with all fields
-                expense_data = {
-                    'name': name,
-                    'amount': amount,
-                    'category': category,
-                    'description': description,
-                    'type': 'Personal',
-                    'user_id': current_user.id,
-                    'date': expense_date
-                }
-
-                new_expense = Expense(**expense_data)
-                db.session.add(new_expense)
-            else:
-                # Old schema - use raw SQL with only basic columns
-                query = text(
-                    "INSERT INTO expense (name, amount, user_id) VALUES (:name, :amount, :user_id)")
-                db.session.execute(query, {
-                    "name": name,
-                    "amount": amount,
-                    "user_id": current_user.id
-                })
-
-            flash('Personal expense added successfully!', 'success')
-
-        db.session.commit()
-
-        # Broadcast real-time update
-        try:
-            from app import broadcast_expense_update
-            broadcast_expense_update(current_user.id, {
-                'name': name,
-                'amount': float(amount),
-                'category': category,
-                'type': expense_type or 'Personal',
-                'date': str(expense_date)
-            })
-        except Exception as e:
-            print(f"Error broadcasting expense update: {e}")
-
-== == == =
-
         # Check which columns exist in the database
         result = db.session.execute(text("PRAGMA table_info(expense)"))
         existing_columns = [row[1] for row in result.fetchall()]
@@ -223,6 +108,7 @@ def add_expense():
             description = request.form.get('description', '')
             date_str = request.form.get('date')
             expense_type = request.form.get('type', '')
+            group_id = request.form.get('group_id')
 
             # Handle reminder fields (only for Bills, Monthly Bill, Dues, Owes)
             reminder_at_str = request.form.get('reminder_at', '')
@@ -238,36 +124,104 @@ def add_expense():
                 except ValueError:
                     flash('Invalid reminder date format. Reminder not set.', 'warning')
 
-            expense_data = {
-                'name': name,
-                'amount': amount,
-                'category': category,
-                'description': description,
-                'type': expense_type,
-                'user_id': current_user.id,
-                'reminder_at': reminder_at,
-                'reminder_note': reminder_note if reminder_at else None,
-                'reminder_sent': False
-            }
-
+            # Parse date
             if date_str:
-                expense_data['date'] = datetime.strptime(
-                    date_str, '%Y-%m-%d').date()
+                expense_date = datetime.strptime(date_str, '%Y-%m-%d').date()
             else:
-                expense_data['date'] = datetime.utcnow().date()
+                expense_date = datetime.utcnow().date()
 
-            new_expense = Expense(**expense_data)
-            db.session.add(new_expense)
-            db.session.commit()
+            # Handle group expense
+            if expense_type == 'Group' and group_id:
+                # Verify user is a member of this group
+                group_member = GroupMember.query.filter_by(
+                    group_id=int(group_id),
+                    user_id=current_user.id
+                ).first()
 
-            # Schedule email reminder if set
-            if reminder_at and reminder_at > datetime.utcnow():
-                from app import schedule_reminder_email
-                schedule_reminder_email(new_expense.id, reminder_at)
-                flash(
-                    f"Expense added with reminder set for {reminder_at.strftime('%Y-%m-%d %H:%M')}", 'success')
+                if not group_member:
+                    flash('You are not a member of this group!', 'danger')
+                    return redirect(url_for('expense.add_expense_form'))
+
+                # Create group expense
+                new_group_expense = GroupExpense(
+                    group_id=int(group_id),
+                    title=name,
+                    amount=amount,
+                    description=description,
+                    date=expense_date,
+                    paid_by=current_user.id
+                )
+                db.session.add(new_group_expense)
+                db.session.flush()  # Get the ID
+
+                # Create expense split for the payer
+                from routes.database import ExpenseSplit
+                expense_split = ExpenseSplit(
+                    expense_id=new_group_expense.id,
+                    user_id=current_user.id,
+                    share_amount=amount,
+                    is_paid=True
+                )
+                db.session.add(expense_split)
+
+                flash('Group expense added successfully!', 'success')
+                db.session.commit()
+
+                # Broadcast real-time update to all group members
+                try:
+                    from app import broadcast_group_expense_update
+                    broadcast_group_expense_update(int(group_id), {
+                        'name': name,
+                        'amount': float(amount),
+                        'category': category,
+                        'type': 'Group',
+                        'date': str(expense_date),
+                        'paid_by_user': current_user.username
+                    })
+                except Exception as e:
+                    print(f"Error broadcasting group expense update: {e}")
+
+                return redirect(url_for('group.group_details', group_id=int(group_id)))
             else:
-                flash('Expense added successfully!', 'success')
+                # Handle personal expense
+                expense_data = {
+                    'name': name,
+                    'amount': amount,
+                    'category': category,
+                    'description': description,
+                    'type': expense_type,
+                    'user_id': current_user.id,
+                    'reminder_at': reminder_at,
+                    'reminder_note': reminder_note if reminder_at else None,
+                    'reminder_sent': False,
+                    'date': expense_date
+                }
+
+                new_expense = Expense(**expense_data)
+                db.session.add(new_expense)
+                db.session.commit()
+
+                # Schedule email reminder if set
+                if reminder_at and reminder_at > datetime.utcnow():
+                    from app import schedule_reminder_email
+                    schedule_reminder_email(new_expense.id, reminder_at)
+                    flash(
+                        f"Expense added with reminder set for {reminder_at.strftime('%Y-%m-%d %H:%M')}", 'success')
+                else:
+                    flash('Expense added successfully!', 'success')
+
+                # Broadcast real-time update
+                try:
+                    from app import broadcast_expense_update
+                    broadcast_expense_update(current_user.id, {
+                        'name': name,
+                        'amount': float(amount),
+                        'category': category,
+                        'type': expense_type or 'Personal',
+                        'date': str(expense_date)
+                    })
+                except Exception as e:
+                    print(f"Error broadcasting expense update: {e}")
         else:
             # Old schema - use raw SQL with only basic columns
             query = text(
