@@ -458,14 +458,18 @@ def export_routine_pdf():
 
     # Group tuitions by day of week
     schedule_by_day = {i: [] for i in range(7)}
+    day_mapping = {
+        'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
+        'Thursday': 4, 'Friday': 5, 'Saturday': 6
+    }
+    
     for record in records:
-        day_mapping = {
-            'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
-            'Thursday': 4, 'Friday': 5, 'Saturday': 6
-        }
-        day_idx = day_mapping.get(record.tuition_day, -1)
-        if day_idx != -1:
-            schedule_by_day[day_idx].append(record)
+        # record.days is a list of day names (e.g., ['Monday', 'Wednesday', 'Friday'])
+        if record.days:
+            for day_name in record.days:
+                day_idx = day_mapping.get(day_name, -1)
+                if day_idx != -1:
+                    schedule_by_day[day_idx].append(record)
 
     # Sort by time
     for day in schedule_by_day:

@@ -1,5 +1,5 @@
 """
-Migrate database to add missing columns to tuition_record table
+Migrate database to add missing columns
 """
 import sqlite3
 import os
@@ -13,30 +13,26 @@ if not os.path.exists(db_path):
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Drop the old table if it exists
-cursor.execute("DROP TABLE IF EXISTS tuition_record")
-print("Dropped old tuition_record table")
+print("="*60)
+print("Database Migration Starting")
+print("="*60)
 
-# Create new table with correct schema
-cursor.execute('''
-    CREATE TABLE tuition_record (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        student_name VARCHAR(100) NOT NULL,
-        total_days INTEGER NOT NULL,
-        total_completed INTEGER NOT NULL,
-        address VARCHAR(200) NOT NULL,
-        amount FLOAT NOT NULL,
-        days BLOB,
-        tuition_time VARCHAR(10),
-        FOREIGN KEY (user_id) REFERENCES user (id)
-    )
-''')
-print("Created new tuition_record table with correct schema")
+# Check if email column exists in profile table
+cursor.execute("PRAGMA table_info(profile)")
+columns = [row[1] for row in cursor.fetchall()]
+
+if 'email' not in columns:
+    print("\n[Profile Table] Adding 'email' column...")
+    cursor.execute("ALTER TABLE profile ADD COLUMN email VARCHAR(120)")
+    print("✓ Added 'email' column to profile table")
+else:
+    print("\n[Profile Table] ✓ 'email' column already exists")
 
 conn.commit()
 conn.close()
 
-print("\nDatabase migration complete!")
-print("Columns: id, user_id, student_name, total_days, total_completed, address, amount, days, tuition_time")
-print("\nYou can now run 'python app.py' to start the server.")
+print("\n" + "="*60)
+print("Database migration complete!")
+print("="*60)
+print("\nYou can now run the app successfully.")
+
