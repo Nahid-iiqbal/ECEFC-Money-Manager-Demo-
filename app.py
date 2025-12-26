@@ -368,6 +368,118 @@ mail = Mail(app)
 # Scheduler setup
 scheduler = APScheduler()
 scheduler.init_app(app)
+scheduler.start()
+
+
+def send_reminder_email(expense_id):
+    """Send a reminder email for a specific expense."""
+    from routes.database import Expense, User
+    
+    with app.app_context():
+        expense = Expense.query.get(expense_id)
+        if not expense or expense.reminder_sent:
+            return
+        
+        user = User.query.get(expense.user_id)
+        if not user or not user.profile:
+            return
+        
+        email = user.profile.email
+        if not email:
+            return
+        
+        try:
+            # Create email message
+            msg = Message(
+                subject=f'Reminder: {expense.category} - {expense.name}',
+                recipients=[email],
+                html=f'''
+                <html>
+                    <head>
+                        <style>
+                            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                      color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }}
+                            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                            .expense-details {{ background: white; padding: 20px; border-radius: 8px; 
+                                               margin: 20px 0; border-left: 4px solid #667eea; }}
+                            .amount {{ font-size: 24px; font-weight: bold; color: #667eea; }}
+                            .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>💰 Payment Reminder</h1>
+                            </div>
+                            <div class="content">
+                                <p>Hello {user.username},</p>
+                                <p>This is a friendly reminder about your upcoming {expense.category.lower()}:</p>
+                                
+                                <div class="expense-details">
+                                    <h2>{expense.name}</h2>
+                                    <p><strong>Category:</strong> {expense.category}</p>
+                                    <p><strong>Amount:</strong> <span class="amount">${expense.amount:.2f}</span></p>
+                                    {f'<p><strong>Description:</strong> {expense.description}</p>' if expense.description else ''}
+                                    {f'<p><strong>Note:</strong> {expense.reminder_note}</p>' if expense.reminder_note else ''}
+                                </div>
+                                
+                                <p>Please make sure to process this payment on time.</p>
+                                
+                                <div class="footer">
+                                    <p>This is an automated reminder from FeinBuddy Money Manager</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+                '''
+            )
+            
+            mail.send(msg)
+            
+            # Mark as sent
+            expense.reminder_sent = True
+            db.session.commit()
+            
+        except Exception as e:
+            print(f'Error sending reminder email: {str(e)}')
+
+
+def schedule_reminder_email(expense_id, reminder_datetime):
+    """Schedule a reminder email for a specific datetime."""
+    try:
+        scheduler.add_job(
+            func=send_reminder_email,
+            trigger='date',
+            run_date=reminder_datetime,
+            args=[expense_id],
+            id=f'reminder_{expense_id}',
+            replace_existing=True
+        )
+    except Exception as e:
+        print(f'Error scheduling reminder: {str(e)}')
+
+
+@scheduler.task('interval', id='check_reminders', minutes=15)
+def check_and_send_reminders():
+    """Periodic job to check for due reminders and send them."""
+    from datetime import datetime
+    from routes.database import Expense
+    
+    with scheduler.app.app_context():
+        now = datetime.utcnow()
+        
+        # Find expenses with reminders that are due and not yet sent
+        due_expenses = Expense.query.filter(
+            Expense.reminder_at <= now,
+            Expense.reminder_sent == False,
+            Expense.reminder_at.isnot(None)
+        ).all()
+        
+        for expense in due_expenses:
+            send_reminder_email(expense.id)
 
 
 def _username_maybe_email(username: str) -> bool:

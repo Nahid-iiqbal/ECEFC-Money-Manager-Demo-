@@ -144,13 +144,17 @@ section:hover {
 }
 
 .reschedule-count-box {
-    background: var(--accent-orange);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    background: rgb(154, 175, 232);
+    color: rgb(6, 39, 96);
+    padding: 0.5rem 0.7rem;
+    border-radius: 10px;
     font-weight: 700;
     font-size: 0.95rem;
     white-space: nowrap;
+}
+[data-theme="dark"] .reschedule-count-box {
+    background: rgb(231, 150, 130);
+    color: rgb(75, 17, 17);
 }
 
 /* Two Column Layout */
@@ -488,7 +492,7 @@ section:hover {
 }
 
 .btn-complete {
-    background: var(--accent-green);
+    background: rgb(0, 128, 92);
 }
 
 .btn-complete:hover {
@@ -497,7 +501,7 @@ section:hover {
 }
 
 .btn-reschedule-action.btn-edit {
-    background: var(--accent-orange);
+    background: rgb(102, 60, 4);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -505,7 +509,14 @@ section:hover {
 }
 
 .btn-reschedule-action.btn-edit:hover {
-    background: #e67e22;
+    background: rgba(100, 73, 3, 0.9);
+    transform: scale(1.1);
+}
+[data-theme="dark"] .btn-reschedule-action.btn-edit {
+    background: rgb(140, 65, 11);
+}
+[data-theme="dark"] .btn-reschedule-action.btn-edit:hover {
+    background: #c9744a;
     transform: scale(1.1);
 }
 
@@ -807,16 +818,16 @@ section:hover {
 
 /* Reschedule Action Button */
 .action-btn.reschedule-btn {
-    background: linear-gradient(165deg, rgb(4, 31, 65), #6ca9e9);
-    color: white;
+    background: linear-gradient(165deg, rgb(148, 177, 213), #6ca9e9);
+    color: rgb(4, 29, 63);
 }
 .action-btn.reschedule-btn:hover{
     background: linear-gradient(165deg, rgb(32, 84, 147), #afc6de);
     color: rgb(4, 28, 67);
 }
 [data-theme="dark"] .action-btn.reschedule-btn {
-    background: linear-gradient(165deg, rgb(65, 9, 4), #432305);
-    color: rgb(216, 170, 170);
+    background: linear-gradient(165deg, rgb(59, 12, 8), #714317);
+    color: rgb(210, 179, 179);
 }
 [data-theme="dark"] .action-btn.reschedule-btn:hover {
     transform: translateY(-2px);
@@ -831,18 +842,18 @@ section:hover {
 
 /* Edit Action Button */
 .action-btn.edit-btn {
-    background: linear-gradient(165deg, var(--bg-secondary-comp), var(--bg-secondary));
+    background: linear-gradient(165deg, rgb(18, 106, 91), rgb(153, 208, 201));
     color: rgb(1, 54, 56);
 }
 [data-theme="dark"] .action-btn.edit-btn{
-    background: linear-gradient(165deg, rgb(230, 178, 178), rgb(210, 177, 148));
+    background: linear-gradient(165deg, rgb(226, 165, 165), rgb(177, 91, 16));
     color:#3d2103;
 }
 
 .action-btn.edit-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(97, 24, 16, 0.4);
-    background: linear-gradient(165deg, teal, rgb(177, 227, 227));
+    background: linear-gradient(165deg, rgb(7, 117, 117), rgb(177, 227, 227));
 }
 [data-theme="dark"] .action-btn.edit-btn:hover{
     background: linear-gradient(165deg, rgb(153, 76, 76), rgb(241, 170, 112));
@@ -854,25 +865,25 @@ section:hover {
 
 /* Delete Action Button */
 .action-btn.delete-btn {
-    background: linear-gradient(165deg, var(--bg-secondary-comp), var(--bg-secondary));
+    background: linear-gradient(145deg, rgb(18, 106, 91), rgb(153, 208, 201));
     color: rgb(1, 54, 56);
 }
 
 .action-btn.delete-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(97, 24, 16, 0.4);
-    background: linear-gradient(165deg, teal, rgb(177, 227, 227));
+    background: linear-gradient(145deg, rgb(6, 97, 97), rgb(177, 227, 227));
 }
 
 .action-btn.delete-btn:active {
     transform: translateY(0);
 }
 [data-theme="dark"] .action-btn.delete-btn{
-    background: linear-gradient(165deg, rgb(230, 178, 178), rgb(210, 177, 148));
+    background: linear-gradient(145deg, rgb(226, 165, 165), rgb(177, 91, 16));
     color:#3d2103;
 }
 [data-theme="dark"] .action-btn.delete-btn:hover{
-    background: linear-gradient(165deg, rgb(155, 76, 76), rgb(241, 170, 112));
+    background: linear-gradient(145deg, rgb(155, 76, 76), rgb(241, 170, 112));
 }
 
 /* Start New Month Button */
@@ -1180,8 +1191,8 @@ section:hover {
 }
 
 .schedule-tile {
-    background: linear-gradient(165deg, var(--bg-primary), var(--bg-primary-comp));
-    color: white;
+    background: linear-gradient(145deg, rgb(7, 84, 112), rgb(112, 150, 201));
+    color: rgb(193, 212, 232);
     padding: 0.75rem;
     border-radius: 8px;
     min-width: 100px;
@@ -1192,6 +1203,10 @@ section:hover {
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
+}
+[data-theme="dark"] .schedule-tile {
+    background: linear-gradient(145deg, rgb(112, 50, 50), rgb(201, 112, 112));
+    color: rgb(255, 218, 218);
 }
 
 .schedule-tile:hover {
