@@ -109,29 +109,38 @@
 
 /* Active page indicator */
 .nav-list a.active {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-    color: white;
+    background: linear-gradient(135deg, rgb(3, 3, 68),rgb(36, 36, 112));
+    color: rgb(179, 200, 214);
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* Dark mode active state */
 [data-theme="dark"] .nav-list a.active {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: linear-gradient(165deg, #360803, #690f06);
     box-shadow: 0 2px 12px rgba(231, 76, 60, 0.4);
+    color:#e7d3d1
 }
 
 /* Logout button - distinct styling */
 .nav-list a.logout-btn {
+    color:rgb(3, 32, 65);
+    background-color: rgba(74, 60, 231, 0.1);
+    border: 1px solid rgba(60, 109, 231, 0.3);
+}
+[data-theme="dark"] .nav-list a.logout-btn {
+    color:rgb(212, 188, 181);
+    background-color: rgba(200, 127, 127, 0.1);
+    border: 1px solid rgba(231, 60, 60, 0.3);
+}
+/* Dark mode logout button hover */
+[data-theme="dark"] .nav-list a.logout-btn:hover {
     background-color: rgba(231, 76, 60, 0.1);
-    color: var(--accent-red);
-    border: 1px solid rgba(231, 76, 60, 0.3);
+    transform: translateY(-2px);
 }
 
 .nav-list a.logout-btn:hover {
-    background-color: var(--accent-red);
-    color: white;
-    border-color: var(--accent-red);
+    background-color: rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 

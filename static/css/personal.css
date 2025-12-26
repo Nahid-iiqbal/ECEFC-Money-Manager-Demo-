@@ -45,21 +45,27 @@
 }
 
 nav{
-    background-color: var(--bg-primary);
+    background: var(--bg-primary);
 }
 
 /* Navigation styling */
 nav a {
-    color: #8B2833 !important;
+    color: #031a35 !important;
 }
 
 nav a:hover {
-    color: #D32F2F !important;
+    color: #07295c !important;
 }
 
 nav a.active {
-    color: #D32F2F !important;
-    border-bottom-color: #D32F2F !important;
+    color: #c2d1ec !important;
+    border-bottom-color: #05323f !important;
+    background: linear-gradient(165deg, rgb(3, 32, 65), rgb(119, 162, 227))
+}
+nav a.logout-btn{
+    color:rgb(3, 32, 65);
+    background-color: rgba(74, 60, 231, 0.1);
+    border: 1px solid rgba(60, 109, 231, 0.3);
 }
 
 /* Dark mode navigation colors */
@@ -72,7 +78,7 @@ nav a.active {
 }
 
 [data-theme="dark"] nav a.active {
-    color: #ff6b6b !important;
+    color: #e1aeae !important;
     border-bottom-color: #ff6b6b !important;
 }
 

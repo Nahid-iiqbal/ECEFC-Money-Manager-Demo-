@@ -36,7 +36,7 @@
     --text-primary: #e8e8e8;
     --text-secondary: #b8b8b8;
     --text-tertiary: #999999;
-    --text-inverse: #1a1a1a;
+    --text-inverse: #e1b1b1;
     --border-color: rgba(231, 76, 60, 0.3);
     --border-focus: #ff6b6b;
     --shadow-sm: 0 2px 10px rgba(231, 76, 60, 0.2);
@@ -63,6 +63,7 @@ nav{
     padding: 0;
     box-sizing: border-box;
 }
+
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -176,7 +177,7 @@ nav a:focus {
 }
 
 nav a.active {
-    color: var(--accent-red);
+    color: rgb(187, 187, 237);
     background-color: rgba(231, 76, 60, 0.1);
 }
 
@@ -188,13 +189,13 @@ nav a.active::after {
     transform: translateX(-50%);
     width: 60%;
     height: 3px;
-    background-color: var(--accent-red);
+    background-color: rgb(63, 116, 153);
     border-radius: 2px;
 }
 
 /* Dark mode navigation colors */
 [data-theme="dark"] nav a {
-    color: #ff9999;
+    color: #742222;
 }
 
 [data-theme="dark"] nav a:hover {
@@ -203,8 +204,8 @@ nav a.active::after {
 }
 
 [data-theme="dark"] nav a.active {
-    color: #ff6b6b;
-    background-color: rgba(255, 107, 107, 0.15);
+    color: #d7c1c1;
+    background-color: rgba(41, 3, 3, 0.15);
 }
 .container {
     max-width: 1200px;

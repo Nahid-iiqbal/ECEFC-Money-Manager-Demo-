@@ -9,17 +9,20 @@
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
-    --accent-red: #e74c3c;
+    --accent-red: #7a261d;
     --accent-purple: #667eea;
     --accent-blue: #4299e1;
     --accent-orange: #f6ad55;
     --accent-green: #48bb78;
+    --bg-primary-comp: rgb(3, 32, 75);
+    --bg-secondary-comp: rgb(4, 71, 60);
+    --bg-card-comp: rgb(54, 19, 72);
 }
 
 [data-theme="dark"] {
     --bg-primary: #352e2e;
     --bg-secondary: #2d2d2d;
-    --bg-card: #3a3a3a;
+    --bg-card: #514444;
     --text-primary: #e8e8e8;
     --text-secondary: #b8b8b8;
     --text-tertiary: #999999;
@@ -27,11 +30,14 @@
     --shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-md: 0 4px 20px rgba(231, 76, 60, 0.2);
     --shadow-hover: 0 8px 30px rgba(231, 76, 60, 0.4);
-    --accent-red: #ff6b6b;
+    --accent-red: #e08f8f;
     --accent-purple: #8b7eea;
     --accent-blue: #5bb5f7;
     --accent-orange: #ffb866;
     --accent-green: #5ed88f;
+    --bg-primary-comp: rgb(119, 42, 49);
+    --bg-secondary-comp: rgb(195, 119, 124);
+    --bg-card-comp: rgb(205, 168, 143);
 }
 
 /* Page Layout */
@@ -91,13 +97,13 @@
 .stat-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-hover);
-    border-color: var(--accent-red);
+    border-color: rgb(2, 49, 2);
 }
 
 .stat-label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: rgb(3, 22, 51);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -105,9 +111,14 @@
 .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--accent-red);
+    color: rgb(3, 60, 60);
 }
-
+[data-theme="dark"] .stat-label{
+    color:rgb(221, 177, 177)
+}
+[data-theme="dark"] .stat-value{
+    color:rgb(240, 229, 207)
+}
 /* Section Styles */
 section {
     background-color: var(--bg-card);
@@ -153,8 +164,17 @@ section:hover {
 }
 
 /* Left Panel: Tuition List */
-.left-panel {
-    background-color: var(--bg-card);
+[data-theme="light"] .left-panel {
+    background-color: rgb(184, 202, 239);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+[data-theme="dark"] .left-panel {
+    background-color: rgb(62, 43, 43);
     border-radius: 12px;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
@@ -166,7 +186,17 @@ section:hover {
 .panel-header {
     padding: 1.5rem;
     border-bottom: 3px solid rgba(192, 57, 43, 0.2);
-    background: linear-gradient(135deg, var(--accent-red), #c0392b);
+    background: linear-gradient(135deg, var(--bg-secondary), #6c95b9);
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+[data-theme="dark"] .panel-header {
+    padding: 1.5rem;
+    border-bottom: 3px solid rgba(231, 76, 60, 0.3);
+    background: linear-gradient(135deg, maroon, #e0c0b8);
     border-radius: 12px 12px 0 0;
     display: flex;
     justify-content: space-between;
@@ -182,7 +212,15 @@ section:hover {
 }
 
 .panel-header .section-title {
-    color: white;
+    color: rgb(40, 71, 87);
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+[data-theme="dark"] .panel-header .section-title {
+    color: #f8d7d7;
     margin: 0;
     padding: 0;
     border: none;
@@ -199,8 +237,8 @@ section:hover {
 }
 
 .btn-add-compact {
-    background: white;
-    color: var(--accent-red);
+    background: rgb(177, 218, 237);
+    color: rgb(5, 22, 49);
     padding: 0.7rem 1.4rem;
     border-radius: 8px;
     font-weight: 700;
@@ -214,16 +252,24 @@ section:hover {
     align-items: center;
     gap: 0.5rem;
 }
+[data-theme="dark"] .btn-add-compact {
+    background: rgb(241, 170, 112);
+    color: #510d0d;
+}
 
 .btn-add-compact:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    background: #f8f8f8;
+    background: #c0d8f1;
+}
+[data-theme="dark"] .btn-add-compact:hover {
+    background: #ffccaa;
 }
 
+
 .btn-export-pdf {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-    color: white;
+    background: linear-gradient(135deg, var(--accent-blue), #95b5ca);
+    color: rgb(5, 47, 46);
     padding: 0.6rem 1.2rem;
     border-radius: 8px;
     font-weight: 700;
@@ -235,6 +281,10 @@ section:hover {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
+}
+[data-theme="dark"] .btn-export-pdf{
+    background: linear-gradient(105deg, rgb(71, 21, 21), rgb(134, 56, 56));
+    color:#e4caca ;
 }
 
 .btn-export-pdf:hover {
@@ -311,12 +361,12 @@ section:hover {
 }
 
 .weekly-schedule::-webkit-scrollbar-thumb {
-    background: var(--accent-blue);
+    background: var(--accent-red);
     border-radius: 4px;
 }
 
 .weekly-schedule::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-purple);
+    background: #c0392b;
 }
 
 .reschedule-section {
@@ -446,7 +496,7 @@ section:hover {
     transform: scale(1.1);
 }
 
-.btn-edit {
+.btn-reschedule-action.btn-edit {
     background: var(--accent-orange);
     text-decoration: none;
     display: inline-flex;
@@ -454,7 +504,7 @@ section:hover {
     justify-content: center;
 }
 
-.btn-edit:hover {
+.btn-reschedule-action.btn-edit:hover {
     background: #e67e22;
     transform: scale(1.1);
 }
@@ -601,7 +651,7 @@ section:hover {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    background: linear-gradient(100deg, var(--bg-secondary), var(--bg-secondary-comp));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -610,6 +660,7 @@ section:hover {
     transition: width 0.4s ease;
     position: relative;
 }
+
 
 .progress-percentage {
     font-size: 0.75rem;
@@ -653,11 +704,11 @@ section:hover {
     min-width: 150px;
 }
 
-/* Edit Button */
+/* Edit Button (Entry Action) */
 .btn-edit {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-comp));
     border: none;
-    color: white;
+    color: var(--border-color);
     width: 36px;
     height: 36px;
     border-radius: 8px;
@@ -675,7 +726,7 @@ section:hover {
 .btn-edit:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-hover);
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    background: linear-gradient(135deg, #c0392b, #a93226);
 }
 
 .btn-edit:active {
@@ -765,14 +816,22 @@ section:hover {
 
 /* Reschedule Action Button */
 .action-btn.reschedule-btn {
-    background: linear-gradient(135deg, var(--accent-orange), #ed8936);
+    background: linear-gradient(165deg, rgb(4, 31, 65), #6ca9e9);
     color: white;
 }
-
-.action-btn.reschedule-btn:hover {
+.action-btn.reschedule-btn:hover{
+    background: linear-gradient(165deg, rgb(32, 84, 147), #afc6de);
+    color: rgb(4, 28, 67);
+}
+[data-theme="dark"] .action-btn.reschedule-btn {
+    background: linear-gradient(165deg, rgb(65, 9, 4), #432305);
+    color: rgb(216, 170, 170);
+}
+[data-theme="dark"] .action-btn.reschedule-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
     background: linear-gradient(135deg, #ed8936, #d68910);
+    color:#510d0d;
 }
 
 .action-btn.reschedule-btn:active {
@@ -781,14 +840,21 @@ section:hover {
 
 /* Edit Action Button */
 .action-btn.edit-btn {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-    color: white;
+    background: linear-gradient(165deg, var(--bg-secondary-comp), var(--bg-secondary));
+    color: rgb(1, 54, 56);
+}
+[data-theme="dark"] .action-btn.edit-btn{
+    background: linear-gradient(165deg, rgb(230, 178, 178), rgb(210, 177, 148));
+    color:#3d2103;
 }
 
 .action-btn.edit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    box-shadow: 0 4px 12px rgba(97, 24, 16, 0.4);
+    background: linear-gradient(165deg, teal, rgb(177, 227, 227));
+}
+[data-theme="dark"] .action-btn.edit-btn:hover{
+    background: linear-gradient(165deg, rgb(153, 76, 76), rgb(241, 170, 112));
 }
 
 .action-btn.edit-btn:active {
@@ -797,23 +863,30 @@ section:hover {
 
 /* Delete Action Button */
 .action-btn.delete-btn {
-    background: linear-gradient(135deg, var(--accent-red), #c0392b);
-    color: white;
+    background: linear-gradient(165deg, var(--bg-secondary-comp), var(--bg-secondary));
+    color: rgb(1, 54, 56);
 }
 
 .action-btn.delete-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-    background: linear-gradient(135deg, #c0392b, #a93226);
+    box-shadow: 0 4px 12px rgba(97, 24, 16, 0.4);
+    background: linear-gradient(165deg, teal, rgb(177, 227, 227));
 }
 
 .action-btn.delete-btn:active {
     transform: translateY(0);
 }
+[data-theme="dark"] .action-btn.delete-btn{
+    background: linear-gradient(165deg, rgb(230, 178, 178), rgb(210, 177, 148));
+    color:#3d2103;
+}
+[data-theme="dark"] .action-btn.delete-btn:hover{
+    background: linear-gradient(165deg, rgb(155, 76, 76), rgb(241, 170, 112));
+}
 
 /* Start New Month Button */
 .action-btn.btn-start-month {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    background: linear-gradient(165deg, var(--accent-red), #c0392b);
     color: white;
     width: 100%;
     padding: 0.8rem;
@@ -821,8 +894,8 @@ section:hover {
 
 .action-btn.btn-start-month:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(165deg, #c0392b, #a93226);
 }
 
 .action-btn.btn-start-month:active {
@@ -837,20 +910,33 @@ section:hover {
 .action-btn:focus,
 .btn-empty-action:focus,
 .btn-add-compact:focus {
-    outline: 2px solid var(--accent-blue);
+    outline: 2px solid var(--accent-red);
     outline-offset: 2px;
 }
 
 .action-btn:focus-visible,
 .btn-empty-action:focus-visible,
 .btn-add-compact:focus-visible {
-    outline: 2px solid var(--accent-blue);
+    outline: 2px solid var(--accent-red);
     outline-offset: 2px;
 }
 
 /* Keyboard Navigation Support */
 .action-btn:focus-within {
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+}
+
+[data-theme="dark"] .action-btn:focus,
+[data-theme="dark"] .btn-empty-action:focus,
+[data-theme="dark"] .btn-add-compact:focus,
+[data-theme="dark"] .action-btn:focus-visible,
+[data-theme="dark"] .btn-empty-action:focus-visible,
+[data-theme="dark"] .btn-add-compact:focus-visible {
+    outline-color: #ff6b6b;
+}
+
+[data-theme="dark"] .action-btn:focus-within {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
 }
 
 /* Progress Bar Styles */
@@ -872,7 +958,7 @@ section:hover {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #48bb78, #38a169, #4299e1);
+    background: linear-gradient(90deg, #48bb78, #38a169, var(--accent-red));
     border-radius: 12px;
     transition: width 0.4s ease;
     display: flex;
@@ -894,7 +980,7 @@ section:hover {
 
 /* Dark mode progress bar */
 [data-theme="dark"] .progress-bar-fill {
-    background: linear-gradient(90deg, #5ed88f, #48bb78, #5bb5f7);
+    background: linear-gradient(90deg, #5ed88f, #48bb78, #ff6b6b);
 }
 
 .progress-bar-fill[style*="width: 0%"] {
@@ -903,7 +989,7 @@ section:hover {
 
 /* Progress Update Buttons */
 .btn-progress {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    background: linear-gradient(165deg, var(--accent-red), #c0392b);
     border: none;
     color: white;
     width: 28px;
@@ -941,7 +1027,7 @@ section:hover {
 
 /* Clear Button */
 .btn-clear {
-    background: linear-gradient(135deg, var(--accent-orange), #e67e22);
+    background: linear-gradient(165deg, var(--accent-orange), #e67e22);
     border: none;
     color: white;
     width: 28px;
@@ -1056,7 +1142,7 @@ section:hover {
 
 .today-badge {
     display: inline-block;
-    background: linear-gradient(135deg, var(--accent-red), #c0392b);
+    background: linear-gradient(165deg, #08511b, rgb(90, 174, 90));
     color: white;
     width: fit-content;
     padding: 0.25rem 0.75rem;
@@ -1066,10 +1152,13 @@ section:hover {
     margin-left: -0.3rem;
     margin-top: -0.5rem;
 }
-
+[data-theme="dark"] .today-badge{
+    background: linear-gradient(165deg, #3e1c03, rgb(159, 51, 51));
+    color: rgb(218, 206, 206);
+}
 .current-day-row {
-    background-color: rgba(231, 76, 60, 0.1);
-    border-left: 4px solid var(--accent-red);
+    background-color: rgba(60, 146, 231, 0.1);
+    border-left: 4px solid var(--bg-primary);
 }
 
 [data-theme="dark"] .current-day-row {
@@ -1101,12 +1190,12 @@ section:hover {
 }
 
 .schedule-tiles-wrapper::-webkit-scrollbar-thumb {
-    background: var(--accent-purple);
+    background: rgb(13, 47, 99);
     border-radius: 2px;
 }
 
 .schedule-tile {
-    background: linear-gradient(135deg, #4299e1, #667eea);
+    background: linear-gradient(165deg, var(--bg-primary), var(--bg-primary-comp));
     color: white;
     padding: 0.75rem;
     border-radius: 8px;
@@ -1187,8 +1276,8 @@ section:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(72, 187, 120, 0.9);
-    color: white;
+    background: rgba(157, 223, 184, 0.9);
+    color: rgb(3, 58, 10);
     padding: 0.3rem 0.6rem;
     border-radius: 6px;
     font-weight: 700;
@@ -1216,11 +1305,11 @@ section:hover {
 }
 
 .btn-tick {
-    background: rgba(72, 187, 120, 0.8);
+    background: rgba(37, 139, 80, 0.8);
 }
 
 .btn-tick:hover:not(:disabled) {
-    background: rgba(72, 187, 120, 1);
+    background: rgb(10, 82, 40);
     transform: scale(1.05);
 }
 
@@ -1230,11 +1319,11 @@ section:hover {
 }
 
 .btn-skip {
-    background: rgba(246, 173, 85, 0.8);
+    background: rgba(3, 25, 67, 0.8);
 }
 
 .btn-skip:hover {
-    background: rgba(246, 173, 85, 1);
+    background: rgb(78, 108, 155);
     transform: scale(1.05);
 }
 
@@ -1274,10 +1363,14 @@ section:hover {
     text-align: center;
     padding: 4rem 1rem;
     color: var(--text-secondary);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(66, 153, 225, 0.05));
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.05), rgba(192, 57, 43, 0.05));
     border-radius: 10px;
     border: 2px dashed var(--border-color);
     margin: 2rem 0;
+}
+
+[data-theme="dark"] .empty-state {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(231, 76, 60, 0.08));
 }
 
 .empty-icon {
@@ -1311,7 +1404,7 @@ section:hover {
 }
 
 .btn-empty-action {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    background: linear-gradient(135deg, var(--accent-red), #c0392b);
     color: white;
     padding: 0.8rem 2rem;
     border: none;
@@ -1330,7 +1423,7 @@ section:hover {
 .btn-empty-action:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-hover);
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    background: linear-gradient(135deg, #c0392b, #a93226);
 }
 
 .btn-empty-action:active {
