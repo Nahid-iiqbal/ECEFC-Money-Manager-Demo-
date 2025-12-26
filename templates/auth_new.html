@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'register' %}Register{% else %}Login{% endif %} - FinBuddy</title>
+    <link href="{{ url_for('static', filename='css/auth_new.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <!-- Left Column - Marketing/Info -->
+            <div class="auth-left">
+                <div class="brand-section">
+                    <h1 class="brand-logo">💰 FinBuddy</h1>
+                    <p class="brand-tagline">Smart Money Management Made Simple</p>
+                </div>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">�</span>
+                        <div class="feature-text">
+                            <h3>Track & Manage</h3>
+                            <p>Monitor expenses and split bills effortlessly</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <span class="feature-icon">🔔</span>
+                        <div class="feature-text">
+                            <h3>Smart Reminders</h3>
+                            <p>Never miss a payment deadline</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div class="feature-text">
+                            <h3>Clear Insights</h3>
+                            <p>Visualize your financial health</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Form -->
+            <div class="auth-right">
+                <div class="form-container">
+                    <!-- Mode Toggle -->
+                    <div class="auth-tabs">
+                        <a href="{{ url_for('auth.login') }}" 
+                           class="auth-tab {% if mode != 'register' %}active{% endif %}">
+                            Login
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" 
+                           class="auth-tab {% if mode == 'register' %}active{% endif %}">
+                            Register
+                        </a>
+                    </div>
+                    
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Form Title -->
+                    <h2 class="form-title">
+                        {% if mode == 'register' %}
+                            Create Your Account
+                        {% else %}
+                            Welcome Back
+                        {% endif %}
+                    </h2>
+                    <p class="form-subtitle">
+                        {% if mode == 'register' %}
+                            Join thousands managing their finances smarter
+                        {% else %}
+                            Sign in to continue to your dashboard
+                        {% endif %}
+                    </p>
+                    
+                    <!-- Form -->
+                    <form method="POST" action="" class="auth-form">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group">
+                            <label for="username" class="form-label">
+                                <span class="label-icon">👤</span>
+                                Username
+                            </label>
+                            {{ form.username(class="form-input", id="username", autocomplete="username") }}
+                            {% if form.username.errors %}
+                                <span class="error-text">{{ form.username.errors[0] }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if mode == 'register' %}
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <span class="label-icon">✉️</span>
+                                Email Address
+                            </label>
+                            {{ form.email(class="form-input", id="email", type="email", autocomplete="email") }}
+                            {% if form.email.errors %}
+                                <span class="error-text">{{ form.email.errors[0] }}</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <span class="label-icon">🔒</span>
+                                Password
+                            </label>
+                            {{ form.password(class="form-input", id="password", autocomplete=("new-password" if mode == 'register' else "current-password")) }}
+                            {% if form.password.errors %}
+                                <span class="error-text">{{ form.password.errors[0] }}</span>
+                            {% endif %}
+                            {% if mode != 'register' %}
+                            <div class="form-hint">
+                                Minimum 8 characters
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if mode == 'register' %}
+                        <div class="password-requirements">
+                            <small>Password must be at least 8 characters long</small>
+                        </div>
+                        {% endif %}
+                        
+                        {{ form.submit(class="btn-submit") }}
+                    </form>
+                    
+                    <!-- Footer Links -->
+                    <div class="form-footer">
+                        {% if mode == 'register' %}
+                            <p>Already have an account? 
+                                <a href="{{ url_for('auth.login') }}" class="link-primary">Login here</a>
+                            </p>
+                        {% else %}
+                            <p>New to FinBuddy? 
+                                <a href="{{ url_for('auth.register') }}" class="link-primary">Create an account</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

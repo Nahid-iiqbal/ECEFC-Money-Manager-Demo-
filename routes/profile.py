@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, session
 from flask_login import login_required, current_user, logout_user
 from routes.database import db, Profile, Expense, User, Debt, GroupMember, GroupExpense, ExpenseSplit
 from werkzeug.utils import secure_filename
@@ -33,6 +33,9 @@ def create_profile():
     # Check if user already has a profile
     if current_user.profile:
         return redirect(url_for('profile.view_profile'))
+    
+    # Get email from session if available (from registration)
+    pending_email = session.pop('pending_email', None)
 
     if request.method == 'POST':
         # Get form data
@@ -46,7 +49,7 @@ def create_profile():
         # Validate required fields
         if not all([profile_name, profession, institution, date_of_birth_str]):
             flash('Please fill in all required fields.', 'danger')
-            return render_template('profile_create.html')
+            return render_template('profile_create.html', pending_email=pending_email)
 
         try:
             # Parse date of birth
@@ -89,7 +92,7 @@ def create_profile():
             db.session.rollback()
             flash(f'Error creating profile: {str(e)}', 'danger')
 
-    return render_template('profile_create.html')
+    return render_template('profile_create.html', pending_email=pending_email)
 
 
 @profile_bp.route('/profile')

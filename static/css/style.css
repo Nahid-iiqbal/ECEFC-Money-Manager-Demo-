@@ -28,7 +28,7 @@ body {
 
 /* Header */
 header {
-    background: linear-gradient(135deg, #75a8d2 0%, #a24b86 100%);
+    background: linear-gradient(105deg, rgb(2, 21, 48), rgb(48, 71, 98));
     color: #fff;
     padding: 1.5rem 0;
     text-align: center;
@@ -36,9 +36,10 @@ header {
 }
 
 [data-theme="dark"] header {
-    background: rgb(114, 31, 31);
-    color: #f5f5f5;
+    background: linear-gradient(105deg, rgb(60, 8, 8), maroon);
+    color: #e6d4d4;
 }
+    
 
 header h1 {
     font-size: 2rem;

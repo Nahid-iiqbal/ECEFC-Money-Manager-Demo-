@@ -344,7 +344,7 @@ body {
 
 /* Settings Button in Navbar */
 .btn-settings-nav {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #054a51, #5fa46c);
     color: white;
     border: none;
     border-radius: 50%;
@@ -365,7 +365,7 @@ body {
 }
 
 [data-theme="dark"] .btn-settings-nav {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: linear-gradient(135deg, #d6746a, #42100b);
     box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
