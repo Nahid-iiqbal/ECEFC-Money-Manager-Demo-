@@ -282,3 +282,86 @@ def split_expense(expense_id, splits):
         )
         db.session.add(expense_split)
     db.session.commit()
+
+# ============================================
+# HELPER FUNCTIONS FOR REAL-TIME UPDATES
+# ============================================
+
+
+def get_group_details_data(group_id):
+    """Get all group details data for real-time updates"""
+    try:
+        from sqlalchemy import func
+
+        group = Group.query.get(group_id)
+        if not group:
+            return {}
+
+        # Calculate total group expense
+        total_group_expense = db.session.query(func.sum(GroupExpense.amount)).filter_by(
+            group_id=group_id).scalar() or 0.0
+
+        # Get member statistics and calculate balances
+        members = []
+        member_count = len(group.members)
+        fair_share = total_group_expense / member_count if member_count > 0 else 0
+
+        balances = {}
+
+        for member in group.members:
+            user = member.user
+            member_total = db.session.query(func.sum(GroupExpense.amount)).filter_by(
+                group_id=group_id, paid_by=user.id).scalar() or 0.0
+            member_count_exp = db.session.query(func.count(GroupExpense.id)).filter_by(
+                group_id=group_id, paid_by=user.id).scalar() or 0
+
+            balance = member_total - fair_share
+            balances[user.id] = balance
+
+            members.append({
+                'id': user.id,
+                'username': user.username,
+                'total_paid': float(member_total),
+                'expense_count': member_count_exp,
+                'balance': float(balance)
+            })
+
+        # Calculate settlements
+        settlements = calculate_settlements(
+            balances, {m['id']: m['username'] for m in members})
+
+        # Get expenses
+        expenses = []
+        for exp in group.expenses:
+            expenses.append({
+                'id': exp.id,
+                'title': exp.title,
+                'amount': float(exp.amount),
+                'paid_by': exp.paid_by,
+                'date': str(exp.date) if exp.date else 'N/A'
+            })
+
+        return {
+            'id': group.id,
+            'name': group.name,
+            'total_expense': float(total_group_expense),
+            'fair_share': float(fair_share),
+            'member_count': member_count,
+            'members': members,
+            'settlements': settlements,
+            'expenses': expenses
+        }
+    except Exception as e:
+        print(f"Error getting group details data: {e}")
+        return {}
+
+
+def get_group_members_ids(group_id):
+    """Get all member user IDs for a group"""
+    try:
+        members = db.session.query(GroupMember.user_id).filter_by(
+            group_id=group_id).all()
+        return [m[0] for m in members]
+    except Exception as e:
+        print(f"Error getting group members: {e}")
+        return []

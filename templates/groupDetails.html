@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ group.name }} - FeinBuddy{% endblock %}
+{% block title %}{{ group.name }} - FinBuddy{% endblock %}
 
 {% block extra_css %}
 <link href="{{ url_for('static', filename='css/group.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-header group-header">
+<div class="dashboard-header group-header" data-group-id="{{ group.id }}">
     <a href="{{ url_for('group.my_groups') }}" class="back-link">← Back</a>
     <h2 class="flicker">{{ group.name }}</h2>
     <div class="invite-pill">
@@ -17,12 +17,12 @@
 </div>
 
 <div class="summary-cards">
-    <div class="summary-card card-green">
+    <div class="summary-card card-green" data-field="total-expense-card">
         <div class="card-icon">💸</div>
         <div class="card-content">
             <h3>Total Spent</h3>
             <p class="card-subtitle">Entire Group</p>
-            <p class="card-amount">৳{{ "%.2f"|format(total_group_expense) }}</p>
+            <p class="card-amount" data-field="total-expense">৳{{ "%.2f"|format(total_group_expense) }}</p>
         </div>
     </div>
 
@@ -39,7 +39,7 @@
 <div class="recent-activity-section settlements-section">
     <h3>💸 Settlements Needed</h3>
     <p class="section-subtitle">Simplify payments with these transactions</p>
-    <div class="activity-list">
+    <div class="activity-list" data-field="settlements">
         {% for settlement in settlements %}
         <div class="activity-item settlement-item">
             <div class="activity-icon {% if settlement.from == current_user.username %}personal{% else %}group{% endif %}">
@@ -78,7 +78,7 @@
 <div class="details-grid">
     <div class="recent-activity-section members-section">
         <h3>👥 Member Contributions</h3>
-        <div class="activity-list">
+        <div class="activity-list" data-field="members-list">
             {% for member in members %}
             <div class="activity-item member-item">
                 <div class="activity-icon group">
@@ -106,7 +106,7 @@
     <div class="recent-activity-section">
         <h3>📜 Group History</h3>
         {% if group.expenses %}
-            <div class="activity-list">
+            <div class="activity-list" data-field="expenses-list">
                 {% for exp in group.expenses|sort(attribute='date', reverse=True) %}
                 <div class="activity-item">
                     <div class="activity-icon personal">🧾</div>
@@ -128,4 +128,24 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Script to join group room on page load -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const groupId = document.querySelector('[data-group-id]')?.getAttribute('data-group-id');
+        if (groupId && socket) {
+            joinGroupRoom(parseInt(groupId));
+            // Request initial group data
+            requestGroupUpdate(parseInt(groupId));
+        }
+    });
+
+    // On page unload, leave group room
+    window.addEventListener('beforeunload', function() {
+        const groupId = document.querySelector('[data-group-id]')?.getAttribute('data-group-id');
+        if (groupId && socket) {
+            leaveGroupRoom(parseInt(groupId));
+        }
+    });
+</script>
 {% endblock %}

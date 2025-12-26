@@ -1,4 +1,4 @@
-# FeinBuddy - API Routes Documentation
+# FinBuddy - API Routes Documentation
 
 ## Authentication Routes (`/auth`)
 

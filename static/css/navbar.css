@@ -7,7 +7,7 @@
     /* High z-index to stay above content, but below modals/dialogs */
     z-index: 1000;
     
-    /* Light mode: Lighter blue-gray to match light theme */
+    /* Solid background color */
     background-color: #c5dfe0dc;
     
     /* Modern glassmorphism effect (Safari, Chrome, Edge support) */
@@ -26,7 +26,7 @@
     padding: 0.75rem 0;
 }
 
-/* Dark mode navbar - brownish/reddish tone to match theme */
+/* Dark mode navbar - solid brownish/reddish tone */
 [data-theme="dark"] .main-nav {
     background-color: #433f3f;
 }
@@ -40,6 +40,16 @@
 [data-theme="dark"] .main-nav.scrolled {
     box-shadow: 0 4px 25px rgba(231, 76, 60, 0.25);
     background-color: #433f3f;
+}
+
+/* Navigation Container */
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* Navigation List Container */
@@ -322,4 +332,78 @@ body {
     .nav-container {
         gap: 0.5rem;
     }
+}
+
+/* Nav Actions Container */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+/* Settings Button in Navbar */
+.btn-settings-nav {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-settings-nav:hover {
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+[data-theme="dark"] .btn-settings-nav {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+[data-theme="dark"] .btn-settings-nav:hover {
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+}
+
+/* Logout Button in Navbar */
+.btn-logout-nav {
+    background-color: rgba(89, 153, 190, 0.262);
+    color: rgb(6, 39, 63);
+    border: 1px solid rgba(60, 171, 231, 0.3);
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.btn-logout-nav:hover {
+    background-color: rgb(10, 49, 77);
+    color: white;
+    border-color: rgb(6, 39, 63);
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .btn-logout-nav {
+    background-color: #5a0f072c;
+    color: #ede4e4;
+    border: 1px solid rgba(231, 60, 63, 0.3);
+}
+
+[data-theme="dark"] .btn-logout-nav:hover {
+    background-color: rgba(77, 11, 10, 0.567);
+    color: rgb(219, 194, 194);
+    border-color: rgba(224, 141, 141, 0.323);
+    transform: translateY(-2px);
 }

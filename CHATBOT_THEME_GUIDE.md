@@ -326,7 +326,7 @@ Test the chatbot in both themes:
 
 ## 🏁 Result
 
-The AI Chatbot now fully supports both light and dark themes with professional gradient designs that match the FeinBuddy app's color scheme. All functionality remains intact while the visual experience is significantly enhanced with theme-aware colors, shadows, and animations.
+The AI Chatbot now fully supports both light and dark themes with professional gradient designs that match the FinBuddy app's color scheme. All functionality remains intact while the visual experience is significantly enhanced with theme-aware colors, shadows, and animations.
 
 **Total Development Time:** ~30 minutes  
 **Lines Changed:** ~150 CSS lines  

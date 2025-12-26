@@ -119,7 +119,7 @@ main {
 .dashboard-header {
     text-align: center;
     padding: 1rem 0;
-    margin: 0;
+    margin-top: -1.5rem;
 }
 
 
@@ -1008,4 +1008,54 @@ main {
         margin-bottom: 1rem;
         transform: none;
     }
+}
+
+/* Skeleton loading styles */
+.skeleton {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.35), rgba(255,255,255,0));
+    animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -150px; }
+    100% { left: 100%; }
+}
+
+.skeleton-line {
+    height: 12px;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-bar {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* Pulse animation for change highlights */
+.pulse {
+    animation: pulseAnim 0.6s ease;
+}
+
+@keyframes pulseAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
 }

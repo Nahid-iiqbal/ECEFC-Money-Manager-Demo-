@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
-from routes.database import db, Profile
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
+from flask_login import login_required, current_user, logout_user
+from routes.database import db, Profile, Expense, User, Debt, GroupMember, GroupExpense, ExpenseSplit
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
 from datetime import datetime
 import os
+import csv
+from io import StringIO
 
 profile_bp = Blueprint('profile', __name__)
 
@@ -167,3 +170,113 @@ def edit_profile():
             flash(f'Error updating profile: {str(e)}', 'danger')
 
     return render_template('profile_edit.html', profile=profile)
+
+
+@profile_bp.route('/download-expenses-csv')
+@login_required
+def download_expenses_csv():
+    """Export user's expense history as CSV."""
+    try:
+        # Get all expenses for current user, ordered by date descending
+        expenses = Expense.query.filter_by(user_id=current_user.id).order_by(
+            Expense.date.desc()).all()
+
+        # Create CSV in memory
+        output = StringIO()
+        writer = csv.writer(output)
+
+        # Write header
+        writer.writerow(['Date', 'Created At', 'Name', 'Category', 'Type',
+                        'Amount (৳)', 'Description'])
+
+        # Write expense rows
+        for expense in expenses:
+            writer.writerow([
+                expense.date.strftime('%Y-%m-%d    ') if expense.date else 'N/A',
+                expense.created_at.strftime(
+                    '%H:%M:%S    ') if expense.created_at else 'N/A',
+                expense.name or '',
+                expense.category or 'Other',
+                expense.type or 'Personal',
+                f"{expense.amount:.2f}",
+                expense.description or ''
+            ])
+
+        # Add summary row
+        total_amount = sum(exp.amount for exp in expenses)
+        writer.writerow([])
+        writer.writerow(['TOTAL', '', '', '', '', f"{total_amount:.2f}", ''])
+
+        # Create response
+        csv_content = output.getvalue()
+        response = make_response(csv_content)
+        response.headers[
+            'Content-Disposition'] = f'attachment; filename=Expense_History_{current_user.username}_{datetime.now().strftime("%Y%m%d")}.csv'
+        response.headers['Content-Type'] = 'text/csv'
+
+        return response
+
+    except Exception as e:
+        flash(f'Error exporting expenses: {str(e)}', 'danger')
+        return redirect(url_for('profile.view_profile'))
+
+
+@profile_bp.route('/profile/delete', methods=['POST'])
+@login_required
+def delete_profile():
+    """Delete entire user account with all associated data"""
+    try:
+        # Verify password
+        password = request.form.get('password', '')
+        if not password:
+            flash('Password is required to delete your account.', 'danger')
+            return redirect(url_for('profile.view_profile'))
+
+        if not check_password_hash(current_user.password_hash, password):
+            flash('Incorrect password. Account deletion cancelled.', 'danger')
+            return redirect(url_for('profile.view_profile'))
+
+        user = current_user
+        user_id = user.id
+
+        # Delete profile picture if exists
+        if user.profile and user.profile.picture_filename:
+            picture_path = os.path.join(
+                UPLOAD_FOLDER, user.profile.picture_filename)
+            if os.path.exists(picture_path):
+                os.remove(picture_path)
+
+        # Delete all user-related data
+        # 1. Delete profile
+        if user.profile:
+            db.session.delete(user.profile)
+
+        # 2. Delete personal expenses
+        Expense.query.filter_by(user_id=user_id).delete()
+
+        # 3. Delete debts where user is involved
+        Debt.query.filter_by(user_id=user_id).delete()
+
+        # 4. Delete group expense splits
+        ExpenseSplit.query.filter_by(user_id=user_id).delete()
+
+        # 5. Delete group expenses paid by user
+        GroupExpense.query.filter_by(paid_by=user_id).delete()
+
+        # 6. Remove user from all groups
+        GroupMember.query.filter_by(user_id=user_id).delete()
+
+        # 7. Finally, delete the user account
+        db.session.delete(user)
+        db.session.commit()
+
+        # Logout the user
+        logout_user()
+
+        flash('Your account has been permanently deleted.', 'success')
+        return redirect(url_for('auth.login'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting account: {str(e)}', 'danger')
+        return redirect(url_for('profile.view_profile'))

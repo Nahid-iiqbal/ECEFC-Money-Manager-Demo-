@@ -1,7 +1,7 @@
 # 🌑 Upside Down Mode Dashboard - Implementation Guide
 
 ## Overview
-FeinBuddy now features a complete dark mode ("Upside Down Mode") with Stranger Things-inspired aesthetics and fully wired backend functionality.
+FinBuddy now features a complete dark mode ("Upside Down Mode") with Stranger Things-inspired aesthetics and fully wired backend functionality.
 
 ---
 
@@ -124,7 +124,7 @@ init()               // Initializes theme on page load
    - New preference saved to `localStorage`
 
 3. **Persistence:**
-   - Theme choice stored in `localStorage` with key `feinbuddy_theme`
+   - Theme choice stored in `localStorage` with key `FinBuddy_theme`
    - Survives page refreshes and browser restarts
    - Works across all dashboard pages
 

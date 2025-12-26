@@ -20,6 +20,7 @@ Flask-Bcrypt==1.0.1
 Flask-Login==0.6.3
 Flask-Mail==0.10.0
 Flask-SQLAlchemy==3.1.1
+Flask-SocketIO==5.3.5
 Flask-WTF==1.2.2
 google-ai-generativelanguage==0.6.15
 google-api-core==2.28.1

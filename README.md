@@ -1,4 +1,4 @@
-# FeinBuddy
+# FinBuddy
 
 An expense tracker specially made for BUET students to manage personal expenses, group expenses, and tuition fees.
 

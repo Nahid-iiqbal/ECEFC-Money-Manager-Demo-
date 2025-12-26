@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% if page == 'login' %}Login - {% elif page == 'register' %}Register - {% endif %}
-        FeinBuddy
+        FinBuddy
     </title>
     <link href="{{ url_for('static', filename='css/home.css') }}?v=2" rel="stylesheet">
 </head>
@@ -49,7 +49,7 @@
     <div class="auth-container">
         <div class="auth-box">
             <h2>Create Account</h2>
-            <p class="auth-subtitle">Join FeinBuddy today</p>
+            <p class="auth-subtitle">Join FinBuddy today</p>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -91,7 +91,7 @@
 
     {% else %}
     <div class="container">
-        <h1>💰 FeinBuddy</h1>
+        <h1>💰 FinBuddy</h1>
         
         <pre class="tagline">Tuition.   Dues.   Savings.<br>Managed.</pre>
 
