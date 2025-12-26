@@ -34,38 +34,6 @@
     --accent-green: #5ed88f;
 }
 
-nav {
-    background-color: var(--bg-primary);
-}
-
-/* Navigation styling */
-nav a {
-    color: #8B2833 !important;
-}
-
-nav a:hover {
-    color: #D32F2F !important;
-}
-
-nav a.active {
-    color: #D32F2F !important;
-    border-bottom-color: #D32F2F !important;
-}
-
-/* Dark mode navigation colors */
-[data-theme="dark"] nav a {
-    color: #ff9999 !important;
-}
-
-[data-theme="dark"] nav a:hover {
-    color: #ffcccc !important;
-}
-
-[data-theme="dark"] nav a.active {
-    color: #ff6b6b !important;
-    border-bottom-color: #ff6b6b !important;
-}
-
 /* Page Layout */
 .expense-page {
     width: 100%;
@@ -177,8 +145,8 @@ section:hover {
 /* Two Column Layout */
 .tuition-layout {
     display: grid;
-    grid-template-columns: 0.2fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: minmax(350px, 420px) 1fr;
+    gap: 1.5rem;
     flex: 1;
     min-height: 0;
     margin-bottom: 2rem;
@@ -188,7 +156,6 @@ section:hover {
 .left-panel {
     background-color: var(--bg-card);
     border-radius: 12px;
-    margin-left: -3rem;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
     display: flex;
@@ -300,7 +267,11 @@ section:hover {
 
 .tuition-list-scrollable::-webkit-scrollbar-thumb:hover {
     background: #c0392b;
-    /* .tile-date removed: dates are not shown inside tiles anymore */
+}
+
+/* Right Panel: Calendar and Reschedules */
+.right-panel {
+    display: flex;
     flex-direction: column;
     gap: 1.5rem;
     height: 100%;
@@ -311,7 +282,6 @@ section:hover {
     background-color: var(--bg-card);
     border-radius: 12px;
     padding: 1.5rem;
-    margin-right: -3rem;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
     flex: 1;
@@ -1057,7 +1027,11 @@ section:hover {
     color: var(--text-primary);
     vertical-align: top;
     border-bottom: 1px solid var(--border-color);
-    background-color: rgba(var(--accent-red), 0.05);
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+[data-theme="dark"] th {
+    background-color: rgba(231, 76, 60, 0.1);
 }
 
 .day-header {
@@ -1475,7 +1449,7 @@ section:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(2px);
+    --webkit-backdrop-filter: blur(2px);
 }
 
 .modal-content {
@@ -1605,5 +1579,44 @@ section:hover {
     
     .btn-modal {
         width: 100%;
+    }
+    
+    /* Responsive layout for tablet and below */
+    .tuition-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .header-stats {
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        min-width: 150px;
+    }
+    
+    .panel-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .panel-header .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .btn-add-compact,
+    .btn-export-pdf {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .tuition-list-scrollable {
+        max-height: 400px;
+    }
+    
+    .calendar-section,
+    .reschedule-section {
+        max-height: none;
     }
 }
