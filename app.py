@@ -11,6 +11,7 @@ from flask_login import LoginManager, current_user
 from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import os
+import re
 
 try:
     from groq import Groq
@@ -30,6 +31,211 @@ if Groq and GROQ_API_KEY:
         print(f"Groq initialized with model: {GROQ_MODEL_NAME}")
     except Exception as e:
         print(f"Groq setup failed: {e}")
+
+
+# =======================
+# Intelligent Chatbot Fallback System
+# =======================
+
+def get_intelligent_fallback_response(user_message, user_context):
+    """
+    Provides intelligent, context-aware responses when AI API is unavailable.
+    Uses pattern matching and FAQ-style responses to guide users.
+    
+    Args:
+        user_message: The user's query (lowercase)
+        user_context: Dict with user's profile and financial data
+    
+    Returns:
+        String response or None if no pattern matches
+    """
+    msg = user_message.lower().strip()
+    
+    # Extract context variables
+    display_name = user_context.get('display_name', 'there')
+    total_recent = user_context.get('total_recent', 0)
+    total_all_time = user_context.get('total_all_time', 0)
+    category_str = user_context.get('category_str', '')
+    tuition_income = user_context.get('tuition_income', 0)
+    tuition_progress = user_context.get('tuition_progress', 0)
+    group_count = user_context.get('group_count', 0)
+    
+    # ===== Greetings =====
+    if re.search(r'\b(hi|hello|hey|greetings|good\s+(morning|afternoon|evening))\b', msg):
+        return (
+            f"Hi {display_name}! 👋 Welcome to FeinBuddy! I'm here to help you navigate this webapp. "
+            f"You can ask me about features, how to use different sections, or what you can do here. "
+            f"What would you like to know?"
+        )
+    
+    # ===== What is this / Overview =====
+    if re.search(r'\b(what\s+(is|does)|about|overview|purpose|tell\s+me\s+about)\b', msg) and \
+       re.search(r'\b(this|app|webapp|website|feinbuddy|platform)\b', msg):
+        return (
+            f"FeinBuddy is your personal finance manager! 💰 It helps you:\n"
+            f"📊 Track daily expenses by category\n"
+            f"👥 Manage group expenses with friends\n"
+            f"🎓 Track tuition classes and income\n"
+            f"📈 View spending trends on your dashboard\n"
+            f"You're currently managing ৳{total_all_time:,.0f} in total expenses!"
+        )
+    
+    # ===== Features List =====
+    if re.search(r'\b(feature|can\s+i|what\s+can|what\s+do|capabilities|options)\b', msg):
+        return (
+            "Here's what you can do in FeinBuddy:\n\n"
+            "💸 **Expenses**: Add, edit, delete daily expenses with categories\n"
+            "👥 **Groups**: Create groups, split bills, track who owes what\n"
+            "🎓 **Tuition**: Manage classes, track attendance, calculate income\n"
+            "👤 **Profile**: Update personal info, profession, institution\n"
+            "📊 **Dashboard**: See charts, weekly summaries, spending trends\n\n"
+            "Which feature would you like to learn more about?"
+        )
+    
+    # ===== Dashboard Help =====
+    if re.search(r'\b(dashboard|home|overview|summary|charts?|graphs?)\b', msg):
+        return (
+            "📊 **Dashboard** is your finance overview!\n\n"
+            "You'll see:\n"
+            "• Weekly spending summary\n"
+            "• Expense breakdown by category (pie chart)\n"
+            "• Recent transactions\n"
+            "• Quick stats cards\n\n"
+            "Navigate to Dashboard from the navbar to see your financial snapshot!"
+        )
+    
+    # ===== Expense Tracking =====
+    if re.search(r'\b(expense|add\s+expense|track|spending|record|log)\b', msg) and \
+       not re.search(r'\bgroup', msg):
+        return (
+            "💸 **Expense Tracking** is easy!\n\n"
+            "**To add an expense:**\n"
+            "1. Go to 'Expenses' in the navbar\n"
+            "2. Click 'Add Expense' button\n"
+            "3. Fill in amount, category, date, description\n"
+            "4. Submit!\n\n"
+            "**Categories available:** Food, Transport, Entertainment, Shopping, Bills, Health, Education\n\n"
+            f"So far you've tracked ৳{total_all_time:,.0f} across all categories!"
+        )
+    
+    # ===== Group Management =====
+    if re.search(r'\b(group|groups|split|shared|friends|owe|dues?)\b', msg):
+        return (
+            "👥 **Groups** let you split expenses with friends!\n\n"
+            "**How it works:**\n"
+            "1. Go to 'Groups' in navbar\n"
+            "2. Create a new group (trip, roommates, etc.)\n"
+            "3. Add members with their names\n"
+            "4. Log shared expenses\n"
+            "5. FeinBuddy automatically calculates who owes what!\n\n"
+            f"You're currently in {group_count} group(s). Check the Groups page to settle dues!"
+        )
+    
+    # ===== Tuition Management =====
+    if re.search(r'\b(tuition|class|classes|teaching|student|income|attendance)\b', msg):
+        return (
+            "🎓 **Tuition Tracker** manages your teaching/tutoring!\n\n"
+            "**Features:**\n"
+            "• Add students/classes with rates\n"
+            "• Track attendance by day\n"
+            "• Calculate potential income\n"
+            "• Export routine as PDF\n"
+            "• Mark classes as complete\n\n"
+            f"Current progress: {tuition_progress}% complete with ৳{tuition_income:,.0f} potential income!"
+        )
+    
+    # ===== Profile/Settings =====
+    if re.search(r'\b(profile|account|settings|personal|edit|update|change)\b', msg):
+        return (
+            "👤 **Profile** lets you manage your account!\n\n"
+            "**You can:**\n"
+            "• Update profile name\n"
+            "• Set email address\n"
+            "• Add profession & institution\n"
+            "• View account details\n\n"
+            "Go to 'Profile' in the navbar to make changes!"
+        )
+    
+    # ===== Navigation Help =====
+    if re.search(r'\b(navigate|navigation|where|find|go\s+to|menu|page)\b', msg):
+        return (
+            "🧭 **Navigation Guide:**\n\n"
+            "Top navbar has these sections:\n"
+            "• 🏠 Dashboard - Your finance overview\n"
+            "• 💸 Expenses - Track daily spending\n"
+            "• 👥 Groups - Shared expenses\n"
+            "• 🎓 Tuition - Class management\n"
+            "• 👤 Profile - Account settings\n"
+            "• 🌙 Theme Toggle - Switch light/dark mode\n\n"
+            "Click any section to jump there!"
+        )
+    
+    # ===== Theme/Appearance =====
+    if re.search(r'\b(theme|dark\s+mode|light\s+mode|appearance|color|design)\b', msg):
+        return (
+            "🎨 **Theme Options:**\n\n"
+            "FeinBuddy supports light & dark themes!\n\n"
+            "**To switch:**\n"
+            "• Click the 🌙/☀️ icon in the navbar\n"
+            "• Instantly toggles between light (purple) and dark (maroon) themes\n"
+            "• Your preference is saved automatically\n\n"
+            "Try it now for a fresh look!"
+        )
+    
+    # ===== How to use / Getting Started =====
+    if re.search(r'\b(how\s+to|getting\s+started|start|begin|tutorial|guide)\b', msg):
+        return (
+            "🚀 **Getting Started with FeinBuddy:**\n\n"
+            "**Step 1:** Complete your profile (add name, profession)\n"
+            "**Step 2:** Start tracking expenses (Expenses page)\n"
+            "**Step 3:** Check your Dashboard for insights\n"
+            "**Step 4:** Create groups for shared expenses (optional)\n"
+            "**Step 5:** Add tuition classes if you teach (optional)\n\n"
+            "Need help with a specific feature? Just ask!"
+        )
+    
+    # ===== Data/Reports =====
+    if re.search(r'\b(report|export|download|pdf|data|statistics|analytics)\b', msg):
+        return (
+            "📈 **Reports & Data:**\n\n"
+            "• **Dashboard** shows visual charts and trends\n"
+            "• **Expenses** page has a filterable table\n"
+            "• **Tuition** section allows PDF export of routines\n"
+            "• All data is stored securely in your account\n\n"
+            "Currently, you can export tuition routines as PDF from the Tuition page!"
+        )
+    
+    # ===== Current Status (personalized) =====
+    if re.search(r'\b(my|current|status|summary|stats?|spending)\b', msg):
+        response = f"Here's your quick status, {display_name}:\n\n"
+        response += f"💰 This week: ৳{total_recent:,.0f}\n"
+        response += f"💰 All-time total: ৳{total_all_time:,.0f}\n"
+        if category_str:
+            response += f"📊 Top spending: {category_str}\n"
+        if tuition_income > 0:
+            response += f"🎓 Tuition income potential: ৳{tuition_income:,.0f} ({tuition_progress}% done)\n"
+        if group_count > 0:
+            response += f"👥 Active groups: {group_count}\n"
+        response += "\nCheck your Dashboard for detailed insights!"
+        return response
+    
+    # ===== Thanks / Appreciation =====
+    if re.search(r'\b(thanks?|thank\s+you|appreciate|helpful)\b', msg):
+        return (
+            f"You're very welcome, {display_name}! 😊 I'm always here to help you navigate FeinBuddy. "
+            "Feel free to ask anything else about the app's features or how to use them!"
+        )
+    
+    # ===== Default fallback for unknown queries =====
+    return (
+        "I'm not quite sure about that specific query, but I'm here to help with FeinBuddy! 🤔\n\n"
+        "I can assist you with:\n"
+        "• What FeinBuddy does\n"
+        "• How to use features (Expenses, Groups, Tuition)\n"
+        "• Navigation and settings\n"
+        "• Your current financial status\n\n"
+        "What would you like to know?"
+    )
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
@@ -475,8 +681,25 @@ def ai_chatbot():
         greeting += f"🎓 Tuition income potential: ৳{total_tuition_income:,.0f} ({tuition_progress}% progress) | Groups: {group_count}"
         return jsonify({'reply': greeting})
 
+    # Prepare context for both AI and fallback
+    user_context = {
+        'display_name': display_name,
+        'email': email,
+        'profession': profession,
+        'institution': institution,
+        'total_recent': total_recent,
+        'total_all_time': total_all_time,
+        'category_str': category_str,
+        'tuition_income': total_tuition_income,
+        'tuition_progress': tuition_progress,
+        'group_count': group_count,
+        'recent_expense_count': len(recent_expenses)
+    }
+
+    # If Groq is not configured, use intelligent fallback
     if not groq_client:
-        return jsonify({'error': 'Groq not configured. Set GROQ_API_KEY and restart the app.'}), 503
+        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        return jsonify({'reply': fallback_response})
 
     # Build rich context for AI
     context = (
@@ -519,8 +742,10 @@ def ai_chatbot():
         ) or "I couldn't draft a reply just now."
         return jsonify({'reply': reply})
     except Exception as e:
-        app.logger.exception("Groq call failed")
-        return jsonify({'error': f'Groq error: {e}'}), 500
+        app.logger.exception("Groq call failed - falling back to intelligent response")
+        # If AI fails, use intelligent fallback instead of showing error
+        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        return jsonify({'reply': fallback_response})
 
 
 @app.route('/')
