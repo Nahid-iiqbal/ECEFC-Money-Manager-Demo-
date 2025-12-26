@@ -48,32 +48,6 @@ main {
     color: var(--text-primary);
 }
 
-nav a {
-    color: #4a0b12 !important;
-}
-
-nav a:hover {
-    color: #D32F2F !important;
-}
-
-nav a.active {
-    color: #4d0c0c !important;
-    border-bottom-color: #D32F2F !important;
-}
-
-/* Dark mode navigation colors for dashboard */
-[data-theme="dark"] nav a {
-    color: #ff9999 !important;
-}
-
-[data-theme="dark"] nav a:hover {
-    color: #ffcccc !important;
-}
-
-[data-theme="dark"] nav a.active {
-    color: #ff6b6b !important;
-    border-bottom-color: #ff6b6b !important;
-}
 
 nav{
     background-color: var(--bg-primary);

@@ -6,6 +6,26 @@
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% block header %}
+<!-- Header with Brand and Theme Toggle (Dashboard Only) -->
+<header>
+    <div class="container">
+        <div class="header-content">
+            <h1 class="brand-title flicker">💰 FeinBuddy</h1>
+            <div class="header-right">
+                {% if current_user.is_authenticated %}
+                    <p class="welcome-text">Welcome back, <strong>{{ current_user.username }}</strong>!</p>
+                {% endif %}
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Upside Down Mode" title="Toggle Upside Down Mode">
+                    <span class="theme-icon" aria-hidden="true">🌙</span>
+                    <span class="theme-label">Upside Down</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-header">
     <h2 class="flicker">📊 Control Room</h2>
