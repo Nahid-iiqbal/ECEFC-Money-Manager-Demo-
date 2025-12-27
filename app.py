@@ -16,6 +16,8 @@ from routes.database import db, User
 from dotenv import load_dotenv
 load_dotenv()
 
+# Check if running on Vercel
+IS_VERCEL = os.environ.get('VERCEL_DEPLOYMENT') == 'true'
 
 app = Flask(__name__)
 
