@@ -985,10 +985,10 @@ def ai_chatbot():
 
 @app.route('/')
 def home():
-    """Redirect to dashboard if logged in, otherwise redirect to login."""
+    """Show landing page for public, redirect to dashboard if authenticated."""
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.dashboard'))
-    return redirect(url_for('auth.login'))
+    return render_template('landing.html')
 
 
 @app.route('/toggle-email-notifications', methods=['POST'])
