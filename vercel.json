@@ -18,5 +18,11 @@
   ],
   "env": {
     "PYTHON_VERSION": "3.11"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/send-reminders",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }

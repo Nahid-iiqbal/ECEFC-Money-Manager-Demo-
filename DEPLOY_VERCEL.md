@@ -7,7 +7,7 @@ This guide explains how to deploy FinBuddy to Vercel's serverless platform.
 When deployed on Vercel, the following features will be **disabled** due to serverless constraints:
 
 1. **Real-time Updates (WebSocket/SocketIO)** - Dashboard and group updates won't happen in real-time. Users must manually refresh.
-2. **Background Email Reminders (APScheduler)** - Scheduled expense reminder emails won't be sent automatically.
+2. ~~**Background Email Reminders (APScheduler)**~~ - **✅ NOW WORKS!** Email reminders are handled by Vercel Cron Jobs (runs daily at 9:00 AM UTC).
 3. **SQLite Database** - Vercel's filesystem is ephemeral. You **must** use an external database.
 
 These features work normally in local development.
@@ -177,8 +177,10 @@ python
 
 1. Visit your Vercel URL
 2. Try registering and logging in
-3. Test adding expenses
-4. Note: Real-time updates and email reminders won't work (serverless limitations)
+3. Test adding expenses with reminder dates
+4. **Email reminders**: Add an expense with a reminder date set to tomorrow, and it will be emailed at 9:00 AM UTC
+5. **Cron job logs**: Check Vercel Dashboard → Your Project → Logs → Filter by "cron" to see reminder execution logs
+6. Note: Real-time dashboard updates won't work (serverless limitation - manual refresh required)
 
 ## Troubleshooting
 
@@ -216,10 +218,35 @@ Your local development environment (`python app.py`) will run with:
 
 Your Vercel production environment will run with:
 ❌ No SocketIO (manual refresh required)
-❌ No APScheduler (no automatic emails)
+✅ **Vercel Cron Jobs for email reminders** (runs daily at 9:00 AM UTC)
 ✅ External database (PostgreSQL/MySQL)
 
 The app automatically detects the environment via the `VERCEL_DEPLOYMENT` environment variable.
+
+## Vercel Cron Jobs
+
+Email reminders are handled by Vercel's built-in cron jobs:
+
+- **Schedule**: Runs daily at 9:00 AM UTC (adjustable in `vercel.json`)
+- **Endpoint**: `/api/cron/send-reminders`
+- **Function**: Checks all expenses with `reminder_date = today` and sends emails
+- **Logs**: View execution logs in Vercel Dashboard → Your Project → Logs
+
+To change the schedule, edit `vercel.json`:
+```json
+"crons": [
+  {
+    "path": "/api/cron/send-reminders",
+    "schedule": "0 9 * * *"  // 9 AM UTC daily (change as needed)
+  }
+]
+```
+
+Common cron schedules:
+- `0 9 * * *` - Daily at 9:00 AM UTC
+- `0 */6 * * *` - Every 6 hours
+- `0 9 * * 1-5` - Weekdays at 9:00 AM UTC
+- `0 0 * * *` - Midnight UTC daily
 
 ## Updating Your Deployment
 
