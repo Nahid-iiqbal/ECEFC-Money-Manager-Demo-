@@ -93,8 +93,8 @@ FinBuddy/
 
 ```bash
 # Clone the repository
-git clone https://github.com/Nahid-iiqbal/FinBuddy.git
-cd FinBuddy
+git clone https://github.com/Nahid-iiqbal/ECEFC-Money-Manager-Demo-.git
+cd ECEFC-Money-Manager-Demo-
 
 # Run setup script
 setup.bat
@@ -115,44 +115,38 @@ setup.bat
    ```
 
 3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
    Edit `.env` with your settings:
    ```env
-   SECRET_KEY=your-secret-key-here
-   
-   # Database (leave empty for SQLite)
-   DATABASE_URL=postgresql://user:pass@host/db
-   
-   # Email configuration
+   GROQ_API_KEY=your_key
+   GROQ_MODEL_NAME=ai_model
+   SECRET_KEY=secret_key
+   DATABASE_URL=your_database
+   # Mail settings for weekly reports
    MAIL_SERVER=smtp.gmail.com
    MAIL_PORT=587
-   MAIL_USE_TLS=True
-   MAIL_USERNAME=your-email@gmail.com
-   MAIL_PASSWORD=your-app-password
-   
-   # AI Chatbot (optional)
-   GROQ_API_KEY=your-groq-api-key
-   GROQ_MODEL_NAME=mixtral-8x7b-32768
-   
-   # Feature flags
+   MAIL_USE_TLS=true
+   MAIL_USE_SSL=false
+   MAIL_USERNAME=email
+   MAIL_PASSWORD=password
+   MAIL_DEFAULT_SENDER=email
+
+   # Weekly report scheduler
    ENABLE_WEEKLY_REPORTS=true
+   WEEKLY_REPORT_DAY=sun
+   WEEKLY_REPORT_HOUR=8
+
+
+   # Tuition reminders (email)
    ENABLE_TUITION_REMINDERS=true
+
    ```
 
-4. **Initialize database**
-   ```bash
-   python database.py
-   ```
-
-5. **Run the application**
+4. **Run the application**
    ```bash
    python app.py
    ```
 
-6. **Access the application**
+5. **Access the application**
    
    Open: `http://localhost:5000`
 
