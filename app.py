@@ -991,6 +991,12 @@ def home():
     return render_template('landing.html')
 
 
+@app.route('/landing')
+def landing():
+    """Always show landing page regardless of auth state."""
+    return render_template('landing.html')
+
+
 @app.route('/toggle-email-notifications', methods=['POST'])
 def toggle_email_notifications():
     """Toggle email notifications for the current user."""

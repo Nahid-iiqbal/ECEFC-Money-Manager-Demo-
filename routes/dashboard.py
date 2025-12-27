@@ -11,6 +11,11 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @login_required
 def dashboard():
     """Main dashboard page showing overview and recent activity."""
+    
+    # Enforce profile creation before accessing dashboard
+    if not current_user.profile:
+        flash('Please complete your profile to continue.', 'info')
+        return redirect(url_for('profile.onboarding_profile'))
 
     today = datetime.now()
     first_day_of_month = today.replace(day=1)

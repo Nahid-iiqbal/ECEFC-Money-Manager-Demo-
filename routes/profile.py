@@ -95,6 +95,78 @@ def create_profile():
     return render_template('profile_create.html', pending_email=pending_email)
 
 
+@profile_bp.route('/onboarding/profile', methods=['GET', 'POST'])
+@login_required
+def onboarding_profile():
+    """Onboarding profile creation page (no navbar, standalone)"""
+    # Check if user already has a profile
+    if current_user.profile:
+        return redirect(url_for('dashboard.dashboard'))
+    
+    # Get email from session if available (from registration)
+    pending_email = session.get('pending_email', None)
+
+    if request.method == 'POST':
+        # Get form data
+        profile_name = request.form.get('profile_name', '').strip()
+        profession = request.form.get('profession', '').strip()
+        institution = request.form.get('institution', '').strip()
+        date_of_birth_str = request.form.get('date_of_birth', '').strip()
+        email = request.form.get('email', '').strip()
+        grade = request.form.get('grade', '').strip()
+
+        # Validate required fields
+        if not all([profile_name, profession, institution, date_of_birth_str]):
+            flash('Please fill in all required fields.', 'danger')
+            return render_template('profile_onboarding.html', pending_email=pending_email)
+
+        try:
+            # Parse date of birth
+            date_of_birth = datetime.strptime(
+                date_of_birth_str, '%Y-%m-%d').date()
+
+            # Handle file upload
+            picture_filename = None
+            if 'picture' in request.files:
+                file = request.files['picture']
+                if file and file.filename and allowed_file(file.filename):
+                    ensure_upload_folder()
+                    # Create unique filename with timestamp
+                    filename = secure_filename(file.filename)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    picture_filename = f"{current_user.id}_{timestamp}_{filename}"
+                    file.save(os.path.join(UPLOAD_FOLDER, picture_filename))
+
+            # Create profile
+            new_profile = Profile(
+                user_id=current_user.id,
+                profile_name=profile_name,
+                picture_filename=picture_filename,
+                email=email if email else None,
+                profession=profession,
+                institution=institution,
+                date_of_birth=date_of_birth,
+                grade=grade if grade else None
+            )
+
+            db.session.add(new_profile)
+            db.session.commit()
+            
+            # Clear pending email from session
+            session.pop('pending_email', None)
+
+            flash('Profile created successfully! Welcome to FinBuddy!', 'success')
+            return redirect(url_for('dashboard.dashboard'))
+
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating profile: {str(e)}', 'danger')
+
+    return render_template('profile_onboarding.html', pending_email=pending_email)
+
+
 @profile_bp.route('/profile')
 @login_required
 def view_profile():

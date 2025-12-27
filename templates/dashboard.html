@@ -11,10 +11,11 @@
 <header>
     <div class="container">
         <div class="header-content">
-            <h1 class="brand-title flicker">💰 FinBuddy</h1>
+            <a href="{{ url_for('landing') }}" class="brand-link"><h1 class="brand-title flicker">💰 FinBuddy</h1></a>
             <div class="header-right">
                 {% if current_user.is_authenticated %}
-                    <p class="welcome-text">Welcome back, <strong>{{ current_user.username }}</strong>!</p>
+                    {% set display_name = (current_user.profile.profile_name if current_user.profile and current_user.profile.profile_name else current_user.username).split()[0] %}
+                    <p class="welcome-text">Welcome back, <strong>{{ display_name }}</strong>!</p>
                 {% endif %}
             </div>
         </div>
@@ -102,9 +103,12 @@
     </div>
 </div>
 
-<div class="recent-activity-section">
-    <h3>📝 Recent Activity</h3>
-    
+<div class="recent-activity-section collapsible-section">
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="recent-activity-content" data-section="recentActivity">
+        <h3>📝 Recent Activity</h3>
+        <span class="collapse-icon" aria-hidden="true">▼</span>
+    </div>
+    <div class="section-content" id="recent-activity-content">
     {% if recent_activities %}
         <div class="activity-list">
             {% for activity in recent_activities %}
@@ -132,21 +136,26 @@
             <p class="empty-subtext">Start by adding your first expense!</p>
         </div>
     {% endif %}
+    </div>
 </div>
 
 <!-- Spending Analytics -->
 {% if category_data or monthly_data %}
-<div class="analytics-section">
-    <div class="analytics-header">
-        <div>
+<div class="analytics-section collapsible-section">
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="analytics-content" data-section="analytics">
+        <div class="analytics-title-group">
             <h3>📊 Spending Analytics</h3>
             <p class="analytics-subtitle">Visual insights into your spending patterns</p>
         </div>
-        <button id="downloadPdfBtn" class="btn btn-primary">
-            📥 Download PDF
-        </button>
+        <div class="analytics-header-actions">
+            <button id="downloadPdfBtn" class="btn btn-primary" onclick="event.stopPropagation();">
+                📥 Download PDF
+            </button>
+            <span class="collapse-icon" aria-hidden="true">▼</span>
+        </div>
     </div>
     
+    <div class="section-content" id="analytics-content">
     <div class="charts-container" id="chartsContainer">
         <!-- Category Chart -->
         {% if category_data %}
@@ -174,12 +183,110 @@
         </div>
         {% endif %}
     </div>
+    </div>
 </div>
 {% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    // ===== Collapsible Sections =====
+    (function initCollapsibleSections() {
+        const sections = document.querySelectorAll('.collapsible-section');
+        const STORAGE_KEY = 'FinBuddy_collapsedSections';
+        
+        // Check if mobile
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+        
+        // Get saved state from localStorage
+        function getSavedState() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch {
+                return {};
+            }
+        }
+        
+        // Save state to localStorage
+        function saveState(sectionId, isCollapsed) {
+            const state = getSavedState();
+            state[sectionId] = isCollapsed;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+        
+        // Toggle section
+        function toggleSection(section, forceState) {
+            const header = section.querySelector('.section-header');
+            const sectionId = header.dataset.section;
+            const isCurrentlyCollapsed = section.dataset.collapsed === 'true';
+            const newState = forceState !== undefined ? forceState : !isCurrentlyCollapsed;
+            
+            section.dataset.collapsed = newState;
+            header.setAttribute('aria-expanded', !newState);
+            
+            saveState(sectionId, newState);
+        }
+        
+        // Initialize each section
+        sections.forEach(section => {
+            const header = section.querySelector('.section-header');
+            const sectionId = header.dataset.section;
+            const savedState = getSavedState();
+            
+            // Determine initial state: use saved state if exists, otherwise default based on viewport
+            let initialCollapsed;
+            if (savedState.hasOwnProperty(sectionId)) {
+                initialCollapsed = savedState[sectionId];
+            } else {
+                // Default: Analytics collapsed on mobile, expanded on desktop
+                initialCollapsed = sectionId === 'analytics' && isMobile();
+            }
+            
+            // Set initial state
+            section.dataset.collapsed = initialCollapsed;
+            header.setAttribute('aria-expanded', !initialCollapsed);
+            
+            // Click handler
+            header.addEventListener('click', (e) => {
+                // Don't toggle if clicking the PDF button
+                if (e.target.closest('#downloadPdfBtn')) return;
+                toggleSection(section);
+            });
+            
+            // Keyboard handler
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleSection(section);
+                }
+            });
+        });
+        
+        // Handle resize - update default state for analytics if no saved preference
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const savedState = getSavedState();
+                sections.forEach(section => {
+                    const header = section.querySelector('.section-header');
+                    const sectionId = header.dataset.section;
+                    
+                    // Only auto-adjust if user hasn't manually set a preference
+                    if (!savedState.hasOwnProperty(sectionId) && sectionId === 'analytics') {
+                        const shouldCollapse = isMobile();
+                        section.dataset.collapsed = shouldCollapse;
+                        header.setAttribute('aria-expanded', !shouldCollapse);
+                    }
+                });
+            }, 250);
+        });
+    })();
+</script>
+
 {% if category_data or monthly_data %}
 <script>
     // Robust theme detection function
