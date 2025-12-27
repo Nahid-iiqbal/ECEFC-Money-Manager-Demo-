@@ -194,7 +194,7 @@ def group_details(group_id):
 @group.route('/groups/<int:group_id>/add_expense', methods=['GET', 'POST'])
 @login_required
 def add_expense_to_group(group_id):
-    """Add a new expense to a group."""
+    """Add a new expense to a group (redirects to unified flow)."""
     from flask import request
     group = Group.query.get_or_404(group_id)
 
@@ -205,58 +205,8 @@ def add_expense_to_group(group_id):
         flash('You are not a member of this group!', 'danger')
         return redirect(url_for('group.my_groups'))
 
-    if request.method == 'GET':
-        # Show the form to add expense
-        members = [member.user for member in group.members]
-        return render_template('addGroupExpense.html', group=group, members=members)
-
-    # Handle POST - add the expense
-    title = request.form.get('title')
-    amount = request.form.get('amount')
-    description = request.form.get('description', '')
-    expense_date = request.form.get('date')
-
-    if not all([title, amount, expense_date]):
-        flash('Please fill in all required fields!', 'danger')
-        return redirect(url_for('group.add_expense_to_group', group_id=group_id))
-
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            raise ValueError("Amount must be positive")
-    except ValueError:
-        flash('Invalid amount!', 'danger')
-        return redirect(url_for('group.add_expense_to_group', group_id=group_id))
-
-    # Create the expense
-    new_expense = GroupExpense(
-        group_id=group_id,
-        title=title,
-        amount=amount,
-        paid_by=current_user.id,
-        description=description,
-        date=datetime.strptime(expense_date, '%Y-%m-%d').date()
-    )
-    db.session.add(new_expense)
-    db.session.commit()
-
-    # Split equally among all members
-    members = group.members
-    share_amount = amount / len(members)
-
-    for member in members:
-        expense_split = ExpenseSplit(
-            expense_id=new_expense.id,
-            user_id=member.user_id,
-            share_amount=share_amount,
-            is_paid=(member.user_id == current_user.id)
-        )
-        db.session.add(expense_split)
-
-    db.session.commit()
-
-    flash(f'Expense "{title}" added successfully!', 'success')
-    return redirect(url_for('group.group_details', group_id=group_id))
+    # Redirect to unified add expense form with group preselected (for both GET and POST)
+    return redirect(url_for('expense.add_expense_form', type='Group', group_id=group_id))
 
 
 def add_member_to_group(group_id, user_id):
