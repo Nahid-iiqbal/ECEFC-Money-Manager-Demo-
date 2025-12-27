@@ -57,7 +57,8 @@ echo ====================================
 echo.
 echo To start the application:
 echo   1. Activate virtual environment: venv\Scripts\activate
-echo   2. Run: python app.py
+echo   2. Run: python migrate_all.py
+echo   3. Run: python app.py
 echo.
 echo The application will be available at http://localhost:5000
 echo.

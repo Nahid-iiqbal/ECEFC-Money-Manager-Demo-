@@ -1,4 +1,3 @@
-# 💰 FinBuddy
 
 A comprehensive personal finance management web application built for BUET students. Track expenses, manage tuition income, split bills with friends, and get AI-powered financial insights.
 
@@ -6,58 +5,26 @@ A comprehensive personal finance management web application built for BUET stude
 ![Flask](https://img.shields.io/badge/Flask-3.1.2-green)
 ![License](https://img.shields.io/badge/License-Educational-orange)
 
----
 
 ## ✨ Features
 
 ### 💳 Personal Expense Tracking
-- Add, edit, and delete expenses with categories
-- Track spending by date with detailed descriptions
-- View category-wise breakdowns and statistics
-- Set expense reminders with email notifications
 
 ### 👥 Group Expenses & Bill Splitting
-- Create groups and invite members via join codes
-- Split bills equally or custom among group members
-- Track who paid and who owes money
-- View group balances and settle debts
 
 ### 🎓 Tuition Management
-- Track tuition classes with student details
-- Schedule classes with days and times
-- Monitor class completion progress
-- Reschedule classes with history tracking
-- Export tuition reports as PDF
 
 ### 📊 Dashboard & Analytics
-- Overview of monthly and all-time expenses
-- Recent activity feed
-- Group balance summary
-- Tuition progress tracking
-- Category-wise spending charts
 
 ### 🤖 AI-Powered Chatbot (FinBuddy Assistant)
-- Get financial insights and spending analysis
-- Ask questions about your expenses and budget
-- Context-aware responses using your financial data
-- Powered by Groq API (Mixtral-8x7b)
 
 ### 📧 Email Notifications
-- **Weekly Expense Reports**: Automated summary every week
-- **Tuition Reminders**: Get notified before scheduled classes
-- **Expense Reminders**: Custom alerts for important payments
 
 ### 🔐 User Profiles
-- Create detailed profiles with profession and institution
-- Profile picture support
-- Customizable notification preferences
-- Secure authentication with password hashing
 
 ### ⚡ Real-time Features
-- Live updates using WebSocket (Flask-SocketIO)
-- Instant notifications for group activities
-- Background task scheduling with APScheduler
 
+# 💰 FinBuddy
 ---
 
 ## 🛠️ Tech Stack
@@ -65,16 +32,8 @@ A comprehensive personal finance management web application built for BUET stude
 | Category | Technologies |
 |----------|-------------|
 | **Backend** | Flask 3.1.2, Flask-SQLAlchemy, Flask-Login |
-| **Database** | PostgreSQL (Production), SQLite (Development) |
 | **Real-time** | Flask-SocketIO, Flask-APScheduler |
 | **AI/ML** | Groq API (Mixtral-8x7b-32768) |
-| **Email** | Flask-Mail |
-| **PDF Generation** | ReportLab |
-| **Frontend** | HTML5, CSS3, JavaScript, Jinja2 |
-| **Authentication** | Werkzeug, Flask-Bcrypt |
-| **Deployment** | Vercel-ready with conditional imports |
-
----
 
 ## 📁 Project Structure
 
@@ -92,8 +51,6 @@ ECEFC-Money-Manager-Demo-/
 │   ├── group.py              # Group expense management
 │   ├── tuition.py            # Tuition tracking & PDF export
 │   ├── profile.py            # User profile management
-│   ├── database.py           # SQLAlchemy models
-│   └── notifications.py      # Notification handlers
 │
 ├── services/                  # Business logic services
 │   └── chat_context.py       # RAG-style chatbot context builder
@@ -107,7 +64,6 @@ ECEFC-Money-Manager-Demo-/
 │   ├── auth_new.html         # Login/Register page
 │   ├── dashboard.html        # Main dashboard
 │   ├── personal.html         # Personal expenses view
-│   ├── group.html            # Group list view
 │   ├── groupDetails.html     # Group details & balances
 │   ├── tuition.html          # Tuition management
 │   ├── profile_*.html        # Profile pages
@@ -116,26 +72,12 @@ ECEFC-Money-Manager-Demo-/
 ├── static/                    # Static assets
 │   ├── css/                  # Stylesheets
 │   │   ├── theme.css        # Global theme & variables
-│   │   ├── style.css        # Common styles
-│   │   ├── landing.css      # Landing page styles
 │   │   ├── dashboard.css    # Dashboard styles
 │   │   └── ...
-│   ├── js/                   # JavaScript files
-│   └── uploads/              # User uploads (profile pics)
-│
 ├── instance/                  # Instance-specific files
 │   └── finance.db            # SQLite database (local)
-│
-└── exports/                   # Analytics exports (gitignored)
 ```
 
----
-
-## 🚀 Installation & Setup
-
-### Prerequisites
-- Python 3.8 or higher
-- pip (Python package manager)
 - PostgreSQL (for production) or SQLite (for development)
 
 ### Quick Start (Windows)
