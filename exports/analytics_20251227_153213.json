@@ -1,0 +1,77 @@
+{
+  "export_metadata": {
+    "exported_at": "2025-12-27T09:32:13.905628",
+    "version": "1.0.0",
+    "privacy_level": "anonymized_aggregates_only"
+  },
+  "user_statistics": {
+    "total_users": 6,
+    "users_with_profile": 3,
+    "users_with_weekly_report_enabled": 1,
+    "users_with_tuition_reminder_enabled": 1
+  },
+  "expense_analytics": {
+    "total_expenses": 5,
+    "total_amount": 717.0,
+    "category_breakdown": {
+      "Dues": {
+        "total_amount": 100.0,
+        "count": 1
+      },
+      "Entertainment": {
+        "total_amount": 20.0,
+        "count": 1
+      },
+      "Food": {
+        "total_amount": 132.0,
+        "count": 1
+      },
+      "Other": {
+        "total_amount": 465.0,
+        "count": 2
+      }
+    },
+    "monthly_breakdown": {
+      "2025-12": {
+        "total_amount": 717.0,
+        "count": 5
+      }
+    },
+    "type_distribution": {
+      "unspecified": 2,
+      "Personal": 3
+    },
+    "reminder_statistics": {
+      "expenses_with_reminders": 1,
+      "reminders_sent": 1
+    }
+  },
+  "tuition_analytics": {
+    "total_tuition_records": 3,
+    "total_tuition_amount": 32412.0,
+    "total_days_scheduled": 36,
+    "total_days_completed": 4,
+    "completion_rate": 11.11
+  },
+  "group_analytics": {
+    "total_groups": 4,
+    "total_group_memberships": 5,
+    "total_group_expenses": 7,
+    "total_group_expense_amount": 6950.0,
+    "average_group_size": 1.25,
+    "monthly_breakdown": {
+      "2025-12": 6950.0
+    }
+  },
+  "debt_analytics": {
+    "total_debt_records": 0,
+    "dues": {
+      "count": 0,
+      "total_amount": 0
+    },
+    "owes": {
+      "count": 0,
+      "total_amount": 0
+    }
+  }
+}
