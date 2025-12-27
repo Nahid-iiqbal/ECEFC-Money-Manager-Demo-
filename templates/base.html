@@ -83,6 +83,9 @@
                     <input type="text" id="ai-chat-input" name="message" placeholder="Ask about expenses, tuition, reports..." aria-label="Chat message" required />
                     <button type="submit" class="ai-chat-send">Send</button>
                 </form>
+                <button class="ai-chat-resize-handle ai-resize-bl" aria-label="Resize chat bottom-left" type="button"></button>
+                <button class="ai-chat-resize-handle ai-resize-tr" aria-label="Resize chat top-right" type="button"></button>
+                <button class="ai-chat-resize-handle ai-resize-tl" aria-label="Resize chat top-left" type="button"></button>
             </div>
         </div>
         {% endif %}
@@ -143,7 +146,10 @@
     <!-- Global Scripts -->
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <!-- Markdown rendering libraries for chatbot -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.1/marked.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}" defer></script>
     
     <!-- Socket.IO for Real-time Updates -->
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
