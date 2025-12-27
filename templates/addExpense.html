@@ -10,7 +10,7 @@
 <div class="expense-page">
     <div class="page-header">
         <h1 class="page-title">➕ Add New Expense</h1>
-        <p class="page-subtitle">Record your personal spending</p>
+        <p class="page-subtitle">{% if expense_type == 'Group' %}Record and split group spending{% else %}Record your personal spending{% endif %}</p>
     </div>
 
     <!-- Add Expense Form Section -->
@@ -53,20 +53,20 @@
                     <label for="expense-type">Type <span class="required">*</span></label>
                     <select id="expense-type" name="type" required aria-required="true" class="form-select" onchange="toggleGroupSelector()">
                         <option value="">Select Type</option>
-                        <option value="Personal">👤 Personal</option>
+                        <option value="Personal" {% if expense_type == 'Personal' %}selected{% endif %}>👤 Personal</option>
                         {% if user_groups %}
-                        <option value="Group">👥 Group</option>
+                        <option value="Group" {% if expense_type == 'Group' %}selected{% endif %}>👥 Group</option>
                         {% endif %}
                     </select>
                 </div>
 
                 {% if user_groups %}
-                <div class="form-group" id="group-selector" style="display: none;">
-                    <label for="expense-group">Which group would you like to add this expense to? <span class="required">*</span></label>
-                    <select id="expense-group" name="group_id" aria-required="true" class="form-select">
+                <div class="form-group" id="group-selector" style="display: {% if expense_type == 'Group' %}block{% else %}none{% endif %};">
+                    <label for="expense-group">Group Name <span class="required">*</span></label>
+                    <select id="expense-group" name="group_id" aria-required="true" class="form-select" {% if expense_type == 'Group' %}required{% endif %}>
                         <option value="">Select a group</option>
                         {% for group in user_groups %}
-                        <option value="{{ group.id }}">{{ group.name }}</option>
+                        <option value="{{ group.id }}" {% if preselected_group_id == group.id %}selected{% endif %}>{{ group.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -115,6 +115,22 @@
 </div>
 
 <script>
+// Toggle group selector based on type
+function toggleGroupSelector() {
+    const typeSelect = document.getElementById('expense-type');
+    const groupSelector = document.getElementById('group-selector');
+    const groupSelect = document.getElementById('expense-group');
+    
+    if (typeSelect.value === 'Group') {
+        groupSelector.style.display = 'block';
+        groupSelect.required = true;
+    } else {
+        groupSelector.style.display = 'none';
+        groupSelect.required = false;
+        groupSelect.value = '';
+    }
+}
+
 // Show/hide reminder section based on category
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('expense-category');
@@ -143,6 +159,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check on page load (for edit forms)
     toggleReminderSection();
+    
+    // Initialize group selector on page load
+    toggleGroupSelector();
 });
 </script>
 

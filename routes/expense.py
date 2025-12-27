@@ -78,9 +78,27 @@ def add_expense_form():
         GroupMember, Group.id == GroupMember.group_id
     ).filter(GroupMember.user_id == current_user.id).all()
 
+    # Get query params for auto-selection
+    expense_type = request.args.get('type', '')
+    group_id = request.args.get('group_id', '')
+
+    # Validate group_id if provided
+    if group_id:
+        try:
+            group_id = int(group_id)
+            # Verify user is a member
+            is_member = any(g.id == group_id for g in user_groups)
+            if not is_member:
+                flash('You are not a member of that group!', 'danger')
+                group_id = ''
+        except ValueError:
+            group_id = ''
+
     return render_template('addExpense.html',
                            today=datetime.now().strftime('%Y-%m-%d'),
-                           user_groups=user_groups)
+                           user_groups=user_groups,
+                           expense_type=expense_type,
+                           preselected_group_id=group_id)
 
 
 @expense.route('/expenses')
