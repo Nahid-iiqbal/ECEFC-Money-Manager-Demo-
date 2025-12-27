@@ -508,11 +508,11 @@ def schedule_reminder_email(expense_id, reminder_datetime):
 @scheduler.task('interval', id='check_reminders', minutes=15)
 def check_and_send_reminders():
     """Periodic job to check for due reminders and send them."""
-    from datetime import datetime
+    from datetime import datetime, timezone
     from routes.database import Expense
     
     with scheduler.app.app_context():
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Find expenses with reminders that are due and not yet sent
         due_expenses = Expense.query.filter(
@@ -530,8 +530,8 @@ def _username_maybe_email(username: str) -> bool:
 
 
 def _week_range():
-    from datetime import datetime, timedelta
-    today = datetime.utcnow().date()
+    from datetime import datetime, timedelta, timezone
+    today = datetime.now(timezone.utc).date()
     start = today - timedelta(days=7)
     return start, today
 
@@ -866,7 +866,7 @@ def ai_chatbot():
     institution = getattr(profile, 'institution', None) or 'not set'
 
     # Recent expenses (last 7 days)
-    week_ago = datetime.utcnow().date() - timedelta(days=7)
+    week_ago = datetime.now(timezone.utc).date() - timedelta(days=7)
     recent_expenses = Expense.query.filter(
         Expense.user_id == current_user.id,
         Expense.date >= week_ago
