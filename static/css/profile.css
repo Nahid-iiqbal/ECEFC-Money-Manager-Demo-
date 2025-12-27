@@ -126,6 +126,10 @@ nav{
     text-align: center;
 }
 
+[data-theme="dark"] .form-input {
+    color: #ffb3b3;
+}
+
 .form-input:focus {
     outline: none;
     border-color: var(--border-focus);

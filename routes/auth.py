@@ -80,7 +80,7 @@ def register():
             db.session.commit()
             login_user(new_user, remember=True)
             flash(f'Welcome, {new_user.username}!', 'success')
-            return redirect(url_for('profile.create_profile'))
+            return redirect(url_for('profile.onboarding_profile'))
         except IntegrityError:
             db.session.rollback()
             flash('Username already exists. Please choose a different one.', 'danger')
