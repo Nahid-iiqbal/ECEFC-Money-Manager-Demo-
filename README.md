@@ -1,5 +1,13 @@
 
-A comprehensive personal finance management web application built for BUET students. Track expenses, manage tuition income, split bills with friends, and get AI-powered financial insights.
+
+A comprehensive personal finance management web application built for students. Track expenses, manage tuition income, split bills with friends, and get AI-powered financial insights.
+
+---
+
+## 🚀 Deployment (Railway)
+
+This app is also deployed in Railway
+
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.1.2-green)
@@ -32,13 +40,14 @@ A comprehensive personal finance management web application built for BUET stude
 | Category | Technologies |
 |----------|-------------|
 | **Backend** | Flask 3.1.2, Flask-SQLAlchemy, Flask-Login |
+| **Frontends** | HTML, CSS and a little bit of JS |
 | **Real-time** | Flask-SocketIO, Flask-APScheduler |
 | **AI/ML** | Groq API (Mixtral-8x7b-32768) |
 
 ## 📁 Project Structure
 
 ```
-ECEFC-Money-Manager-Demo-/
+FinBuddy/
 ├── app.py                      # Main Flask application
 ├── database.py                 # Database initialization script
 ├── requirements.txt            # Python dependencies
@@ -84,8 +93,8 @@ ECEFC-Money-Manager-Demo-/
 
 ```bash
 # Clone the repository
-git clone https://github.com/Nahid-iiqbal/ECEFC-Money-Manager-Demo-.git
-cd ECEFC-Money-Manager-Demo-
+git clone https://github.com/Nahid-iiqbal/FinBuddy.git
+cd FinBuddy
 
 # Run setup script
 setup.bat
@@ -172,7 +181,6 @@ See [API_ROUTES.md](API_ROUTES.md) for complete API documentation including:
 1. Create a new group or join with a code
 2. Add expenses and split among members
 3. Track balances - who owes whom
-4. Mark expenses as settled when paid
 
 ### Tuition Management
 1. Add tuition records with student details
@@ -234,7 +242,7 @@ This project is for educational purposes for BUET students.
 
 ## 💖 Contributors
 
-Made with ❤️ for the BUET community
+Made with ❤️ for the Student community
 
 ---
 
