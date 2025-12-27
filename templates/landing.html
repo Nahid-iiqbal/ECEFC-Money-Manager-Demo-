@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FinBuddy - Smart expense tracking for BUET students. Manage personal expenses, group spending, and tuition fees effortlessly.">
+    <title>FinBuddy - Smart Finance Management for Students</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    
+    <!-- Styles -->
+    <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="landing-nav" id="landingNav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">FinBuddy</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('auth.login') }}" class="btn-secondary">Log In</a>
+                <a href="{{ url_for('auth.register') }}" class="btn-primary">Sign Up</a>
+            </div>
+            <!-- Mobile menu toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <!-- Mobile menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features" class="mobile-link">Features</a>
+            <a href="#how-it-works" class="mobile-link">How It Works</a>
+            <a href="#about" class="mobile-link">About</a>
+            <div class="mobile-actions">
+                <a href="{{ url_for('auth.login') }}" class="btn-secondary">Log In</a>
+                <a href="{{ url_for('auth.register') }}" class="btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Smart Finance Management<br>for BUET Students</h1>
+                <p class="hero-subtitle">Track personal expenses, manage group spending, and never miss a tuition deadline. All in one simple, powerful platform.</p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('auth.register') }}" class="btn-hero-primary">Get Started Free</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn-hero-secondary">Log In</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="visual-card card-1">
+                    <div class="card-icon">💰</div>
+                    <div class="card-label">Track Expenses</div>
+                </div>
+                <div class="visual-card card-2">
+                    <div class="card-icon">👥</div>
+                    <div class="card-label">Split with Groups</div>
+                </div>
+                <div class="visual-card card-3">
+                    <div class="card-icon">🎓</div>
+                    <div class="card-label">Manage Tuition</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Everything You Need to Stay on Budget</h2>
+                <p class="section-subtitle">Built specifically for students, by students</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Smart Dashboard</h3>
+                    <p class="feature-description">Get a complete overview of your finances at a glance. Track spending patterns and stay informed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3 class="feature-title">Expense Tracking</h3>
+                    <p class="feature-description">Log personal expenses with categories, descriptions, and dates. Never wonder where your money went.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Group Expenses</h3>
+                    <p class="feature-description">Create groups, split bills, and track who owes what. Perfect for shared meals and outings.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3 class="feature-title">Tuition Management</h3>
+                    <p class="feature-description">Track tuition fees, deadlines, and payment history. Never miss a payment with smart reminders.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3 class="feature-title">Smart Reminders</h3>
+                    <p class="feature-description">Set email reminders for upcoming expenses and payments. Stay ahead of your financial commitments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Mobile Ready</h3>
+                    <p class="feature-description">Access your finances anywhere, anytime. Fully responsive design works on all devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Get started in minutes</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Sign Up</h3>
+                    <p class="step-description">Create your free account in seconds. No credit card required.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Add Expenses</h3>
+                    <p class="step-description">Log your daily expenses and categorize them for better insights.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Create Groups</h3>
+                    <p class="step-description">Invite friends, split bills, and track shared expenses effortlessly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Stay Organized</h3>
+                    <p class="step-description">Monitor your budget, get insights, and achieve your financial goals.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="section-container">
+            <div class="about-content">
+                <h2 class="section-title">Built for BUET Students</h2>
+                <p class="about-text">FinBuddy was created by students who understand the unique financial challenges of university life. From managing mess bills to tracking tuition fees, we've built the tools you actually need.</p>
+                <p class="about-text">Whether you're splitting pizza with roommates or planning your semester budget, FinBuddy makes money management simple, smart, and stress-free.</p>
+                <div class="about-stats">
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Free to Use</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Access Anywhere</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Unlimited Tracking</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Take Control of Your Finances?</h2>
+            <p class="cta-subtitle">Join FinBuddy today and start managing your money smarter.</p>
+            <a href="{{ url_for('auth.register') }}" class="btn-cta">Get Started Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">FinBuddy</span>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#about">About</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FinBuddy. Made with ❤️ for BUET students.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+</body>
+</html>
