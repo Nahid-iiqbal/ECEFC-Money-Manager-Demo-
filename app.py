@@ -54,7 +54,6 @@ if Groq and GROQ_API_KEY:
     except Exception as e:
         print(f"Groq setup failed: {e}")
 
-
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -695,6 +694,7 @@ Reply to the user's message now.
     except Exception as e:
         print(f"Groq call failed: {e}")
         return jsonify({'reply': "I'm having trouble accessing my brain right now. 🧠 Please try again in a moment!"})
+
 
 @app.route('/')
 def home():
