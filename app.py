@@ -16,6 +16,8 @@ from routes.expense import expense
 from routes.auth import auth_bp
 from routes.database import db, User
 
+# Check if running on Vercel
+IS_VERCEL = os.environ.get('VERCEL_DEPLOYMENT') == 'true'
 
 # Load environment variables once at the start
 load_dotenv()
