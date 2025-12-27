@@ -226,23 +226,19 @@ nav{
 
 
 .welcome-text {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--text-primary);
-    font-weight: 500;
+    color: var(--text-inverse);
+    margin-top: 0.2rem;
+    font-size: 1.2rem;
 }
-
-[data-theme="dark"] .welcome-text {
-    color: #e8e8e8;
+[data-theme="dark"]{
+    color:#dfbfbc
 }
-.welcome-text strong {
-    color: #fff;
-    font-weight: 800;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+.welcome-text strong{
+    color: #c5e2eb;
 }
-
 [data-theme="dark"] .welcome-text strong {
-    color: #ecd8b5;
+    color: rgb(242, 205, 214);
+    text-shadow: 0 0 8px rgba(235, 114, 101, 0.836);
 }
 
 header {    
@@ -267,13 +263,13 @@ header .container {
 .welcome-text {
     margin: 0;
     font-size: 1.4rem;
-    color: white;
+    color: rgb(164, 210, 214);
     font-weight: 600;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .welcome-text {
-    color: #ffffff;
+    color: #e5bfbf;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 

@@ -11,11 +11,11 @@
 <header>
     <div class="container">
         <div class="header-content">
-            <a href="{{ url_for('landing') }}" class="brand-link"><h1 class="brand-title flicker">💰 FinBuddy</h1></a>
+            <a href="{{ url_for('landing') }}" class="brand-link"><h1 class="brand-title flicker">💰 <span class="fb-brand fb-brand-animated">FinBuddy</span></h1></a>
             <div class="header-right">
                 {% if current_user.is_authenticated %}
                     {% set display_name = (current_user.profile.profile_name if current_user.profile and current_user.profile.profile_name else current_user.username).split()[0] %}
-                    <p class="welcome-text">Welcome back, <strong>{{ display_name }}</strong>!</p>
+                    <p class="welcome-text fb-welcome">Welcome back, <strong>{{ display_name }}</strong>!</p>
                 {% endif %}
             </div>
         </div>
@@ -576,20 +576,25 @@
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
 
+            // Note: jsPDF uses built-in fonts. For Luckiest Guy in PDFs,
+            // you would need to embed the font as base64 using pdf.addFont().
+            // Using bold Helvetica as fallback for consistent branding look.
+
             // Helper: draw branded header
             function drawHeader(doc) {
                 doc.setFillColor(102, 126, 234);
                 doc.rect(0, 8, 210, 10, 'F');
                 doc.setTextColor(255, 255, 255);
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(16);
+                // FinBuddy brand text - using bold for emphasis
                 doc.text('FinBuddy', 105, 15, { align: 'center' });
             }
 
             // Helper: draw footer with page number
             function drawFooter(doc, pageNum) {
                 doc.setTextColor(120, 120, 120);
-                doc.setFont(undefined, 'normal');
+                doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
                 doc.text('FinBuddy • Generated ' + new Date().toLocaleDateString(), 10, 290);
                 doc.text('Page ' + pageNum, 200, 290, { align: 'right' });

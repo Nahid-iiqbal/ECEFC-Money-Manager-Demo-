@@ -6,10 +6,10 @@
     <meta name="description" content="FinBuddy - Personal Finance Management">
     <title>{% block title %}FinBuddy{% endblock %}</title>
     
-    <!-- Google Fonts - Chewy -->
+    <!-- Google Fonts - Chewy, Luckiest Guy & Fredoka -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@300;400;500;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
     
     <!-- Global Styles -->
     <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
@@ -69,11 +69,11 @@
         {% if current_user.is_authenticated %}
         <!-- Floating AI Chatbot -->
         <div id="ai-chatbot" class="ai-chatbot" aria-live="polite">
-            <button id="ai-chat-toggle" class="ai-chat-toggle" aria-label="Open AI assistant" aria-expanded="false">💬 Ask FinBuddy AI</button>
+            <button id="ai-chat-toggle" class="ai-chat-toggle" aria-label="Open AI assistant" aria-expanded="false">💬 Ask <span class="fb-brand">FinBuddy</span> AI</button>
             <div id="ai-chat-panel" class="ai-chat-panel" hidden>
                 <div class="ai-chat-header">
                     <div>
-                        <p class="ai-chat-title">FinBuddy AI</p>
+                        <p class="ai-chat-title"><span class="fb-brand">FinBuddy</span> AI</p>
                         <p class="ai-chat-subtitle">Knows your profile & context</p>
                     </div>
                     <button id="ai-chat-close" class="ai-chat-close" aria-label="Close chat" type="button">×</button>
@@ -136,7 +136,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 FinBuddy. All rights reserved.</p>
+            <p>&copy; 2025 <span class="fb-brand">FinBuddy</span>. All rights reserved.</p>
         </div>
     </footer>
     

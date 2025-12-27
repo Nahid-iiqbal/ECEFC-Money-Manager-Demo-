@@ -6,7 +6,7 @@ body {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
     line-height: 1.6;
     color: #333;
     background-color: var(--bg-primary);
@@ -75,7 +75,7 @@ main {
     border: 2px solid rgba(102, 126, 234, 0.3);
     border-radius: 999px;
     padding: 12px 20px;
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', 'Chewy', cursive;
     font-weight: 400;
     font-size: 1rem;
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
@@ -150,7 +150,7 @@ main {
 
 .ai-chat-title {
     margin: 0;
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', 'Chewy', cursive;
     font-weight: 400;
     font-size: 1.2rem;
     color: white;
@@ -454,7 +454,7 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgb(11, 61, 117), rgb(64, 111, 158));
     width: 100%;
     padding: 14px;
     font-size: 16px;
@@ -473,12 +473,13 @@ form {
 
 .form-group {
     margin-bottom: 20px;
+    color:#021c32;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: #555;
+    color: #b6d0ee;
     font-weight: 600;
     font-size: 14px;
 }
@@ -717,6 +718,7 @@ footer {
 .form-group {
     margin-bottom: 1.5rem;
     text-align: left;
+    color: #e7dbdb;
 }
 
 .form-group label {
@@ -729,10 +731,10 @@ footer {
 
 .form-group input {
     padding: 0.75rem;
-    border: 2px solid rgb(78, 101, 149);
+    border: 2px solid rgb(175, 185, 208);
     border-radius: 8px;
     background-color: var(--bg-input);
-    color: rgb(4, 27, 60);
+    color: rgb(10, 32, 63);
     font-size: 1.1rem;
     font-family: inherit;
     transition: all 0.3s ease;

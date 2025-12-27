@@ -8,7 +8,7 @@
     --text-primary: #333333;
     --text-secondary: #666666;
     --text-tertiary: #888888;
-    --text-inverse: #c4dafa;
+    --text-inverse: #b5cbed;
     --border-color: rgba(0, 0, 0, 0.1);
     --border-focus: #667eea;
     --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -63,18 +63,105 @@ nav{
     box-sizing: border-box;
 }
 
-/* Header elements use Chewy font */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Chewy', cursive;
+/* Main content uses Fredoka font */
+main, main * {
+    font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
 }
 
-/* FinBuddy brand text */
+/* Header elements use Fredoka font */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+/* Base brand class for "FinBuddy" text */
+.fb-brand {
+    font-family: 'Luckiest Guy', 'Chewy', cursive !important;
+    font-weight: 400;
+    display: inline-block;
+    position: relative;
+    /* Slight tilt for logo effect */
+    transform: rotate(-1deg);
+    letter-spacing: 2px;
+    /* Light mode color */
+    color: rgb(164, 187, 204);
+    /* Multi-layer shadow for depth */
+    text-shadow: 
+        1px 1px 0 rgba(0, 0, 0, 0.15),
+        2px 2px 4px rgba(0, 0, 0, 0.1),
+        0 0 8px rgba(102, 126, 234, 0.2);
+}
+
+/* Spot/highlight effect via pseudo-element */
+.fb-brand::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .fb-brand {
+    color: rgb(228, 191, 187);
+    text-shadow: 
+        1px 1px 0 rgba(0, 0, 0, 0.3),
+        2px 2px 6px rgba(0, 0, 0, 0.25),
+        0 0 12px rgba(231, 76, 60, 0.3),
+        0 0 20px rgba(231, 76, 60, 0.15);
+}
+
+[data-theme="dark"] .fb-brand::after {
+    background: radial-gradient(circle, rgba(255,200,200,0.6) 0%, transparent 70%);
+}
+
+/* Welcome text styling */
+.fb-welcome {
+    font-family: 'Luckiest Guy', 'Chewy', cursive !important;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    /* Light mode color - same as FinBuddy */
+    color: rgb(134, 159, 178);
+}
+[data-theme="dark"] .fb-welcome {
+    color: rgb(228, 191, 187);
+}
+
+/* Subtle flicker animation for brand */
+@keyframes fb-flicker {
+    0%, 100% { 
+        opacity: 1;
+        filter: brightness(1);
+    }
+    50% { 
+        opacity: 0.95;
+        filter: brightness(1.05);
+    }
+}
+
+.fb-brand-animated {
+    animation: fb-flicker 3s ease-in-out infinite;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .fb-brand-animated {
+        animation: none;
+    }
+    .fb-brand {
+        transform: none;
+    }
+}
+
+/* Legacy class for backward compatibility */
 .finbuddy-brand {
-    font-family: 'Chewy', cursive !important;
+    font-family: 'Luckiest Guy', 'Chewy', cursive !important;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
@@ -99,7 +186,7 @@ header {
 }
 
 .brand-title {
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', 'Chewy', cursive;
     font-size: 2rem;
     margin: 0;
     font-weight: 400;
@@ -118,7 +205,7 @@ header {
     font-size: 1.2rem;
 }
 .welcome-text strong{
-    color: #fff;
+    color: #9ab9c2;
 }
 [data-theme="dark"] .welcome-text strong {
     color: rgb(222, 186, 186);
@@ -306,17 +393,25 @@ footer p {
     }
     
     .brand-title {
+        font-family: 'Luckiest Guy', 'Chewy', cursive;
         font-size: 1.5rem;
     }
 }
 
+/* Legacy flicker - now using fb-flicker for brand */
 @keyframes flicker {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+    50% { opacity: 0.92; }
 }
 
 .flicker {
-    animation: flicker 2s ease-in-out infinite;
+    animation: flicker 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flicker {
+        animation: none;
+    }
 }
 
 [data-theme="dark"] .flicker {

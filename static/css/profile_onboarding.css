@@ -21,14 +21,15 @@ body {
 }
 
 .onboarding-card {
-    background-color: var(--bg-card);
+    background-color: linear-gradient(150deg, rgb(28, 79, 79), rgb(10, 68, 68));
     border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    box-shadow: 0 4px 2px rgba(7, 80, 54, 0.12), 0 4px 16px rgba(46, 151, 142, 0.08);
 }
 
 [data-theme="dark"] .onboarding-card {
-    box-shadow: 0 8px 32px rgba(231, 76, 60, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 2px rgba(231, 76, 60, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(150deg, rgb(236, 186, 186), rgb(185, 140, 140));
 }
 
 .onboarding-header {
@@ -37,24 +38,36 @@ body {
 }
 
 .onboarding-logo {
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', cursive;
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: rgb(14, 58, 79);
     font-weight: 400;
+}
+.fb-brand{
+    color:#0c304c;
+}
+[data-theme="dark"] .fb-brand{
+    color:rgb(54, 6, 25);
 }
 
 .onboarding-title {
     font-size: 1.5rem;
-    color: var(--text-primary);
+    color: rgb(17, 69, 94);
     margin-bottom: 0.5rem;
     font-weight: 700;
+}
+[data-theme="dark"] .onboarding-title{
+    color: rgb(101, 15, 41);
 }
 
 .onboarding-subtitle {
     font-size: 1rem;
-    color: var(--text-secondary);
+    color: rgb(9, 72, 28);
     margin: 0;
+}
+[data-theme="dark"] .onboarding-subtitle{
+    color: rgb(79, 46, 11);
 }
 
 /* Flash messages within onboarding */
@@ -84,6 +97,16 @@ body {
 /* Form adjustments for onboarding */
 .onboarding-card .profile-form {
     margin-top: 0;
+}
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: rgb(5, 58, 54) !important;
+    font-size: 0.95rem;
+    text-align: center;
+}
+[data-theme="dark"] .form-group label {
+    color: #4c0c0c !important;
 }
 
 .onboarding-card .form-grid {

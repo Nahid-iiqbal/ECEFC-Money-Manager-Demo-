@@ -33,8 +33,8 @@
     --spacing-xl: 6rem;
     
     /* Typography */
-    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    --font-heading: 'Chewy', cursive;
+    --font-body: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+    --font-heading: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
     
     /* Shadows */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -96,7 +96,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', 'Chewy', cursive;
     font-size: 1.5rem;
     font-weight: 400;
     color: var(--landing-cyan);
@@ -583,7 +583,7 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: 'Chewy', cursive;
+    font-family: 'Luckiest Guy', 'Chewy', cursive;
     font-size: 1.5rem;
     font-weight: 400;
     color: var(--landing-cyan);
