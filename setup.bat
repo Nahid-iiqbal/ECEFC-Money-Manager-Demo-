@@ -37,15 +37,41 @@ echo.
 
 echo [4/5] Setting up environment file...
 if not exist .env (
-    if exist .env.example (
-        copy .env.example .env
-        echo .env file created from template
-        echo IMPORTANT: Please edit .env and set your SECRET_KEY
-    ) else (
-        echo Warning: .env.example not found, creating basic .env
-        echo SECRET_KEY=change-this-to-a-random-secret-key> .env
-        echo DATABASE_URL=sqlite:///finance.db>> .env
-    )
+    echo "Creating .env file..."
+
+    # -- AI Config --
+    echo "GROQ_API_KEY=your_key" > .env
+    echo "GROQ_MODEL_NAME=ai_model" >> .env
+
+    # -- App Security --
+    echo "SECRET_KEY=secret_key" >> .env
+    echo "DATABASE_URL=your_database" >> .env
+
+    # -- Mail Settings --
+    echo "" >> .env
+    echo "# Mail settings for weekly reports" >> .env
+    echo "MAIL_SERVER=smtp.gmail.com" >> .env
+    echo "MAIL_PORT=587" >> .env
+    echo "MAIL_USE_TLS=true" >> .env
+    echo "MAIL_USE_SSL=false" >> .env
+    echo "MAIL_USERNAME=email" >> .env
+    echo "MAIL_PASSWORD=password" >> .env
+    echo "MAIL_DEFAULT_SENDER=email" >> .env
+
+    # -- Scheduler Settings --
+    echo "" >> .env
+    echo "# Weekly report scheduler" >> .env
+    echo "ENABLE_WEEKLY_REPORTS=true" >> .env
+    echo "WEEKLY_REPORT_DAY=sun" >> .env
+    echo "WEEKLY_REPORT_HOUR=8" >> .env
+
+    # -- Tuition Settings --
+    echo "" >> .env
+    echo "# Tuition reminders (email)" >> .env
+    echo "ENABLE_TUITION_REMINDERS=true" >> .env
+
+    echo ".env file created successfully."
+    
 ) else (
     echo .env file already exists, skipping...
 )
