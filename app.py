@@ -1,7 +1,8 @@
 # Redirect root URL to landing page
 from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
-import re
 import os
+from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_apscheduler import APScheduler
 from datetime import datetime, timezone, timedelta
 from flask_mail import Mail, Message
 from flask_login import LoginManager, current_user
@@ -13,6 +14,9 @@ from routes.expense import expense
 from routes.auth import auth_bp
 from routes.database import db, User
 from dotenv import load_dotenv
+load_dotenv()
+
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -20,32 +24,18 @@ def root_landing():
     return render_template('landing.html')
 
 
-# Check if running on Vercel
-IS_VERCEL = os.environ.get('VERCEL_DEPLOYMENT') == 'true'
 
-# Conditionally import SocketIO and APScheduler (not needed on Vercel)
-if not IS_VERCEL:
-    from flask_socketio import SocketIO, emit, join_room, leave_room
-    from flask_apscheduler import APScheduler
-else:
-    # Dummy classes for Vercel
-    SocketIO = None
-    APScheduler = None
-    emit = None
-    join_room = None
-    leave_room = None
 
-try:
-    from groq import Groq
-except ImportError:
-    Groq = None
-
-load_dotenv()
 
 
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 GROQ_MODEL_NAME = os.environ.get('GROQ_MODEL_NAME', 'mixtral-8x7b-32768')
 groq_client = None
+
+try:
+    from groq import Groq
+except ImportError:
+    Groq = None
 
 if Groq and GROQ_API_KEY:
     try:
