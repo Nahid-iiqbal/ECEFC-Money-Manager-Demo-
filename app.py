@@ -1,17 +1,24 @@
+# Redirect root URL to landing page
 from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
-from dotenv import load_dotenv
-from routes.database import db, User
-from routes.auth import auth_bp
-from routes.expense import expense
-from routes.dashboard import dashboard_bp
-from routes.group import group
-from routes.tuition import tuition_bp
-from routes.profile import profile_bp
-from flask_login import LoginManager, current_user
-from flask_mail import Mail, Message
-from datetime import datetime, timezone, timedelta
-import os
 import re
+import os
+from datetime import datetime, timezone, timedelta
+from flask_mail import Mail, Message
+from flask_login import LoginManager, current_user
+from routes.profile import profile_bp
+from routes.tuition import tuition_bp
+from routes.group import group
+from routes.dashboard import dashboard_bp
+from routes.expense import expense
+from routes.auth import auth_bp
+from routes.database import db, User
+from dotenv import load_dotenv
+app = Flask(__name__)
+
+@app.route('/')
+def root_landing():
+    return render_template('landing.html')
+
 
 # Check if running on Vercel
 IS_VERCEL = os.environ.get('VERCEL_DEPLOYMENT') == 'true'
@@ -34,7 +41,7 @@ except ImportError:
     Groq = None
 
 load_dotenv()
-app = Flask(__name__)
+
 
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 GROQ_MODEL_NAME = os.environ.get('GROQ_MODEL_NAME', 'mixtral-8x7b-32768')
@@ -56,16 +63,16 @@ def get_intelligent_fallback_response(user_message, user_context):
     """
     Provides intelligent, context-aware responses when AI API is unavailable.
     Uses pattern matching and FAQ-style responses to guide users.
-    
+
     Args:
         user_message: The user's query (lowercase)
         user_context: Dict with user's profile and financial data
-    
+
     Returns:
         String response or None if no pattern matches
     """
     msg = user_message.lower().strip()
-    
+
     # Extract context variables
     display_name = user_context.get('display_name', 'there')
     total_recent = user_context.get('total_recent', 0)
@@ -74,7 +81,7 @@ def get_intelligent_fallback_response(user_message, user_context):
     tuition_income = user_context.get('tuition_income', 0)
     tuition_progress = user_context.get('tuition_progress', 0)
     group_count = user_context.get('group_count', 0)
-    
+
     # ===== Greetings =====
     if re.search(r'\b(hi|hello|hey|greetings|good\s+(morning|afternoon|evening))\b', msg):
         return (
@@ -82,7 +89,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             f"You can ask me about features, how to use different sections, or what you can do here. "
             f"What would you like to know?"
         )
-    
+
     # ===== What is this / Overview =====
     if re.search(r'\b(what\s+(is|does)|about|overview|purpose|tell\s+me\s+about)\b', msg) and \
        re.search(r'\b(this|app|webapp|website|feinbuddy|platform)\b', msg):
@@ -94,7 +101,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             f"📈 View spending trends on your dashboard\n"
             f"You're currently managing ৳{total_all_time:,.0f} in total expenses!"
         )
-    
+
     # ===== Features List =====
     if re.search(r'\b(feature|can\s+i|what\s+can|what\s+do|capabilities|options)\b', msg):
         return (
@@ -128,7 +135,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "═══════════════════════════════════════\n\n"
             "Ask: 'How do I add expenses?' or 'Tell me about routine system'"
         )
-    
+
     # ===== Dashboard Help =====
     if re.search(r'\b(dashboard|home|overview|summary|charts?|graphs?)\b', msg):
         return (
@@ -140,7 +147,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• Quick stats cards\n\n"
             "Navigate to Dashboard from the navbar to see your financial snapshot!"
         )
-    
+
     # ===== Expense Tracking =====
     if re.search(r'\b(expense|add\s+expense|track|spending|record|log)\b', msg) and \
        not re.search(r'\bgroup', msg):
@@ -154,7 +161,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "**Categories available:** Food, Transport, Entertainment, Shopping, Bills, Health, Education\n\n"
             f"So far you've tracked ৳{total_all_time:,.0f} across all categories!"
         )
-    
+
     # ===== Group Management =====
     if re.search(r'\b(group|groups|split|shared|friends|owe|dues?|settle)\b', msg):
         return (
@@ -185,7 +192,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• Restaurant bills • Event planning\n\n"
             f"**Your Groups:** {group_count} active group(s)"
         )
-    
+
     # ===== Tuition Management =====
     if re.search(r'\b(tuition|class|classes|teaching|student|income|attendance|routine)\b', msg):
         return (
@@ -217,7 +224,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• Click student → Mark attendance\n"
             "• 'Export Routine PDF' → Download"
         )
-    
+
     # ===== Profile/Settings =====
     if re.search(r'\b(profile|account|settings|personal|edit|update|change)\b', msg):
         return (
@@ -229,7 +236,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• View account details\n\n"
             "Go to 'Profile' in the navbar to make changes!"
         )
-    
+
     # ===== Navigation Help =====
     if re.search(r'\b(navigate|navigation|where|find|go\s+to|menu|page)\b', msg):
         return (
@@ -243,7 +250,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• 🌙 Theme Toggle - Switch light/dark mode\n\n"
             "Click any section to jump there!"
         )
-    
+
     # ===== Theme/Appearance =====
     if re.search(r'\b(theme|dark\s+mode|light\s+mode|appearance|color|design)\b', msg):
         return (
@@ -255,7 +262,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "• Your preference is saved automatically\n\n"
             "Try it now for a fresh look!"
         )
-    
+
     # ===== How to use / Getting Started =====
     if re.search(r'\b(how\s+to|getting\s+started|start|begin|tutorial|guide)\b', msg):
         return (
@@ -267,7 +274,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "**Step 5:** Add tuition classes if you teach (optional)\n\n"
             "Need help with a specific feature? Just ask!"
         )
-    
+
     # ===== Data/Reports =====
     if re.search(r'\b(report|export|download|pdf|data|statistics|analytics)\b', msg):
         return (
@@ -299,7 +306,7 @@ def get_intelligent_fallback_response(user_message, user_context):
             "2. Click 'Export Routine PDF'\n"
             "3. PDF downloads automatically!"
         )
-    
+
     # ===== Current Status (personalized) =====
     if re.search(r'\b(my|current|status|summary|stats?|spending)\b', msg):
         response = f"Here's your quick status, {display_name}:\n\n"
@@ -313,14 +320,14 @@ def get_intelligent_fallback_response(user_message, user_context):
             response += f"👥 Active groups: {group_count}\n"
         response += "\nCheck your Dashboard for detailed insights!"
         return response
-    
+
     # ===== Thanks / Appreciation =====
     if re.search(r'\b(thanks?|thank\s+you|appreciate|helpful)\b', msg):
         return (
             f"You're very welcome, {display_name}! 😊 I'm always here to help you navigate FeinBuddy. "
             "Feel free to ask anything else about the app's features or how to use them!"
         )
-    
+
     # ===== Default fallback for unknown queries =====
     return (
         "I'm not quite sure about that specific query, but I'm here to help with FeinBuddy! 🤔\n\n"
@@ -331,6 +338,7 @@ def get_intelligent_fallback_response(user_message, user_context):
         "• Your current financial status\n\n"
         "What would you like to know?"
     )
+
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get(
@@ -418,20 +426,20 @@ else:
 def send_reminder_email(expense_id):
     """Send a reminder email for a specific expense."""
     from routes.database import Expense, User
-    
+
     with app.app_context():
         expense = Expense.query.get(expense_id)
         if not expense or expense.reminder_sent:
             return
-        
+
         user = User.query.get(expense.user_id)
         if not user or not user.profile:
             return
-        
+
         email = user.profile.email
         if not email:
             return
-        
+
         try:
             # Create email message
             msg = Message(
@@ -480,13 +488,13 @@ def send_reminder_email(expense_id):
                 </html>
                 '''
             )
-            
+
             mail.send(msg)
-            
+
             # Mark as sent
             expense.reminder_sent = True
             db.session.commit()
-            
+
         except Exception as e:
             print(f'Error sending reminder email: {str(e)}')
 
@@ -511,17 +519,17 @@ def check_and_send_reminders():
     """Periodic job to check for due reminders and send them."""
     from datetime import datetime, timezone
     from routes.database import Expense
-    
+
     with scheduler.app.app_context():
         now = datetime.now(timezone.utc)
-        
+
         # Find expenses with reminders that are due and not yet sent
         due_expenses = Expense.query.filter(
             Expense.reminder_at <= now,
             Expense.reminder_sent == False,
             Expense.reminder_at.isnot(None)
         ).all()
-        
+
         for expense in due_expenses:
             send_reminder_email(expense.id)
 
@@ -857,7 +865,7 @@ def ai_chatbot():
 
     # Import snapshot builder
     from services.chat_context import (
-        build_user_finance_snapshot, 
+        build_user_finance_snapshot,
         get_display_name,
         build_system_prompt_with_snapshot
     )
@@ -865,9 +873,10 @@ def ai_chatbot():
 
     # Get display name
     display_name = get_display_name(current_user)
-    
+
     # Build comprehensive finance snapshot (60 days of data)
-    snapshot = build_user_finance_snapshot(current_user.id, db.session, days=60)
+    snapshot = build_user_finance_snapshot(
+        current_user.id, db.session, days=60)
 
     # Quick context for fallback responses
     profile = getattr(current_user, 'profile', None)
@@ -882,9 +891,10 @@ def ai_chatbot():
         Expense.date >= week_ago
     ).all()
     total_recent = sum((e.amount or 0) for e in recent_expenses)
-    all_expenses = Expense.query.filter(Expense.user_id == current_user.id).all()
+    all_expenses = Expense.query.filter(
+        Expense.user_id == current_user.id).all()
     total_all_time = sum((e.amount or 0) for e in all_expenses)
-    
+
     category_summary = {}
     for e in recent_expenses:
         cat = e.category or 'Other'
@@ -897,9 +907,11 @@ def ai_chatbot():
     total_tuition_income = sum((t.amount or 0) for t in tuition_records)
     total_classes = sum((t.total_days or 0) for t in tuition_records)
     total_completed = sum((t.total_completed or 0) for t in tuition_records)
-    tuition_progress = int((total_completed / total_classes * 100)) if total_classes > 0 else 0
-    
-    group_count = GroupMember.query.filter(GroupMember.user_id == current_user.id).count()
+    tuition_progress = int(
+        (total_completed / total_classes * 100)) if total_classes > 0 else 0
+
+    group_count = GroupMember.query.filter(
+        GroupMember.user_id == current_user.id).count()
 
     # Handle empty message - return quick summary
     if not user_message:
@@ -927,7 +939,8 @@ def ai_chatbot():
 
     # If Groq is not configured, use intelligent fallback
     if not groq_client:
-        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        fallback_response = get_intelligent_fallback_response(
+            user_message, user_context)
         return jsonify({'reply': fallback_response})
 
     # Build system prompt with RAG-style snapshot
@@ -947,9 +960,11 @@ def ai_chatbot():
         ) or "I couldn't draft a reply just now."
         return jsonify({'reply': reply})
     except Exception as e:
-        app.logger.exception("Groq call failed - falling back to intelligent response")
+        app.logger.exception(
+            "Groq call failed - falling back to intelligent response")
         # If AI fails, use intelligent fallback instead of showing error
-        fallback_response = get_intelligent_fallback_response(user_message, user_context)
+        fallback_response = get_intelligent_fallback_response(
+            user_message, user_context)
         return jsonify({'reply': fallback_response})
 
 
@@ -1045,14 +1060,12 @@ if not IS_VERCEL and socketio:
             print(f"User {current_user.username} connected")
         return True
 
-
     @socketio.on('disconnect')
     def handle_disconnect():
         """Handle user disconnection"""
         if current_user.is_authenticated:
             leave_room(f'user_{current_user.id}')
             print(f"User {current_user.username} disconnected")
-
 
     @socketio.on('request_dashboard_update')
     def handle_dashboard_update(data):
@@ -1068,7 +1081,6 @@ if not IS_VERCEL and socketio:
         except Exception as e:
             print(f"Error sending dashboard update: {e}")
             return False
-
 
     @socketio.on('request_activity_update')
     def handle_activity_update(data):
@@ -1086,7 +1098,6 @@ if not IS_VERCEL and socketio:
             print(f"Error sending activity update: {e}")
             return False
 
-
     @socketio.on('request_group_update')
     def handle_group_update(data):
         """Send updated group data to user"""
@@ -1102,7 +1113,6 @@ if not IS_VERCEL and socketio:
         except Exception as e:
             print(f"Error sending group update: {e}")
             return False
-
 
     @socketio.on('join_group')
     def handle_join_group(data):
@@ -1121,7 +1131,8 @@ if not IS_VERCEL and socketio:
 
             if is_member:
                 join_room(f'group_{group_id}')
-                print(f"User {current_user.username} joined group room {group_id}")
+                print(
+                    f"User {current_user.username} joined group room {group_id}")
                 # Broadcast to group that user is viewing
                 socketio.emit('user_viewing_group', {
                     'user_id': current_user.id,
@@ -1132,7 +1143,6 @@ if not IS_VERCEL and socketio:
         except Exception as e:
             print(f"Error joining group: {e}")
             return False
-
 
     @socketio.on('leave_group')
     def handle_leave_group(data):
@@ -1149,11 +1159,9 @@ if not IS_VERCEL and socketio:
             print(f"Error leaving group: {e}")
             return False
 
-
     def broadcast_expense_update(user_id, expense_data):
         """Broadcast expense update to user's session"""
         socketio.emit('expense_added', expense_data, to=f'user_{user_id}')
-
 
     def broadcast_group_expense_update(group_id, expense_data):
         """Broadcast group expense update to all group members"""
@@ -1193,7 +1201,7 @@ if __name__ == '__main__':
     print("FinBuddy - Starting Application")
     print("=" * 50)
     print(f"Database: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    
+
     if IS_VERCEL:
         print("Running in Vercel mode (no SocketIO or background tasks)")
         print("Server starting on http://0.0.0.0:5000")

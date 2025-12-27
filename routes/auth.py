@@ -101,7 +101,7 @@ def logout():
     flash('You have been logged out successfully.', 'info')
     
     # Create response with cache prevention
-    response = make_response(redirect(url_for('auth.login')))
+    response = make_response(redirect(url_for('landing')))
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'

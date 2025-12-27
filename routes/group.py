@@ -1,11 +1,116 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+# KICK MEMBER (admin only)
 from flask_login import login_required, current_user
-from routes.database import db, Group, GroupMember, GroupExpense, ExpenseSplit
-from datetime import datetime
-import random
+from flask import request
+from flask import Blueprint, render_template, redirect, url_for, flash
 import string
-
+import random
+from datetime import datetime
+from routes.database import db, Group, GroupMember, GroupExpense, ExpenseSplit
 group = Blueprint("group", __name__)
+
+
+@group.route('/groups/<int:group_id>/kick_member', methods=['POST'])
+@login_required
+def kick_member(group_id):
+    group_obj = Group.query.get_or_404(group_id)
+    if group_obj.created_by != current_user.id:
+        flash('Only the group admin can kick members.', 'danger')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    kick_user_id = request.form.get('kick_user_id')
+    if not kick_user_id:
+        flash('No member selected.', 'warning')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    if int(kick_user_id) == current_user.id:
+        flash('You cannot kick yourself.', 'warning')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    member = GroupMember.query.filter_by(
+        group_id=group_id, user_id=kick_user_id).first()
+    if not member:
+        flash('Member not found.', 'warning')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    db.session.delete(member)
+    db.session.commit()
+    flash('Member has been kicked from the group.', 'success')
+    return redirect(url_for('group.group_details', group_id=group_id))
+
+
+# LEAVE GROUP ROUTE
+
+
+@group.route('/groups/<int:group_id>/leave', methods=['POST'])
+@login_required
+def leave_group(group_id):
+    group_obj = Group.query.get_or_404(group_id)
+    membership = GroupMember.query.filter_by(
+        group_id=group_id, user_id=current_user.id).first()
+    if not membership:
+        flash('You are not a member of this group.', 'danger')
+        return redirect(url_for('group.my_groups'))
+    # If admin is leaving and there are other members, require transfer
+    if group_obj.created_by == current_user.id:
+        other_members = GroupMember.query.filter(
+            GroupMember.group_id == group_id, GroupMember.user_id != current_user.id).all()
+        if other_members:
+            flash('You must transfer admin rights before leaving the group.', 'danger')
+            return redirect(url_for('group.group_details', group_id=group_id))
+    db.session.delete(membership)
+    db.session.commit()
+    # If no members left, delete group
+    if GroupMember.query.filter_by(group_id=group_id).count() == 0:
+        db.session.delete(group_obj)
+        db.session.commit()
+        flash('You left the group. The group was deleted as no members remain.', 'success')
+        return redirect(url_for('group.my_groups'))
+    # If admin left and there are still members, transfer admin to the next member
+    if group_obj.created_by == current_user.id:
+        new_admin = GroupMember.query.filter_by(group_id=group_id).first()
+        if new_admin:
+            group_obj.created_by = new_admin.user_id
+            db.session.commit()
+            flash('Admin rights transferred to another member.', 'info')
+    flash('You left the group.', 'success')
+    return redirect(url_for('group.my_groups'))
+
+# TRANSFER ADMIN ROUTE
+
+
+@group.route('/groups/<int:group_id>/transfer_admin', methods=['POST'])
+@login_required
+def transfer_admin(group_id):
+    group_obj = Group.query.get_or_404(group_id)
+    if group_obj.created_by != current_user.id:
+        flash('Only the group admin can transfer admin rights.', 'danger')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    new_admin_id = request.form.get('new_admin_id')
+    if not new_admin_id:
+        flash('No member selected for admin transfer.', 'danger')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    new_admin_id = int(new_admin_id)
+    # Ensure the new admin is a member
+    if not GroupMember.query.filter_by(group_id=group_id, user_id=new_admin_id).first():
+        flash('Selected user is not a member of this group.', 'danger')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    group_obj.created_by = new_admin_id
+    db.session.commit()
+    flash('Admin rights transferred successfully.', 'success')
+    return redirect(url_for('group.group_details', group_id=group_id))
+
+# Route to delete a group if it has no members
+
+
+@group.route('/groups/<int:group_id>/delete', methods=['POST'])
+@login_required
+def delete_group(group_id):
+    group_obj = Group.query.get_or_404(group_id)
+    # Only allow if group has no members
+    member_count = GroupMember.query.filter_by(group_id=group_id).count()
+    if member_count > 0:
+        flash('Cannot delete group: members are still present.', 'danger')
+        return redirect(url_for('group.group_details', group_id=group_id))
+    db.session.delete(group_obj)
+    db.session.commit()
+    flash('Group deleted successfully.', 'success')
+    return redirect(url_for('group.my_groups'))
 
 
 def generate_join_code():

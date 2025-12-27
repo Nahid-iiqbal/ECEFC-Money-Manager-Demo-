@@ -32,9 +32,12 @@ class Expense(db.Model):
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     type = db.Column(db.String(50), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    reminder_at = db.Column(db.DateTime, nullable=True)  # When to send reminder
-    reminder_sent = db.Column(db.Boolean, default=False, nullable=False)  # Track if sent
-    reminder_note = db.Column(db.Text, nullable=True)  # Optional reminder message
+    # When to send reminder
+    reminder_at = db.Column(db.DateTime, nullable=True)
+    reminder_sent = db.Column(
+        db.Boolean, default=False, nullable=False)  # Track if sent
+    # Optional reminder message
+    reminder_note = db.Column(db.Text, nullable=True)
 
 
 class Debt(db.Model):
@@ -57,6 +60,8 @@ class TuitionRecord(db.Model):
     student_name = db.Column(db.String(100), nullable=False)
     total_days = db.Column(db.Integer, nullable=False)
     total_completed = db.Column(db.Integer, nullable=False)
+    # Date when last marked completed
+    completed_date = db.Column(db.Date, nullable=True)
     address = db.Column(db.String(200), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     days = db.Column(db.PickleType, nullable=True)

@@ -18,7 +18,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 # If font file exists in static/fonts/, use it; otherwise fallback to Helvetica-Bold
 BRAND_FONT = 'Helvetica-Bold'  # Default fallback
 try:
-    font_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
+    font_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                              'static', 'fonts', 'LuckiestGuy-Regular.ttf')
     if os.path.exists(font_path):
         pdfmetrics.registerFont(TTFont('LuckiestGuy', font_path))
@@ -182,17 +182,27 @@ def update_completed(record_id, action):
         return redirect(url_for('tuition.tuition_list'))
 
     # Update completed days
+
     try:
+        today = datetime.now().date()
         if action == 'increment' and record.total_completed < record.total_days:
             record.total_completed += 1
+            record.completed_date = today
             db.session.commit()
             flash('✅ Class marked as completed!', 'success')
+        elif action == 'undo' and record.completed_date == today:
+            if record.total_completed > 0:
+                record.total_completed -= 1
+            record.completed_date = None
+            db.session.commit()
+            flash('Marked completion undone for today!', 'success')
         elif action == 'decrement' and record.total_completed > 0:
             record.total_completed -= 1
             db.session.commit()
             flash('Progress updated!', 'success')
         elif action == 'clear' and record.total_completed > 0:
             record.total_completed = 0
+            record.completed_date = None
             db.session.commit()
             flash('Progress reset to 0!', 'success')
         else:

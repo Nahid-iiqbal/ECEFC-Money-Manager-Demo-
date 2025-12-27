@@ -156,8 +156,18 @@
                                                 <div class="tile-time">⏰ {{ entry.tuition_time }}</div>
                                                 {% endif %}
                                                 <div class="tile-actions" id="actions-{{ entry.id }}" {% if entry.total_completed >= entry.total_days %}style="display: none !important;"{% endif %}>
-                                                    <button type="button" class="btn-tile btn-tick" onclick="incrementProgress({{ entry.id }}, '{{ entry.student_name }}', {{ entry.total_completed }}, {{ entry.total_days }})" {% if entry.total_completed >= entry.total_days %}disabled{% endif %} title="Increment progress">✓</button>
-                                                    <button type="button" class="btn-tile btn-skip" onclick="openRescheduleModal({{ entry.id }}, '{{ entry.student_name }}', '{{ entry.tuition_time }}', {{ entry.amount }}, {{ entry.total_days }})" title="Skip/Reschedule">⏭️</button>
+                                                    {% set today = now.date() %}
+                                                    {% if entry.completed_date and entry.completed_date == today %}
+                                                        <!-- Hide tick, show undo -->
+                                                        <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='undo') }}" style="display:inline;">
+                                                            <button type="submit" class="btn-tile btn-undo" title="Undo today's completion">↩️ Undo</button>
+                                                        </form>
+                                                    {% else %}
+                                                        <form method="POST" action="{{ url_for('tuition.update_completed', record_id=entry.id, action='increment') }}" style="display:inline;">
+                                                            <button type="submit" class="btn-tile btn-tick" {% if entry.total_completed >= entry.total_days %}disabled{% endif %} title="Mark as completed">✓</button>
+                                                        </form>
+                                                        <button type="button" class="btn-tile btn-skip" onclick="openRescheduleModal({{ entry.id }}, '{{ entry.student_name }}', '{{ entry.tuition_time }}', {{ entry.amount }}, {{ entry.total_days }})" title="Skip/Reschedule">⏭️</button>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="tile-completed" id="completed-{{ entry.id }}" {% if entry.total_completed < entry.total_days %}style="display: none;"{% endif %}>Completed</div>
                                             </div>
