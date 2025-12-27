@@ -106,8 +106,9 @@ body {
 }
 
 .brand-logo {
+    font-family: 'Chewy', cursive;
     font-size: 3rem;
-    font-weight: 700;
+    font-weight: 400;
     margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);

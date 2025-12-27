@@ -75,8 +75,9 @@ main {
     border: 2px solid rgba(102, 126, 234, 0.3);
     border-radius: 999px;
     padding: 12px 20px;
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-family: 'Chewy', cursive;
+    font-weight: 400;
+    font-size: 1rem;
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -149,8 +150,9 @@ main {
 
 .ai-chat-title {
     margin: 0;
-    font-weight: 800;
-    font-size: 1.1rem;
+    font-family: 'Chewy', cursive;
+    font-weight: 400;
+    font-size: 1.2rem;
     color: white;
 }
 

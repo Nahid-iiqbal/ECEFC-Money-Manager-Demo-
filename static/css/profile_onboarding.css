@@ -37,9 +37,11 @@ body {
 }
 
 .onboarding-logo {
+    font-family: 'Chewy', cursive;
     font-size: 2rem;
     margin-bottom: 1rem;
     color: var(--text-primary);
+    font-weight: 400;
 }
 
 .onboarding-title {

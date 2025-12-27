@@ -63,6 +63,15 @@ nav{
     box-sizing: border-box;
 }
 
+/* Header elements use Chewy font */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Chewy', cursive;
+}
+
+/* FinBuddy brand text */
+.finbuddy-brand {
+    font-family: 'Chewy', cursive !important;
+}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -90,9 +99,10 @@ header {
 }
 
 .brand-title {
+    font-family: 'Chewy', cursive;
     font-size: 2rem;
     margin: 0;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .header-right {
