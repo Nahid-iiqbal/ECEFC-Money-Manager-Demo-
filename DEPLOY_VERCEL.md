@@ -218,10 +218,35 @@ Your local development environment (`python app.py`) will run with:
 
 Your Vercel production environment will run with:
 ❌ No SocketIO (manual refresh required)
-❌ No APScheduler (no automatic emails)
+✅ **Vercel Cron Jobs for email reminders** (runs daily at 9:00 AM UTC)
 ✅ External database (PostgreSQL/MySQL)
 
 The app automatically detects the environment via the `VERCEL_DEPLOYMENT` environment variable.
+
+## Vercel Cron Jobs
+
+Email reminders are handled by Vercel's built-in cron jobs:
+
+- **Schedule**: Runs daily at 9:00 AM UTC (adjustable in `vercel.json`)
+- **Endpoint**: `/api/cron/send-reminders`
+- **Function**: Checks all expenses with `reminder_date = today` and sends emails
+- **Logs**: View execution logs in Vercel Dashboard → Your Project → Logs
+
+To change the schedule, edit `vercel.json`:
+```json
+"crons": [
+  {
+    "path": "/api/cron/send-reminders",
+    "schedule": "0 9 * * *"  // 9 AM UTC daily (change as needed)
+  }
+]
+```
+
+Common cron schedules:
+- `0 9 * * *` - Daily at 9:00 AM UTC
+- `0 */6 * * *` - Every 6 hours
+- `0 9 * * 1-5` - Weekdays at 9:00 AM UTC
+- `0 0 * * *` - Midnight UTC daily
 
 ## Updating Your Deployment
 
