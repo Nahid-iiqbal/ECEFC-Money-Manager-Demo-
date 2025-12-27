@@ -75,7 +75,7 @@ nav{
     color: var(--text-secondary);
     margin: 0;
 }
-.profile-form-section {
+.profile-section {
     background-color: var(--bg-card);
     border-radius: 12px;
     padding: 2rem;
@@ -105,9 +105,12 @@ nav{
 .form-group label {
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: rgb(7, 44, 41);
     font-size: 0.95rem;
     text-align: center;
+}
+[data-theme="dark"] .form-group label {
+    color: #dca6a6;
 }
 
 .required {
@@ -116,10 +119,10 @@ nav{
 
 .form-input {
     padding: 0.75rem;
-    border: 2px solid var(--border-color);
+    border: 2px solid rgb(4, 24, 47);
     border-radius: 8px;
     background-color: var(--bg-input);
-    color: rgb(4, 27, 60);
+    color: rgb(2, 20, 46);
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;
@@ -127,17 +130,18 @@ nav{
 }
 
 [data-theme="dark"] .form-input {
-    color: #ffb3b3;
+    color: #e1cccc;
+    border: 2px solid var(--border-color);
 }
 
 .form-input:focus {
     outline: none;
-    border-color: var(--border-focus);
+    border-color: rgb(2, 30, 49);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-input:hover {
-    border-color: var(--accent-purple);
+    border-color: rgb(3, 59, 31);
 }
 
 .file-input {
@@ -148,8 +152,13 @@ nav{
     display: block;
     margin-top: 0.25rem;
     font-size: 0.85rem;
-    color: var(--text-tertiary);
+    color: rgb(7, 66, 66);
 }
+[data-theme="dark"] .form-hint {
+    color: #460808;
+}
+
+
 
 .current-picture {
     margin-bottom: 1rem;
@@ -296,6 +305,22 @@ nav{
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+}
+.btn-expense{
+    background: linear-gradient(135deg, rgb(7, 89, 37), green);
+    color: rgb(169, 221, 184);
+}
+[data-theme="dark"] .btn-expense{
+    background: linear-gradient(135deg, rgb(163, 104, 147), rgb(128, 74, 99));
+    color: rgb(62, 4, 16);
+}
+.btn-expense:hover{
+    background: linear-gradient(135deg, rgb(3, 101, 55), rgb(37, 100, 75));
+    color: #9bd8b4;
+}
+[data-theme="dark"] .btn-expense:hover{
+    background: linear-gradient(135deg, rgb(148, 84, 107), rgb(79, 43, 56));
+    color:rgb(50, 4, 4);
 }
 
 .btn-success {
