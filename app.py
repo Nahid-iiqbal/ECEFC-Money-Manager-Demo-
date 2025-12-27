@@ -1,5 +1,4 @@
 from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
-from flask_socketio import SocketIO, emit, join_room, leave_room
 from dotenv import load_dotenv
 from routes.database import db, User
 from routes.auth import auth_bp
@@ -9,10 +8,24 @@ from routes.group import group
 from routes.tuition import tuition_bp
 from routes.profile import profile_bp
 from flask_login import LoginManager, current_user
-from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import os
 import re
+
+# Check if running on Vercel
+IS_VERCEL = os.environ.get('VERCEL_DEPLOYMENT') == 'true'
+
+# Conditionally import SocketIO and APScheduler (not needed on Vercel)
+if not IS_VERCEL:
+    from flask_socketio import SocketIO, emit, join_room, leave_room
+    from flask_apscheduler import APScheduler
+else:
+    # Dummy classes for Vercel
+    SocketIO = None
+    APScheduler = None
+    emit = None
+    join_room = None
+    leave_room = None
 
 try:
     from groq import Groq
@@ -379,13 +392,19 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
 
 mail = Mail(app)
 
-# Initialize SocketIO for real-time updates
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+# Initialize SocketIO and APScheduler only for local development
+if not IS_VERCEL:
+    # Initialize SocketIO for real-time updates
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
-# Scheduler setup
-scheduler = APScheduler()
-scheduler.init_app(app)
-scheduler.start()
+    # Scheduler setup
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
+else:
+    # On Vercel, these features are disabled
+    socketio = None
+    scheduler = None
 
 
 def send_reminder_email(expense_id):
@@ -1032,156 +1051,174 @@ def toggle_tuition_reminder():
 # WEBSOCKET EVENTS FOR REAL-TIME UPDATES
 # ============================================
 
-@socketio.on('connect')
-def handle_connect():
-    """Handle user connection to WebSocket"""
-    if current_user.is_authenticated:
-        # Join a room with user's ID for personalized updates
-        join_room(f'user_{current_user.id}')
-        print(f"User {current_user.username} connected")
-    return True
-
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    """Handle user disconnection"""
-    if current_user.is_authenticated:
-        leave_room(f'user_{current_user.id}')
-        print(f"User {current_user.username} disconnected")
-
-
-@socketio.on('request_dashboard_update')
-def handle_dashboard_update(data):
-    """Send updated dashboard data to user"""
-    if not current_user.is_authenticated:
-        return False
-
-    try:
-        from routes.dashboard import get_dashboard_data
-        data = get_dashboard_data()
-        emit('dashboard_updated', data, to=f'user_{current_user.id}')
+# Only register SocketIO handlers when not on Vercel
+if not IS_VERCEL and socketio:
+    @socketio.on('connect')
+    def handle_connect():
+        """Handle user connection to WebSocket"""
+        if current_user.is_authenticated:
+            # Join a room with user's ID for personalized updates
+            join_room(f'user_{current_user.id}')
+            print(f"User {current_user.username} connected")
         return True
-    except Exception as e:
-        print(f"Error sending dashboard update: {e}")
-        return False
 
 
-@socketio.on('request_activity_update')
-def handle_activity_update(data):
-    """Send updated activity feed to user"""
-    if not current_user.is_authenticated:
-        return False
-
-    try:
-        from routes.dashboard import get_recent_activities
-        activities = get_recent_activities()
-        emit('activity_updated', {
-             'activities': activities}, to=f'user_{current_user.id}')
-        return True
-    except Exception as e:
-        print(f"Error sending activity update: {e}")
-        return False
+    @socketio.on('disconnect')
+    def handle_disconnect():
+        """Handle user disconnection"""
+        if current_user.is_authenticated:
+            leave_room(f'user_{current_user.id}')
+            print(f"User {current_user.username} disconnected")
 
 
-@socketio.on('request_group_update')
-def handle_group_update(data):
-    """Send updated group data to user"""
-    if not current_user.is_authenticated:
-        return False
+    @socketio.on('request_dashboard_update')
+    def handle_dashboard_update(data):
+        """Send updated dashboard data to user"""
+        if not current_user.is_authenticated:
+            return False
 
-    try:
-        from routes.group import get_group_details_data
-        group_id = data.get('group_id')
-        group_data = get_group_details_data(group_id)
-        emit('group_updated', group_data, to=f'user_{current_user.id}')
-        return True
-    except Exception as e:
-        print(f"Error sending group update: {e}")
-        return False
-
-
-@socketio.on('join_group')
-def handle_join_group(data):
-    """User joins a group room for real-time updates"""
-    if not current_user.is_authenticated:
-        return False
-
-    try:
-        group_id = data.get('group_id')
-        # Verify user is member of group
-        from routes.database import GroupMember
-        is_member = GroupMember.query.filter_by(
-            group_id=group_id,
-            user_id=current_user.id
-        ).first()
-
-        if is_member:
-            join_room(f'group_{group_id}')
-            print(f"User {current_user.username} joined group room {group_id}")
-            # Broadcast to group that user is viewing
-            socketio.emit('user_viewing_group', {
-                'user_id': current_user.id,
-                'username': current_user.username
-            }, to=f'group_{group_id}')
+        try:
+            from routes.dashboard import get_dashboard_data
+            data = get_dashboard_data()
+            emit('dashboard_updated', data, to=f'user_{current_user.id}')
             return True
-        return False
-    except Exception as e:
-        print(f"Error joining group: {e}")
-        return False
+        except Exception as e:
+            print(f"Error sending dashboard update: {e}")
+            return False
 
 
-@socketio.on('leave_group')
-def handle_leave_group(data):
-    """User leaves a group room"""
-    if not current_user.is_authenticated:
-        return False
+    @socketio.on('request_activity_update')
+    def handle_activity_update(data):
+        """Send updated activity feed to user"""
+        if not current_user.is_authenticated:
+            return False
 
-    try:
-        group_id = data.get('group_id')
-        leave_room(f'group_{group_id}')
-        print(f"User {current_user.username} left group room {group_id}")
-        return True
-    except Exception as e:
-        print(f"Error leaving group: {e}")
-        return False
-
-
-def broadcast_expense_update(user_id, expense_data):
-    """Broadcast expense update to user's session"""
-    socketio.emit('expense_added', expense_data, to=f'user_{user_id}')
+        try:
+            from routes.dashboard import get_recent_activities
+            activities = get_recent_activities()
+            emit('activity_updated', {
+                'activities': activities}, to=f'user_{current_user.id}')
+            return True
+        except Exception as e:
+            print(f"Error sending activity update: {e}")
+            return False
 
 
-def broadcast_group_expense_update(group_id, expense_data):
-    """Broadcast group expense update to all group members"""
-    try:
-        from routes.group import get_group_details_data, get_group_members_ids
+    @socketio.on('request_group_update')
+    def handle_group_update(data):
+        """Send updated group data to user"""
+        if not current_user.is_authenticated:
+            return False
 
-        # Send to all group members in the group room
-        group_data = get_group_details_data(group_id)
-        socketio.emit('group_updated', group_data, to=f'group_{group_id}')
+        try:
+            from routes.group import get_group_details_data
+            group_id = data.get('group_id')
+            group_data = get_group_details_data(group_id)
+            emit('group_updated', group_data, to=f'user_{current_user.id}')
+            return True
+        except Exception as e:
+            print(f"Error sending group update: {e}")
+            return False
 
-        # Also send to each member's personal room (if not in group room)
-        member_ids = get_group_members_ids(group_id)
-        for member_id in member_ids:
-            socketio.emit('group_expense_added', {
-                'group_id': group_id,
-                'message': 'New expense added to your group!',
-                'expense': expense_data
-            }, to=f'user_{member_id}')
 
-        print(
-            f"Group {group_id} expense update broadcasted to {len(member_ids)} members")
-    except Exception as e:
-        print(f"Error broadcasting group expense update: {e}")
+    @socketio.on('join_group')
+    def handle_join_group(data):
+        """User joins a group room for real-time updates"""
+        if not current_user.is_authenticated:
+            return False
+
+        try:
+            group_id = data.get('group_id')
+            # Verify user is member of group
+            from routes.database import GroupMember
+            is_member = GroupMember.query.filter_by(
+                group_id=group_id,
+                user_id=current_user.id
+            ).first()
+
+            if is_member:
+                join_room(f'group_{group_id}')
+                print(f"User {current_user.username} joined group room {group_id}")
+                # Broadcast to group that user is viewing
+                socketio.emit('user_viewing_group', {
+                    'user_id': current_user.id,
+                    'username': current_user.username
+                }, to=f'group_{group_id}')
+                return True
+            return False
+        except Exception as e:
+            print(f"Error joining group: {e}")
+            return False
+
+
+    @socketio.on('leave_group')
+    def handle_leave_group(data):
+        """User leaves a group room"""
+        if not current_user.is_authenticated:
+            return False
+
+        try:
+            group_id = data.get('group_id')
+            leave_room(f'group_{group_id}')
+            print(f"User {current_user.username} left group room {group_id}")
+            return True
+        except Exception as e:
+            print(f"Error leaving group: {e}")
+            return False
+
+
+    def broadcast_expense_update(user_id, expense_data):
+        """Broadcast expense update to user's session"""
+        socketio.emit('expense_added', expense_data, to=f'user_{user_id}')
+
+
+    def broadcast_group_expense_update(group_id, expense_data):
+        """Broadcast group expense update to all group members"""
+        try:
+            from routes.group import get_group_details_data, get_group_members_ids
+
+            # Send to all group members in the group room
+            group_data = get_group_details_data(group_id)
+            socketio.emit('group_updated', group_data, to=f'group_{group_id}')
+
+            # Also send to each member's personal room (if not in group room)
+            member_ids = get_group_members_ids(group_id)
+            for member_id in member_ids:
+                socketio.emit('group_expense_added', {
+                    'group_id': group_id,
+                    'message': 'New expense added to your group!',
+                    'expense': expense_data
+                }, to=f'user_{member_id}')
+
+            print(
+                f"Group {group_id} expense update broadcasted to {len(member_ids)} members")
+        except Exception as e:
+            print(f"Error broadcasting group expense update: {e}")
+else:
+    # On Vercel, define stub functions to prevent errors
+    def broadcast_expense_update(user_id, expense_data):
+        """Stub function for Vercel - no real-time updates"""
+        pass
+
+    def broadcast_group_expense_update(group_id, expense_data):
+        """Stub function for Vercel - no real-time updates"""
+        pass
 
 
 if __name__ == '__main__':
-    # Run the application with socketio
     print("=" * 50)
     print("FinBuddy - Starting Application")
     print("=" * 50)
     print(f"Database: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    print("Server starting on http://localhost:5000")
-    print("Press Ctrl+C to stop the server")
-    socketio.run(app, debug=True, host='0.0.0.0',
-                 port=5000, allow_unsafe_werkzeug=True)
+    
+    if IS_VERCEL:
+        print("Running in Vercel mode (no SocketIO or background tasks)")
+        print("Server starting on http://0.0.0.0:5000")
+        print("Press Ctrl+C to stop the server")
+        app.run(debug=True, host='0.0.0.0', port=5000)
+    else:
+        print("Running in local development mode (with SocketIO and background tasks)")
+        print("Server starting on http://localhost:5000")
+        print("Press Ctrl+C to stop the server")
+        socketio.run(app, debug=True, host='0.0.0.0',
+                     port=5000, allow_unsafe_werkzeug=True)
