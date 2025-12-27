@@ -343,8 +343,15 @@ app.config['REMEMBER_COOKIE_DURATION'] = 86400  # 1 day in seconds
 
 # Initialize database
 db.init_app(app)
-with app.app_context():
-    db.create_all()
+
+# Create tables (with error handling for Vercel)
+try:
+    with app.app_context():
+        db.create_all()
+        print("Database tables created successfully")
+except Exception as e:
+    print(f"Warning: Database initialization issue: {e}")
+    # Continue anyway - tables might already exist
 
 # Initialize Flask-Login
 login_manager = LoginManager()
