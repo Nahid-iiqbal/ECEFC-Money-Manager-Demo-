@@ -1,42 +1,61 @@
-annotated-types==0.7.0
-anyio==4.12.0
-APScheduler==3.11.2
-bcrypt==5.0.0
-blinker==1.9.0
-certifi==2025.11.12
-cffi==2.0.0
-charset-normalizer==3.4.4
-click==8.3.1
-colorama==0.4.6
-cryptography==46.0.3
-dnspython==2.8.0
-email-validator==2.3.0
+# ===================================
+# Core Flask Framework
+# ===================================
 Flask==3.1.2
-Flask-APScheduler==1.13.1
-Flask-Bcrypt==1.0.1
-Flask-Login==0.6.3
-Flask-Mail==0.10.0
-Flask-SQLAlchemy==3.1.1
-Flask-SocketIO==5.3.5
-Flask-WTF==1.2.2
-greenlet==3.3.0
-groq==0.11.0
-h11==0.16.0
-idna==3.11
-itsdangerous==2.2.0
+Werkzeug==3.1.4
 Jinja2==3.1.6
-MarkupSafe==3.0.3
-pillow==12.0.0
+itsdangerous==2.2.0
+click==8.3.1
+
+# ===================================
+# Database (PostgreSQL for Vercel)
+# ===================================
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.45
 psycopg2-binary==2.9.10
+greenlet==3.3.0
+
+# ===================================
+# Authentication & Security
+# ===================================
+Flask-Login==0.6.3
+Flask-Bcrypt==1.0.1
+bcrypt==5.0.0
+Flask-WTF==1.2.2
+WTForms==3.2.1
+email-validator==2.3.0
+cryptography==46.0.3
+
+# ===================================
+# Email (Required for reminders)
+# ===================================
+Flask-Mail==0.10.0
+blinker==1.9.0
+
+# ===================================
+# Real-time Features (Local dev only)
+# Note: Disabled on Vercel automatically
+# ===================================
+Flask-SocketIO==5.3.5
+Flask-APScheduler==1.13.1
+APScheduler==3.11.2
+
+# ===================================
+# PDF Generation (Tuition reports)
+# ===================================
+reportlab==4.2.5
+pillow==12.0.0
+
+# ===================================
+# AI Chatbot (Optional)
+# ===================================
+groq==0.11.0
 pydantic==2.12.5
 pydantic_core==2.41.5
-python-dateutil==2.9.0.post0
+
+# ===================================
+# Utilities
+# ===================================
 python-dotenv==1.2.1
-reportlab==4.2.5
+python-dateutil==2.9.0.post0
 requests==2.32.5
-six==1.17.0
-SQLAlchemy==2.0.45
-typing_extensions==4.15.0
-tzdata==2025.3
-Werkzeug==3.1.4
-WTForms==3.2.1
