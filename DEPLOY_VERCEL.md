@@ -7,7 +7,7 @@ This guide explains how to deploy FinBuddy to Vercel's serverless platform.
 When deployed on Vercel, the following features will be **disabled** due to serverless constraints:
 
 1. **Real-time Updates (WebSocket/SocketIO)** - Dashboard and group updates won't happen in real-time. Users must manually refresh.
-2. **Background Email Reminders (APScheduler)** - Scheduled expense reminder emails won't be sent automatically.
+2. ~~**Background Email Reminders (APScheduler)**~~ - **✅ NOW WORKS!** Email reminders are handled by Vercel Cron Jobs (runs daily at 9:00 AM UTC).
 3. **SQLite Database** - Vercel's filesystem is ephemeral. You **must** use an external database.
 
 These features work normally in local development.
@@ -177,8 +177,10 @@ python
 
 1. Visit your Vercel URL
 2. Try registering and logging in
-3. Test adding expenses
-4. Note: Real-time updates and email reminders won't work (serverless limitations)
+3. Test adding expenses with reminder dates
+4. **Email reminders**: Add an expense with a reminder date set to tomorrow, and it will be emailed at 9:00 AM UTC
+5. **Cron job logs**: Check Vercel Dashboard → Your Project → Logs → Filter by "cron" to see reminder execution logs
+6. Note: Real-time dashboard updates won't work (serverless limitation - manual refresh required)
 
 ## Troubleshooting
 
