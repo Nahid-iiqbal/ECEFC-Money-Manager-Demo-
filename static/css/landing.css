@@ -297,7 +297,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-wrap: wrap;
 }
 
-.btn-hero-primary, .btn-hero-secondary {
+.btn-hero-primary {
     padding: 1rem 2rem;
     font-size: 1.125rem;
     border-radius: var(--radius-md);
@@ -305,9 +305,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     transition: all var(--transition-base);
     display: inline-block;
-}
-
-.btn-hero-primary {
     background: linear-gradient(135deg, var(--landing-cyan), var(--landing-turquoise));
     color: white;
     box-shadow: var(--shadow-md);
@@ -316,18 +313,6 @@ h1, h2, h3, h4, h5, h6 {
 .btn-hero-primary:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
-}
-
-.btn-hero-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    --webkit-backdrop-filter: blur(10px);
-}
-
-.btn-hero-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--landing-cyan);
 }
 
 /* Hero Visual */
