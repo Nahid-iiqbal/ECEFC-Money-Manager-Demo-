@@ -4,12 +4,27 @@ from routes.database import db, TuitionRecord, TuitionReschedule
 from flask_login import current_user
 from datetime import datetime, timedelta
 from io import BytesIO
+import os
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+# Try to register Luckiest Guy font for PDF branding
+# If font file exists in static/fonts/, use it; otherwise fallback to Helvetica-Bold
+BRAND_FONT = 'Helvetica-Bold'  # Default fallback
+try:
+    font_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
+                             'static', 'fonts', 'LuckiestGuy-Regular.ttf')
+    if os.path.exists(font_path):
+        pdfmetrics.registerFont(TTFont('LuckiestGuy', font_path))
+        BRAND_FONT = 'LuckiestGuy'
+except Exception:
+    pass  # Silently fallback to Helvetica-Bold
 
 tuition_bp = Blueprint('tuition', __name__)
 
@@ -651,9 +666,9 @@ def export_routine_pdf():
         # Header bar
         canvas_obj.setFillColor(colors.HexColor('#667eea'))
         canvas_obj.rect(0, height - 25, width, 25, fill=1, stroke=0)
-        # Brand text
+        # Brand text - use Luckiest Guy if available, else Helvetica-Bold
         canvas_obj.setFillColor(colors.whitesmoke)
-        canvas_obj.setFont('Helvetica-Bold', 14)
+        canvas_obj.setFont(BRAND_FONT, 16)
         canvas_obj.drawCentredString(width / 2, height - 18, 'FinBuddy')
         # Footer
         canvas_obj.setFillColor(colors.HexColor('#888888'))

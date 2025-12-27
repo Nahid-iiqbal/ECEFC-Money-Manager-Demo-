@@ -6,6 +6,11 @@
     <meta name="description" content="FinBuddy - Smart expense tracking for BUET students. Manage personal expenses, group spending, and tuition fees effortlessly.">
     <title>FinBuddy - Smart Finance Management for Students</title>
     
+    <!-- Google Fonts - Chewy, Luckiest Guy & Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@300;400;500;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     
@@ -18,7 +23,7 @@
         <div class="nav-container">
             <div class="nav-brand">
                 <span class="logo">💰</span>
-                <span class="brand-name">FinBuddy</span>
+                <span class="brand-name fb-brand fb-brand-animated">FinBuddy</span>
             </div>
             <div class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
@@ -155,8 +160,8 @@
         <div class="section-container">
             <div class="about-content">
                 <h2 class="section-title">Built for BUET Students</h2>
-                <p class="about-text">FinBuddy was created by students who understand the unique financial challenges of university life. From managing mess bills to tracking tuition fees, we've built the tools you actually need.</p>
-                <p class="about-text">Whether you're splitting pizza with roommates or planning your semester budget, FinBuddy makes money management simple, smart, and stress-free.</p>
+                <p class="about-text"><span class="fb-brand">FinBuddy</span> was created by students who understand the unique financial challenges of university life. From managing mess bills to tracking tuition fees, we've built the tools you actually need.</p>
+                <p class="about-text">Whether you're splitting pizza with roommates or planning your semester budget, <span class="fb-brand">FinBuddy</span> makes money management simple, smart, and stress-free.</p>
                 <div class="about-stats">
                     <div class="stat">
                         <div class="stat-number">100%</div>
@@ -179,7 +184,7 @@
     <section class="cta">
         <div class="cta-container">
             <h2 class="cta-title">Ready to Take Control of Your Finances?</h2>
-            <p class="cta-subtitle">Join FinBuddy today and start managing your money smarter.</p>
+            <p class="cta-subtitle">Join <span class="fb-brand">FinBuddy</span> today and start managing your money smarter.</p>
             <a href="{{ url_for('auth.register') }}" class="btn-cta">Get Started Now</a>
         </div>
     </section>
@@ -189,7 +194,7 @@
         <div class="footer-container">
             <div class="footer-brand">
                 <span class="logo">💰</span>
-                <span class="brand-name">FinBuddy</span>
+                <span class="brand-name fb-brand">FinBuddy</span>
             </div>
             <div class="footer-links">
                 <a href="#features">Features</a>
@@ -197,7 +202,7 @@
                 <a href="#about">About</a>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 FinBuddy. Made with ❤️ for BUET students.</p>
+                <p>&copy; 2025 <span class="fb-brand">FinBuddy</span>. Made with ❤️ for BUET students.</p>
             </div>
         </div>
     </footer>

@@ -444,7 +444,7 @@ section:hover {
 .form-select,
 .form-textarea {
     padding: 0.75rem;
-    border: 2px solid var(--border-color);
+    border: 2px solid rgb(6, 53, 70);
     border-radius: 8px;
     background-color: var(--bg-input);
     color: rgb(5, 5, 73) !important;
@@ -458,6 +458,7 @@ section:hover {
 [data-theme="dark"] .form-textarea {
     background-color: #4b4545;
     color: #e7dbdb !important;
+    border: 2px solid var(--border-color);
 }
 
 .form-input::placeholder,
@@ -486,7 +487,7 @@ section:hover {
 .form-input:hover,
 .form-select:hover,
 .form-textarea:hover {
-    border-color: var(--accent-purple);
+    border-color: rgb(5, 65, 5);
 }
 
 .form-textarea {

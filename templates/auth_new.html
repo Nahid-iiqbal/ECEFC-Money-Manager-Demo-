@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if mode == 'register' %}Register{% else %}Login{% endif %} - FinBuddy</title>
+    
+    <!-- Google Fonts - Chewy, Luckiest Guy & Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@300;400;500;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    
     <link href="{{ url_for('static', filename='css/auth_new.css') }}" rel="stylesheet">
 </head>
 <body>
@@ -12,14 +18,14 @@
             <!-- Left Column - Marketing/Info -->
             <div class="auth-left">
                 <div class="brand-section">
-                    <h1 class="brand-logo">💰 FinBuddy</h1>
+                    <h1 class="brand-logo">💰 <span class="fb-brand fb-brand-animated">FinBuddy</span></h1>
                     <p class="brand-tagline">Smart Money Management Made Simple</p>
                 </div>
                 
                 <div class="features-list">
                     <div class="feature-item">
-                        <span class="feature-icon">�</span>
-                        <div class="feature-text">
+                        <span class="feature-icon-1">�</span>
+                        <div class="feature-text-1">
                             <h3>Track & Manage</h3>
                             <p>Monitor expenses and split bills effortlessly</p>
                         </div>
@@ -145,7 +151,7 @@
                                 <a href="{{ url_for('auth.login') }}" class="link-primary">Login here</a>
                             </p>
                         {% else %}
-                            <p>New to FinBuddy? 
+                            <p>New to <span class="fb-brand">FinBuddy</span>? 
                                 <a href="{{ url_for('auth.register') }}" class="link-primary">Create an account</a>
                             </p>
                         {% endif %}

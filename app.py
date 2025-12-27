@@ -9,6 +9,7 @@ from routes.tuition import tuition_bp
 from routes.profile import profile_bp
 from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
+from datetime import datetime, timezone, timedelta
 import os
 import re
 
@@ -847,67 +848,60 @@ def send_tuition_reminders_now():
 
 @app.route('/api/chatbot', methods=['POST'])
 def ai_chatbot():
-    """AI responder with full user context from database."""
+    """AI responder with full user context from database using RAG-style snapshot."""
     if not current_user.is_authenticated:
         return jsonify({'error': 'unauthorized'}), 401
 
     payload = request.get_json(silent=True) or {}
     user_message = (payload.get('message') or '').strip()
 
-    # Gather user information from database
+    # Import snapshot builder
+    from services.chat_context import (
+        build_user_finance_snapshot, 
+        get_display_name,
+        build_system_prompt_with_snapshot
+    )
     from routes.database import Expense, TuitionRecord, GroupMember
-    from datetime import datetime, timedelta
 
+    # Get display name
+    display_name = get_display_name(current_user)
+    
+    # Build comprehensive finance snapshot (60 days of data)
+    snapshot = build_user_finance_snapshot(current_user.id, db.session, days=60)
+
+    # Quick context for fallback responses
     profile = getattr(current_user, 'profile', None)
-    display_name = getattr(profile, 'profile_name',
-                           None) or current_user.username
     email = getattr(profile, 'email', None) or 'not set'
     profession = getattr(profile, 'profession', None) or 'not set'
     institution = getattr(profile, 'institution', None) or 'not set'
 
-    # Recent expenses (last 7 days)
+    # Recent expenses for basic stats (fallback needs these)
     week_ago = datetime.now(timezone.utc).date() - timedelta(days=7)
     recent_expenses = Expense.query.filter(
         Expense.user_id == current_user.id,
         Expense.date >= week_ago
     ).all()
     total_recent = sum((e.amount or 0) for e in recent_expenses)
-
-    # Total spending all time
-    all_expenses = Expense.query.filter(
-        Expense.user_id == current_user.id).all()
+    all_expenses = Expense.query.filter(Expense.user_id == current_user.id).all()
     total_all_time = sum((e.amount or 0) for e in all_expenses)
-
-    # Expense categories breakdown (last 7 days)
+    
     category_summary = {}
     for e in recent_expenses:
         cat = e.category or 'Other'
         category_summary[cat] = category_summary.get(cat, 0) + (e.amount or 0)
-
-    # Tuition info (income earned once 100% complete)
-    tuition_records = TuitionRecord.query.filter(
-        TuitionRecord.user_id == current_user.id).all()
-    tuition_count = len(tuition_records) if tuition_records else 0
-    total_tuition_income = sum((t.amount or 0)
-                               for t in tuition_records) if tuition_records else 0
-
-    # Calculate progress for tuition
-    tuition_progress = 0
-    if tuition_records:
-        total_classes = sum((t.total_days or 0) for t in tuition_records)
-        total_completed = sum((t.total_completed or 0)
-                              for t in tuition_records)
-        if total_classes > 0:
-            tuition_progress = int((total_completed / total_classes) * 100)
-
-    # Group memberships
-    group_count = GroupMember.query.filter(
-        GroupMember.user_id == current_user.id).count()
-
-    # Build context summary
     category_str = ', '.join([f"{k}: ৳{v:,.0f}" for k, v in sorted(
         category_summary.items(), key=lambda x: -x[1])[:3]])
 
+    tuition_records = TuitionRecord.query.filter(
+        TuitionRecord.user_id == current_user.id).all()
+    total_tuition_income = sum((t.amount or 0) for t in tuition_records)
+    total_classes = sum((t.total_days or 0) for t in tuition_records)
+    total_completed = sum((t.total_completed or 0) for t in tuition_records)
+    tuition_progress = int((total_completed / total_classes * 100)) if total_classes > 0 else 0
+    
+    group_count = GroupMember.query.filter(GroupMember.user_id == current_user.id).count()
+
+    # Handle empty message - return quick summary
     if not user_message:
         greeting = f"Hi {display_name}! 👋 Here's your quick summary:\n"
         greeting += f"💰 This week: ৳{total_recent:,.0f} spent | All-time: ৳{total_all_time:,.0f}\n"
@@ -916,7 +910,7 @@ def ai_chatbot():
         greeting += f"🎓 Tuition income potential: ৳{total_tuition_income:,.0f} ({tuition_progress}% progress) | Groups: {group_count}"
         return jsonify({'reply': greeting})
 
-    # Prepare context for both AI and fallback
+    # Prepare context for fallback
     user_context = {
         'display_name': display_name,
         'email': email,
@@ -936,32 +930,8 @@ def ai_chatbot():
         fallback_response = get_intelligent_fallback_response(user_message, user_context)
         return jsonify({'reply': fallback_response})
 
-    # Build rich context for AI
-    context = (
-        f"User: {display_name} ({email})\n"
-        f"Profession: {profession} | Institution: {institution}\n"
-        f"📈 Finance Summary:\n"
-        f"  - This week: ৳{total_recent:,.2f} ({len(recent_expenses)} expenses)\n"
-        f"  - All-time total: ৳{total_all_time:,.2f}\n"
-    )
-
-    if category_str:
-        context += f"  - Categories: {category_str}\n"
-
-    context += (
-        f"  - Tuition income potential: ৳{total_tuition_income:,.2f} ({tuition_progress}% progress, {tuition_count} classes)\n"
-        f"  - Groups: {group_count} joined\n"
-        f"Recent expenses: {', '.join([f'{e.name}(৳{e.amount:,.0f})' for e in recent_expenses[-5:]])}"
-    )
-
-    system_prompt = (
-        "You are FinBuddy, a friendly personal finance assistant. "
-        f"You know the user's financial data: {context}\n\n"
-        "CHAT naturally like a friend, NOT like a report. Keep it SHORT (2-3 sentences max). "
-        "Use their data to give relevant, personalized insights and advice. "
-        "Be conversational, supportive, and encouraging. Use 1-2 emoji if it fits. "
-        "Never start with 'Hi', 'Hello', or greetings."
-    )
+    # Build system prompt with RAG-style snapshot
+    system_prompt = build_system_prompt_with_snapshot(snapshot, display_name)
 
     try:
         completion = groq_client.chat.completions.create(

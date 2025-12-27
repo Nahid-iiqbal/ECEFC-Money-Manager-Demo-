@@ -38,3 +38,6 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+# Anonymized exports (local analytics only)
+exports/
